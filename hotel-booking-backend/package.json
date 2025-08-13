@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "npm install && npx tsc",
-    "start": "node ./dist/index.js",
+    "start": "node dist/hotel-booking-backend/src/index.js",
     "e2e": "cross-env DOTENV_CONFIG_PATH=.env.e2e nodemon"
   },
   "author": "",
