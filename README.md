@@ -2,8 +2,8 @@
 
 A full-stack hotel booking platform built with the MERN stack (MongoDB, Express, React, Node.js), TypeScript, Stripe, Cloudinary, and Playwright for end-to-end testing. This project demonstrates modern web development best practices, modular architecture, and real-world features for both users and developers.
 
-- **Frontend Live-Demo:** []()
-- **Backend Live-Demo:** []()
+- **Frontend Live-Demo:** [https://mern-booking-hotel.netlify.app/](https://mern-booking-hotel.netlify.app/)
+- **Backend Live-Demo:** [https://mern-hotel-booking-68ej.onrender.com](https://mern-hotel-booking-68ej.onrender.com)
 
 ---
 

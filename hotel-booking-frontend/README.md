@@ -2,7 +2,7 @@
 
 A modern, responsive frontend for the MERN Hotel Booking platform, built with React, TypeScript, Vite, and Tailwind CSS. This app provides a seamless hotel search, booking, and management experience, integrating with a Node.js/Express backend and third-party services like Stripe and Cloudinary.
 
-- **Live-Demo:** []()
+- **Live-Demo:** [https://mern-booking-hotel.netlify.app/](https://mern-booking-hotel.netlify.app/)
 
 ---
 
