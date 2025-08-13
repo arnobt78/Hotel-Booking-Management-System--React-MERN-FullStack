@@ -20,19 +20,12 @@ cloudinary.config({
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
 
-const app = express();
-app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req: Request, res: Response) => {
-  res.send("<h1>Hotel Booking Backend API is running 🚀</h1>");
-});
+const app = express();
 const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5174"].filter((origin): origin is string => Boolean(origin));
 app.use(
   cors({
     origin: (origin, callback) => {
-      // allow requests with no origin (like mobile apps, curl, etc.)
       if (!origin) return callback(null, true);
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
@@ -40,8 +33,34 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
+    optionsSuccessStatus: 204,
   })
 );
+// Explicit preflight handler for all routes
+app.options("*", cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  optionsSuccessStatus: 204,
+}));
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  // Ensure Vary header for CORS
+  res.header("Vary", "Origin");
+  next();
+});
+
+app.get("/", (req: Request, res: Response) => {
+  res.send("<h1>Hotel Booking Backend API is running 🚀</h1>");
+});
 
 
 
