@@ -58,6 +58,11 @@ export const validateToken = async () => {
     credentials: "include",
   });
 
+  if (response.status === 401) {
+    // Not logged in, return null for smoother UX
+    return null;
+  }
+
   if (!response.ok) {
     throw new Error("Token invalid");
   }
