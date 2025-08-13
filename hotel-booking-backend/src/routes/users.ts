@@ -60,6 +60,7 @@ router.post(
       res.cookie("auth_token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 86400000,
       });
       return res.status(200).send({ message: "User registered OK" });
