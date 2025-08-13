@@ -2,7 +2,7 @@
 
 A robust, scalable backend for a full-stack hotel booking application, built with Node.js, Express, MongoDB, and TypeScript. This backend powers the MERN Hotel Booking platform, providing secure authentication, hotel management, booking, and user APIs.
 
-- **Live-Demo:** []()
+- **Live-Demo:** [https://mern-hotel-booking-68ej.onrender.com](https://mern-hotel-booking-68ej.onrender.com)
 
 ---
 
