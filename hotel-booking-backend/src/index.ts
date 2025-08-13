@@ -22,7 +22,11 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
 
 
 const app = express();
-const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5174"].filter((origin): origin is string => Boolean(origin));
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5174",
+  "https://mern-booking-hotel.netlify.app"
+].filter((origin): origin is string => Boolean(origin));
 app.use(
   cors({
     origin: (origin, callback) => {
