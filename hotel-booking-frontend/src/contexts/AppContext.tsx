@@ -28,9 +28,14 @@ export const AppContextProvider = ({
 }) => {
   const [toast, setToast] = useState<ToastMessage | undefined>(undefined);
 
-  const { isError } = useQuery("validateToken", apiClient.validateToken, {
+  const { isError, isLoading, data } = useQuery("validateToken", apiClient.validateToken, {
     retry: false,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
   });
+
+  // Only logged in if not loading, not error, and data is present
+  const isLoggedIn = !isLoading && !isError && !!data;
 
   return (
     <AppContext.Provider
@@ -38,7 +43,7 @@ export const AppContextProvider = ({
         showToast: (toastMessage) => {
           setToast(toastMessage);
         },
-        isLoggedIn: !isError,
+        isLoggedIn,
         stripePromise,
       }}
     >
