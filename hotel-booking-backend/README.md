@@ -1,4 +1,4 @@
-# MERN Hotel Booking Backend - React, Express.js Project (MERN)
+# MERN Hotel Booking Backend - React, Express.js MERN Project
 
 A robust, scalable backend for a full-stack hotel booking application, built with Node.js, Express, MongoDB, and TypeScript. This backend powers the MERN Hotel Booking platform, providing secure authentication, hotel management, booking, and user APIs.
 
