@@ -1,4 +1,4 @@
-# MERN Hotel Booking Frontend - React-Vite, Express.js Project
+# MERN Hotel Booking Frontend - React, Express.js MERN Project
 
 A modern, responsive frontend for the MERN Hotel Booking platform, built with React, TypeScript, Vite, and Tailwind CSS. This app provides a seamless hotel search, booking, and management experience, integrating with a Node.js/Express backend and third-party services like Stripe and Cloudinary.
 
