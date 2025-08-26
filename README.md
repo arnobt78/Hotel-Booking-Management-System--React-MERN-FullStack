@@ -1,4 +1,4 @@
-# MERN Hotel Booking App
+# Hotel Booking - React, Mongodb, Express, Node.js (MERN) Website
 
 A full-stack hotel booking platform built with the MERN stack (MongoDB, Express, React, Node.js), TypeScript, Stripe, Cloudinary, and Playwright for end-to-end testing. This project demonstrates modern web development best practices, modular architecture, and real-world features for both users and developers.
 
