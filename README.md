@@ -1127,11 +1127,11 @@ npm run build
    - Ensure MongoDB connection string is production-ready
    - Configure CORS for production domain
 
-3. **Deploy to Railway:**
+3. **Deploy to Render:**
 
 ```bash
 # Connect your GitHub repository
-# Railway will auto-deploy on push to main branch
+# Render normally doesn't auto-deploy on push to main branch, so everytime you modify anything in backend, you have to redeploy the render server by yourself
 ```
 
 ### Frontend Deployment (Netlify/Vercel)
