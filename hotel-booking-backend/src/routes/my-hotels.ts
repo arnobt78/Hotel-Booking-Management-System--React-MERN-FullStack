@@ -40,7 +40,7 @@ router.post(
   upload.array("imageFiles", 6),
   async (req: Request, res: Response) => {
     try {
-      const imageFiles = req.files as any[];
+      const imageFiles = (req as any).files as any[];
       const newHotel: HotelType = req.body;
 
       // Ensure type is always an array
@@ -169,7 +169,7 @@ router.put(
       }
 
       // Handle image uploads if any
-      const files = req.files as any[];
+      const files = (req as any).files as any[];
       if (files && files.length > 0) {
         const updatedImageUrls = await uploadImages(files);
         updatedHotel.imageUrls = [
