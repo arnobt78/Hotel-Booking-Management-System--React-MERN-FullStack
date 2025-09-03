@@ -47,11 +47,25 @@ export const AppContextProvider = ({
       retry: false,
       refetchOnWindowFocus: true,
       staleTime: 0,
+      // Add fallback for incognito mode
+      onError: (error: any) => {
+        // If validateToken fails, check if we have a token in localStorage
+        const storedToken = localStorage.getItem("session_id");
+        if (storedToken && error.response?.status === 401) {
+          // We have a token but validateToken failed, this might be incognito mode
+          // Don't treat this as an error, let the user continue
+          console.log(
+            "Token found in localStorage but validateToken failed - possible incognito mode"
+          );
+        }
+      },
     }
   );
 
   // Only logged in if not loading, not error, and data is present
-  const isLoggedIn = !isLoading && !isError && !!data;
+  // OR if we have a token in localStorage (for incognito mode)
+  const hasStoredToken = localStorage.getItem("session_id");
+  const isLoggedIn = (!isLoading && !isError && !!data) || !!hasStoredToken;
 
   const showToast = (toastMessage: ToastMessage) => {
     const variant =

@@ -10,6 +10,7 @@ import {
   BookingType,
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
+import Cookies from "js-cookie";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await axiosInstance.get("/api/users/me");
@@ -23,6 +24,13 @@ export const register = async (formData: RegisterFormData) => {
 
 export const signIn = async (formData: SignInFormData) => {
   const response = await axiosInstance.post("/api/auth/login", formData);
+
+  // Store token in localStorage as backup for incognito mode
+  const token = Cookies.get("session_id");
+  if (token) {
+    localStorage.setItem("session_id", token);
+  }
+
   return response.data;
 };
 
@@ -41,6 +49,11 @@ export const validateToken = async () => {
 
 export const signOut = async () => {
   const response = await axiosInstance.post("/api/auth/logout");
+
+  // Clear both cookie and localStorage
+  Cookies.remove("session_id");
+  localStorage.removeItem("session_id");
+
   return response.data;
 };
 

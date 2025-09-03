@@ -21,7 +21,28 @@ const axiosInstance = axios.create({
 
 // Request interceptor to add Authorization header with session token
 axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
-  const token = Cookies.get("session_id");
+  // Try multiple ways to get the session token for incognito compatibility
+  let token = Cookies.get("session_id");
+
+  // Fallback: try to get from document.cookie directly (for incognito mode)
+  if (!token) {
+    const cookies = document.cookie.split(";");
+    const sessionCookie = cookies.find((cookie) =>
+      cookie.trim().startsWith("session_id=")
+    );
+    if (sessionCookie) {
+      token = sessionCookie.split("=")[1];
+    }
+  }
+
+  // Fallback: try localStorage as backup (for privacy browsers)
+  if (!token) {
+    const storedToken = localStorage.getItem("session_id");
+    if (storedToken) {
+      token = storedToken;
+    }
+  }
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -41,6 +62,7 @@ axiosInstance.interceptors.response.use(
     // Handle 401 errors by clearing session
     if (error.response?.status === 401) {
       Cookies.remove("session_id");
+      localStorage.removeItem("session_id");
       // Redirect to login if not already there
       if (window.location.pathname !== "/sign-in") {
         window.location.href = "/sign-in";
