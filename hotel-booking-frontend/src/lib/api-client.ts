@@ -35,45 +35,14 @@ const axiosInstance = axios.create({
   timeout: 30000, // 30 second timeout
 });
 
-// Request interceptor to add Authorization header with session token
+// Request interceptor to add Authorization header with JWT token
 axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
-  // Try multiple ways to get the session token for incognito compatibility
-  let token = Cookies.get("session_id");
-
-  // Fallback: try to get from document.cookie directly (for incognito mode)
-  if (!token) {
-    const cookies = document.cookie.split(";");
-    const sessionCookie = cookies.find((cookie) =>
-      cookie.trim().startsWith("session_id=")
-    );
-    if (sessionCookie) {
-      token = sessionCookie.split("=")[1];
-    }
-  }
-
-  // Fallback: try localStorage as backup (for privacy browsers)
-  if (!token) {
-    const storedToken = localStorage.getItem("session_id");
-    if (storedToken) {
-      token = storedToken;
-    }
-  }
-
-  // Enhanced incognito mode detection
-  const isIncognitoMode = () => {
-    // Check if we have a token in localStorage but not in cookies
-    const hasLocalToken = localStorage.getItem("session_id");
-    const hasCookieToken = Cookies.get("session_id");
-    return hasLocalToken && !hasCookieToken;
-  };
+  // Get JWT token from localStorage (no more cookie dependency)
+  const token = localStorage.getItem("session_id");
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-
-    // Log for debugging
-    if (isIncognitoMode()) {
-      console.log("Using localStorage token for incognito mode");
-    }
+    console.log("Using JWT token from localStorage for authentication");
   }
 
   // Add retry count to track retries

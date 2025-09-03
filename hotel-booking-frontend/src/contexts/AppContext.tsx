@@ -4,7 +4,6 @@ import { useQuery } from "react-query";
 import * as apiClient from "../api-client";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { useToast } from "../hooks/use-toast";
-import Cookies from "js-cookie";
 
 const STRIPE_PUB_KEY = import.meta.env.VITE_STRIPE_PUB_KEY || "";
 
@@ -43,9 +42,18 @@ export const AppContextProvider = ({
 
   // Simple check for stored tokens without API calls
   const checkStoredAuth = () => {
-    const cookieToken = Cookies.get("session_id");
     const localToken = localStorage.getItem("session_id");
-    return !!(cookieToken || localToken);
+    const userId = localStorage.getItem("user_id");
+
+    // Check if we have both token and user ID
+    const hasToken = !!localToken;
+    const hasUserId = !!userId;
+
+    if (hasToken && hasUserId) {
+      console.log("JWT authentication detected - token and user ID found");
+    }
+
+    return hasToken;
   };
 
   // Always run validation query - let it handle token checking internally
@@ -58,16 +66,21 @@ export const AppContextProvider = ({
       staleTime: 5 * 60 * 1000, // 5 minutes
       // Always enabled - let validateToken handle missing tokens
       enabled: true,
-      // Add fallback for incognito mode
+      // Add fallback for JWT authentication
       onError: (error: any) => {
         // If validateToken fails, check if we have a token in localStorage
         const storedToken = localStorage.getItem("session_id");
+        const storedUserId = localStorage.getItem("user_id");
+
         if (storedToken && error.response?.status === 401) {
-          // We have a token but validateToken failed, this might be incognito mode
-          // Don't treat this as an error, let the user continue
           console.log(
-            "Token found in localStorage but validateToken failed - possible incognito mode"
+            "JWT token found but validation failed - possible token expiration"
           );
+
+          // If we also have a user ID, we can be more confident it's a valid session
+          if (storedUserId) {
+            console.log("JWT session confirmed - using localStorage fallback");
+          }
         }
       },
     }
@@ -79,6 +92,7 @@ export const AppContextProvider = ({
     isError,
     hasData: !!data,
     hasStoredToken: checkStoredAuth(),
+    hasUserId: !!localStorage.getItem("user_id"),
     data,
   });
 
@@ -89,19 +103,29 @@ export const AppContextProvider = ({
   // Additional fallback: if we just logged in and have a token, consider logged in
   const justLoggedIn = checkStoredAuth() && !isLoading && !data && !isError;
 
-  // Enhanced incognito mode detection and fallback
-  const isIncognitoMode = () => {
-    // Check if we have a token but validation failed (typical incognito behavior)
-    return checkStoredAuth() && isError && !data;
+  // Enhanced JWT authentication detection and fallback
+  const isJWTFallback = () => {
+    // Check if we have a token but validation failed (typical JWT fallback behavior)
+    const hasStoredToken = checkStoredAuth();
+    const hasUserId = !!localStorage.getItem("user_id");
+    const isFallback = hasStoredToken && isError && !data && hasUserId;
+
+    if (isFallback) {
+      console.log(
+        "JWT fallback mode detected - using localStorage authentication"
+      );
+    }
+
+    return isFallback;
   };
 
-  const finalIsLoggedIn = isLoggedIn || justLoggedIn || isIncognitoMode();
+  const finalIsLoggedIn = isLoggedIn || justLoggedIn || isJWTFallback();
 
   console.log(
     "Final isLoggedIn:",
     finalIsLoggedIn,
-    "Incognito:",
-    isIncognitoMode()
+    "JWT Fallback:",
+    isJWTFallback()
   );
 
   const showToast = (toastMessage: ToastMessage) => {

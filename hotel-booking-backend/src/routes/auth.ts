@@ -83,18 +83,17 @@ router.post(
         }
       );
 
-      // Set session cookie for consistent authentication
-      res.cookie("session_id", token, {
-        httpOnly: false, // Allow client-side access for axios interceptor
-        secure: true,
-        sameSite: "none",
-        maxAge: 86400000, // 24 hours
-        path: "/",
-      });
-
+      // Return JWT token in response body for localStorage storage
       res.status(200).json({
         userId: user._id,
         message: "Login successful",
+        token: token, // JWT token in response body
+        user: {
+          id: user._id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+        },
       });
     } catch (error) {
       console.log(error);

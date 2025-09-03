@@ -10,7 +10,6 @@ import {
   BookingType,
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
-import Cookies from "js-cookie";
 import { queryClient } from "./main";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
@@ -26,19 +25,17 @@ export const register = async (formData: RegisterFormData) => {
 export const signIn = async (formData: SignInFormData) => {
   const response = await axiosInstance.post("/api/auth/login", formData);
 
-  // Store token in localStorage as backup for incognito mode
-  const token = Cookies.get("session_id");
+  // Store JWT token from response body in localStorage
+  const token = response.data?.token;
   if (token) {
     localStorage.setItem("session_id", token);
-    console.log("Token stored in localStorage for incognito compatibility");
-  } else {
-    // If no cookie token, try to get from response headers or body
-    const responseToken =
-      response.data?.token || response.headers?.["set-cookie"];
-    if (responseToken) {
-      localStorage.setItem("session_id", responseToken);
-      console.log("Token extracted from response and stored in localStorage");
-    }
+    console.log("JWT token stored in localStorage for incognito compatibility");
+  }
+
+  // Store user info for incognito mode fallback
+  if (response.data?.userId) {
+    localStorage.setItem("user_id", response.data.userId);
+    console.log("User ID stored for incognito mode fallback");
   }
 
   // Force validate token after successful login to update React Query cache
@@ -80,9 +77,9 @@ export const validateToken = async () => {
 export const signOut = async () => {
   const response = await axiosInstance.post("/api/auth/logout");
 
-  // Clear both cookie and localStorage
-  Cookies.remove("session_id");
+  // Clear localStorage (JWT tokens)
   localStorage.removeItem("session_id");
+  localStorage.removeItem("user_id");
 
   return response.data;
 };
