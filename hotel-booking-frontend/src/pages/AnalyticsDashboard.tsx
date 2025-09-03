@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useQueryWithLoading } from "../hooks/useLoadingHooks";
 import {
-  fetchAnalyticsDashboard,
-  fetchAnalyticsForecast,
-  fetchAnalyticsPerformance,
+  fetchBusinessInsightsDashboard,
+  fetchBusinessInsightsForecast,
+  fetchBusinessInsightsPerformance,
 } from "../api-client";
 import {
   BarChart,
@@ -127,22 +127,22 @@ const AnalyticsDashboard = () => {
     error,
     refetch,
   } = useQueryWithLoading<AnalyticsData>(
-    "analytics-dashboard",
-    fetchAnalyticsDashboard,
+    "business-insights-dashboard",
+    fetchBusinessInsightsDashboard,
     {
       refetchInterval: false, // Disable auto-refresh to avoid blocking
       retry: 3,
       retryDelay: 1000,
-      loadingMessage: "Loading analytics dashboard...",
+      loadingMessage: "Loading business insights dashboard...",
     }
   );
 
   // Debug logging
-  console.log("Frontend Analytics Data:", analyticsData);
+  console.log("Frontend Business Insights Data:", analyticsData);
 
   const { data: forecastData } = useQueryWithLoading<ForecastData>(
-    "analytics-forecast",
-    fetchAnalyticsForecast,
+    "business-insights-forecast",
+    fetchBusinessInsightsForecast,
     {
       refetchInterval: false, // Disable auto-refresh to avoid blocking
       retry: 3,
@@ -155,8 +155,8 @@ const AnalyticsDashboard = () => {
   console.log("Frontend Forecast Data:", forecastData);
 
   const { data: performanceData } = useQueryWithLoading<PerformanceData>(
-    "analytics-performance",
-    fetchAnalyticsPerformance,
+    "business-insights-performance",
+    fetchBusinessInsightsPerformance,
     {
       refetchInterval: false, // Disable auto-refresh to avoid blocking
       retry: 3,
@@ -186,7 +186,7 @@ const AnalyticsDashboard = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading analytics data...</p>
+          <p className="text-gray-600">Loading business insights data...</p>
         </div>
       </div>
     );
@@ -196,7 +196,9 @@ const AnalyticsDashboard = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="text-red-500 mb-4">Failed to load analytics data</div>
+          <div className="text-red-500 mb-4">
+            Failed to load business insights data
+          </div>
           <button
             onClick={() => refetch()}
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
@@ -215,7 +217,7 @@ const AnalyticsDashboard = () => {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">
-              Analytics Dashboard
+              Business Insights Dashboard
             </h1>
             <p className="text-gray-600">
               Comprehensive insights into your hotel booking business

@@ -12,7 +12,7 @@ import hotelRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
 import bookingsManagementRoutes from "./routes/bookings";
 import healthRoutes from "./routes/health";
-import analyticsRoutes from "./routes/analytics";
+import businessInsightsRoutes from "./routes/business-insights";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./swagger";
 import helmet from "helmet";
@@ -112,7 +112,7 @@ app.use("/api/hotels", hotelRoutes);
 app.use("/api/my-bookings", bookingRoutes);
 app.use("/api/bookings", bookingsManagementRoutes);
 app.use("/api/health", healthRoutes);
-app.use("/api/analytics", analyticsRoutes);
+app.use("/api/business-insights", businessInsightsRoutes);
 
 // Swagger API Documentation
 app.use(

@@ -25,14 +25,14 @@ interface BookingDocument {
 
 /**
  * @swagger
- * /api/analytics/dashboard:
+ * /api/business-insights/dashboard:
  *   get:
- *     summary: Get analytics dashboard data
- *     description: Returns comprehensive analytics data for the dashboard including bookings, revenue, and performance metrics
- *     tags: [Analytics]
+ *     summary: Get business insights dashboard data
+ *     description: Returns comprehensive business insights data for the dashboard including bookings, revenue, and performance metrics
+ *     tags: [Business Insights]
  *     responses:
  *       200:
- *         description: Analytics dashboard data
+ *         description: Business insights dashboard data
  */
 router.get("/dashboard", verifyToken, async (req: Request, res: Response) => {
   try {
@@ -261,7 +261,7 @@ router.get("/dashboard", verifyToken, async (req: Request, res: Response) => {
       hotelPerformance.push(...fallbackPerformance);
     }
 
-    const analyticsData = {
+    const businessInsightsData = {
       overview: {
         totalHotels,
         totalUsers,
@@ -278,17 +278,17 @@ router.get("/dashboard", verifyToken, async (req: Request, res: Response) => {
     };
 
     // Debug logging
-    console.log("Analytics Data:", {
-      overview: analyticsData.overview,
+    console.log("Business Insights Data:", {
+      overview: businessInsightsData.overview,
       popularDestinationsCount: popularDestinations.length,
       dailyBookingsCount: dailyBookings.length,
       hotelPerformanceCount: hotelPerformance.length,
     });
 
-    res.status(200).json(analyticsData);
+    res.status(200).json(businessInsightsData);
   } catch (error) {
     res.status(500).json({
-      error: "Failed to fetch analytics data",
+      error: "Failed to fetch business insights data",
       message: error instanceof Error ? error.message : "Unknown error",
     });
   }
@@ -296,11 +296,11 @@ router.get("/dashboard", verifyToken, async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/analytics/forecast:
+ * /api/business-insights/forecast:
  *   get:
  *     summary: Get booking and revenue forecasts
  *     description: Returns forecasting data for bookings and revenue based on historical trends
- *     tags: [Analytics]
+ *     tags: [Business Insights]
  *     responses:
  *       200:
  *         description: Forecasting data
@@ -487,11 +487,11 @@ router.get("/forecast", verifyToken, async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/analytics/performance:
+ * /api/business-insights/performance:
  *   get:
  *     summary: Get performance metrics
  *     description: Returns detailed performance metrics for the application
- *     tags: [Analytics]
+ *     tags: [Business Insights]
  *     responses:
  *       200:
  *         description: Performance metrics

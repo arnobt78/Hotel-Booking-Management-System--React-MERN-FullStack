@@ -286,38 +286,47 @@ export const fetchHotelBookings = async (
   return response.json();
 };
 
-// Analytics API functions
-export const fetchAnalyticsDashboard = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/analytics/dashboard`, {
-    credentials: "include",
-  });
+// Business Insights API functions
+export const fetchBusinessInsightsDashboard = async () => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/business-insights/dashboard`,
+    {
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch analytics dashboard data");
+    throw new Error("Failed to fetch business insights dashboard data");
   }
 
   return response.json();
 };
 
-export const fetchAnalyticsForecast = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/analytics/forecast`, {
-    credentials: "include",
-  });
+export const fetchBusinessInsightsForecast = async () => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/business-insights/forecast`,
+    {
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch analytics forecast data");
+    throw new Error("Failed to fetch business insights forecast data");
   }
 
   return response.json();
 };
 
-export const fetchAnalyticsPerformance = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/analytics/performance`, {
-    credentials: "include",
-  });
+export const fetchBusinessInsightsPerformance = async () => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/business-insights/performance`,
+    {
+      credentials: "include",
+    }
+  );
 
   if (!response.ok) {
-    throw new Error("Failed to fetch analytics performance data");
+    throw new Error("Failed to fetch business insights performance data");
   }
 
   return response.json();
