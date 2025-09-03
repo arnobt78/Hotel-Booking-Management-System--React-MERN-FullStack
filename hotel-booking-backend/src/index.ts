@@ -57,6 +57,7 @@ const allowedOrigins = [
   "http://localhost:5174",
   "http://localhost:5173",
   "https://mern-booking-hotel.netlify.app",
+  "https://mern-booking-hotel.netlify.app/",
 ].filter((origin): origin is string => Boolean(origin));
 app.use(
   cors({
@@ -69,6 +70,8 @@ app.use(
     },
     credentials: true,
     optionsSuccessStatus: 204,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
 // Explicit preflight handler for all routes
@@ -84,6 +87,8 @@ app.options(
     },
     credentials: true,
     optionsSuccessStatus: 204,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
   })
 );
 app.use(cookieParser());
