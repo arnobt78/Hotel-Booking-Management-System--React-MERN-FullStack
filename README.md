@@ -1,259 +1,357 @@
-# MERN Hotel Booking Website - React, Mongodb, Express.js, Node.js MERN Project
+# Hotel Booking Platform - Enhanced Features
 
-A full-stack hotel booking platform built with the MERN stack (MongoDB, Express, React, Node.js), TypeScript, Stripe, Cloudinary, and Playwright for end-to-end testing. This project demonstrates modern web development best practices, modular architecture, and real-world features for both users and developers.
+A comprehensive hotel booking platform built with React, TypeScript, Node.js, and MongoDB. This project now includes advanced features for API documentation, health monitoring, analytics, and enhanced search capabilities.
 
-- **Frontend Live-Demo:** [https://mern-booking-hotel.netlify.app/](https://mern-booking-hotel.netlify.app/)
-- **Backend Live-Demo:** [https://mern-hotel-booking-68ej.onrender.com](https://mern-hotel-booking-68ej.onrender.com)
+## 🚀 New Features Added
 
----
+### 1. API Documentation (`/api-docs`)
 
-## Table of Contents
+- **Interactive Swagger UI**: Complete API documentation with testing capabilities
+- **Endpoint Categories**: Organized by Authentication, Users, Hotels, Bookings, Health & Analytics
+- **Authentication Guide**: JWT token-based authentication documentation
+- **Rate Limiting Info**: API usage limits and guidelines
+- **Error Handling**: Standard error responses and status codes
 
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Technology Stack](#technology-stack)
-- [Environment Variables](#environment-variables)
-- [Setup & Installation](#setup--installation)
-- [Running the Application](#running-the-application)
-- [Testing (Playwright)](#testing-playwright)
-- [API & Data Flow](#api--data-flow)
-- [Deployment](#deployment)
-- [Extending & Reusing](#extending--reusing)
-- [Keywords](#keywords)
-- [Conclusion](#conclusion)
-- [Happy Coding! 🎉](#happy-coding-)
+### 2. API Status Monitoring (`/api-status`)
 
----
+- **Real-time Health Checks**: Live monitoring of API health status
+- **Database Connection Status**: MongoDB connection monitoring
+- **System Metrics**: Memory usage, CPU usage, uptime tracking
+- **Performance Indicators**: Response times and error rates
+- **Auto-refresh**: Updates every 30 seconds for real-time monitoring
 
-## Project Structure
+### 3. Analytics Dashboard (`/analytics`)
+
+- **Business Intelligence**: Comprehensive analytics and insights
+- **Revenue Tracking**: Total revenue, growth percentages, trends
+- **Booking Analytics**: Daily booking trends, popular destinations
+- **Hotel Performance**: Top-performing hotels with metrics
+- **Forecasting**: AI-powered booking and revenue predictions
+- **Interactive Charts**: Bar charts, pie charts, line charts, area charts
+
+### 4. Enhanced Search (`/search`)
+
+- **Advanced Filters**: Price range, star rating, hotel type, facilities
+- **Quick Search**: Popular destinations with one-click search
+- **Sorting Options**: Relevance, price, rating, distance
+- **Facility Filters**: WiFi, parking, pool, gym, spa, breakfast
+- **Search Radius**: Configurable search area (10-100km)
+- **Instant Booking**: Filter for instant booking options
+
+## 🛠️ Technical Stack
+
+### Frontend
+
+- **React 18** with TypeScript
+- **React Router** for navigation
+- **React Query** for data fetching
+- **Tailwind CSS** for styling
+- **Recharts** for data visualization
+- **Lucide React** for icons
+- **React Hook Form** for form handling
+
+### Backend
+
+- **Node.js** with TypeScript
+- **Express.js** framework
+- **MongoDB** with Mongoose ODM
+- **JWT** for authentication
+- **Swagger UI** for API documentation
+- **Helmet** for security headers
+- **Morgan** for logging
+- **Compression** for response compression
+- **Rate Limiting** for API protection
+
+### Additional Libraries
+
+- **Cloudinary** for image uploads
+- **Stripe** for payment processing
+- **bcryptjs** for password hashing
+- **cors** for cross-origin requests
+
+## 📊 Analytics Features
+
+### Dashboard Overview
+
+- Total hotels, users, and bookings
+- Revenue growth tracking
+- Recent booking trends
+- Popular destinations analysis
+
+### Forecasting
+
+- Booking trend predictions
+- Revenue forecasting
+- Seasonal growth analysis
+- Confidence intervals
+
+### Performance Metrics
+
+- System resource monitoring
+- Database performance
+- Response time tracking
+- Error rate monitoring
+
+## 🔍 Search Enhancements
+
+### Advanced Filters
+
+- **Price Range**: Min/max price filtering
+- **Star Rating**: 2-5 star hotel filtering
+
+## 🛠️ Development Notes
+
+### Authentication State Persistence
+
+During development, authentication state persists between sessions using HTTP-only cookies. This means:
+
+- **Expected Behavior**: When you close the browser or stop the development server, your login state is preserved
+- **Development Tools**: Use the "Clear Auth" and "Clear All" buttons in the header (development mode only)
+- **Production Behavior**: In production, this provides better user experience with persistent sessions
+
+### Development Utilities
+
+The application includes development-only utilities accessible from the header:
+
+- **Clear Auth**: Clears authentication cookies and redirects to sign-in
+- **Clear All**: Clears all browser storage (localStorage, sessionStorage, cookies)
+- **Development Banner**: Yellow banner indicating development mode
+
+### Getting Started
+
+1. **Start Backend**: `cd hotel-booking-backend && npm run dev`
+2. **Start Frontend**: `cd hotel-booking-frontend && npm run dev`
+3. **Clear Auth State**: If you see unexpected login state, use the "Clear Auth" button
+4. **Database**: Ensure MongoDB is running locally or update connection string
+
+- **Hotel Types**: Hotel, Resort, Motel, Hostel, etc.
+- **Facilities**: WiFi, parking, pool, gym, spa, breakfast
+- **Booking Options**: Instant booking, free cancellation
+
+### Quick Search
+
+- Popular destinations
+- One-click search functionality
+- Recent searches
+- Search suggestions
+
+## 🏥 Health Monitoring
+
+### API Health Endpoints
+
+- `/api/health` - Basic health status
+- `/api/health/detailed` - Detailed system metrics
+
+### Monitoring Features
+
+- Database connection status
+- Memory usage tracking
+- CPU usage monitoring
+- Uptime tracking
+- Error rate monitoring
+
+## 🔐 Security Features
+
+### API Protection
+
+- Rate limiting (100 requests per 15 minutes)
+- Security headers with Helmet
+- CORS configuration
+- Input validation
+- Error handling
+
+### Authentication
+
+- JWT token-based authentication
+- HTTP-only cookies
+- Secure password hashing
+- Token validation
+
+## 📈 Business Intelligence
+
+### Revenue Analytics
+
+- Total revenue tracking
+- Revenue growth percentages
+- Revenue forecasting
+- Seasonal analysis
+
+### Booking Analytics
+
+- Daily booking trends
+- Popular destinations
+- Hotel performance metrics
+- Booking patterns
+
+### User Analytics
+
+- User growth tracking
+- User behavior analysis
+- Conversion rates
+- User engagement metrics
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 16+
+- MongoDB
+- npm or yarn
+
+### Installation
+
+1. **Clone the repository**
 
 ```bash
-hotel-booking/
-├── data/                # Test data and hotel images
-│   ├── test-hotel.json
-│   ├── test-users.json
-│   └── hotel_images/
-├── e2e-tests/           # Playwright end-to-end tests
-│   ├── tests/
-│   ├── tests-examples/
-│   ├── package.json
-│   └── playwright.config.ts
-├── hotel-booking-backend/   # Backend (Node.js, Express, MongoDB)
-│   ├── src/
-│   ├── package.json
-│   └── README.md
-├── hotel-booking-frontend/  # Frontend (React, Vite, Tailwind)
-│   ├── src/
-│   ├── public/
-│   ├── package.json
-│   └── README.md
-├── shared/              # Shared TypeScript types
-│   └── types.ts
-├── netlify.toml         # Netlify SPA routing config
-└── README.md            # This file
+git clone <repository-url>
+cd hotel-booking
 ```
 
----
+2. **Install dependencies**
 
-## Features
+```bash
+# Backend
+cd hotel-booking-backend
+npm install
 
-- User registration, login, and JWT authentication
-- Hotel search with filters (stars, price, facilities, types)
-- Hotel detail pages with image galleries and booking forms
-- Booking management and booking history
-- Stripe integration for secure payments
-- Cloudinary integration for hotel images
-- Toast notifications for user feedback
-- Pagination and sorting for search results
-- Responsive design with Tailwind CSS
-- Modern React patterns (hooks, context, code splitting)
-- TypeScript for type safety
-- End-to-end testing with Playwright
-
----
-
-## Technology Stack
-
-- **Frontend:** React, TypeScript, Vite, Tailwind CSS, React Query, React Router, Stripe, Cloudinary
-- **Backend:** Node.js, Express, MongoDB, Mongoose, TypeScript, JWT, bcryptjs, Stripe, Cloudinary
-- **Testing:** Playwright (e2e), Jest (unit, optional)
-- **DevOps:** Netlify (frontend), Render (backend), MongoDB Atlas, Cloudinary, Stripe
-- **Shared:** TypeScript types for type safety across frontend and backend
-
----
-
-## Environment Variables
-
-### Backend (`hotel-booking-backend/.env`)
-
-```env
-MONGODB_CONNECTION_STRING=
-JWT_SECRET_KEY=
-FRONTEND_URL=
-
-# Cloudinary
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-
-# Stripe
-STRIPE_API_KEY=
+# Frontend
+cd ../hotel-booking-frontend
+npm install
 ```
 
-### Frontend (`hotel-booking-frontend/.env`)
+3. **Environment Setup**
 
-```env
-VITE_API_BASE_URL=
-VITE_STRIPE_PUB_KEY=
+```bash
+# Backend (.env)
+MONGODB_CONNECTION_STRING=your_mongodb_connection
+JWT_SECRET_KEY=your_jwt_secret
+CLOUDINARY_CLOUD_NAME=your_cloudinary_name
+CLOUDINARY_API_KEY=your_cloudinary_key
+CLOUDINARY_API_SECRET=your_cloudinary_secret
+FRONTEND_URL=http://localhost:5174
+
+# Frontend (.env)
+VITE_API_BASE_URL=http://localhost:7001
 ```
 
----
+4. **Start the application**
 
-## Setup & Installation
+```bash
+# Backend
+cd hotel-booking-backend
+npm run dev
 
-1. **Clone the repository:**
+# Frontend
+cd ../hotel-booking-frontend
+npm run dev
+```
 
-    ```bash
-    git clone https://github.com/your-username/mern-hotel-booking.git
-    cd mern-hotel-booking
-    ```
+## 📚 API Documentation
 
-2. **Install dependencies:**
+### Access Swagger UI
 
-- Backend: `cd hotel-booking-backend && npm install`
-- Frontend: `cd hotel-booking-frontend && npm install`
-- E2E Tests: `cd e2e-tests && npm install`
+Visit `http://localhost:7001/api-docs` for interactive API documentation.
 
-3. **Configure environment variables:**  
+### API Endpoints
 
-- See above for required variables in each `.env` file.
+#### Authentication
 
-4. **Import test data (optional):**
+- `POST /api/auth/login` - User login
+- `GET /api/auth/validate-token` - Validate token
+- `POST /api/auth/logout` - User logout
 
-- Use the files in `data/` to seed your MongoDB database for testing.
+#### Users
 
----
+- `POST /api/users/register` - Register new user
+- `GET /api/users/me` - Get current user
 
-## Running the Application
+#### Hotels
 
-- **Backend:**
+- `GET /api/hotels` - Get all hotels
+- `GET /api/hotels/search` - Search hotels
+- `GET /api/hotels/:id` - Get hotel by ID
+- `POST /api/my-hotels` - Add hotel
+- `GET /api/my-hotels` - Get user's hotels
+- `PUT /api/my-hotels/:id` - Update hotel
+- `DELETE /api/my-hotels/:id` - Delete hotel
 
-    ```bash
-    cd hotel-booking-backend
-    npm run dev   # for development
-    npm start     # for production
-    ```
+#### Bookings
 
-- **Frontend:**
+- `POST /api/hotels/:id/bookings` - Create booking
+- `GET /api/my-bookings` - Get user's bookings
+- `POST /api/hotels/:id/bookings/payment-intent` - Create payment intent
 
-    ```bash
-    cd hotel-booking-frontend
-    npm run dev   # for development
-    npm run build && npm run preview   # for production
-    ```
+#### Health & Analytics
 
-- The app will be available at [http://localhost:5174](http://localhost:5174) (frontend) and [http://localhost:7001](http://localhost:7001) (backend).
+- `GET /api/health` - API health status
+- `GET /api/health/detailed` - Detailed health info
+- `GET /api/analytics/dashboard` - Analytics dashboard
+- `GET /api/analytics/forecast` - Booking forecasts
+- `GET /api/analytics/performance` - Performance metrics
 
----
+## 🎯 Key Features
 
-## Testing (Playwright)
+### User Experience
 
-- **Run E2E tests:**
+- **Responsive Design**: Mobile-first approach
+- **Real-time Updates**: Live data refresh
+- **Interactive Charts**: Data visualization
+- **Advanced Search**: Comprehensive filtering
+- **Quick Actions**: One-click operations
 
-    ```bash
-    cd e2e-tests
-    npm install
-    # Start both frontend and backend servers first!
-    npx playwright test
-    ```
+### Developer Experience
 
-- **Test Data:**  
+- **TypeScript**: Full type safety
+- **API Documentation**: Interactive Swagger UI
+- **Health Monitoring**: Real-time system status
+- **Error Handling**: Comprehensive error management
+- **Code Quality**: ESLint and Prettier configuration
 
-Use the JSON files in `data/` to seed your database for consistent test results.
+### Business Features
 
-- **Test Files:**  
+- **Analytics Dashboard**: Business intelligence
+- **Revenue Tracking**: Financial insights
+- **Forecasting**: Predictive analytics
+- **Performance Monitoring**: System health
+- **Search Optimization**: Advanced filtering
 
-- `e2e-tests/tests/auth.spec.ts` — Authentication flows
-- `e2e-tests/tests/manage-hotels.spec.ts` — Hotel management
-- `e2e-tests/tests/search-hotels.spec.ts` — Hotel search
+## 🔧 Configuration
 
----
+### Environment Variables
 
-## API & Data Flow
+All sensitive configuration is managed through environment variables for security.
 
-- **API:**  
-The backend exposes RESTful endpoints for authentication, users, hotels, and bookings.
+### Database
 
-See backend/README.md for full API documentation.
+MongoDB with Mongoose ODM for data modeling and validation.
 
-- **Data Flow:**  
+### File Upload
 
-- Frontend uses React Query to fetch and cache data from the backend.
-- Authentication is managed with JWT and cookies.
-- Payments are processed via Stripe.
-- Images are uploaded to Cloudinary via the backend.
+Cloudinary integration for secure image uploads and storage.
 
-- **Shared Types:**  
+### Payments
 
-All domain types (User, Hotel, Booking, etc.) are defined in `shared/types.ts` and imported in both frontend and backend for type safety.
+Stripe integration for secure payment processing.
 
----
+## 📝 Contributing
 
-## Deployment
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
 
-- **Frontend:** Deploy to Netlify.  
+## 📄 License
 
-- Build command: `npm run build`
-- Publish directory: `dist`
-- SPA routing handled via `netlify.toml`
+This project is licensed under the ISC License.
 
-- **Backend:** Deploy to Render.  
+## 🤝 Support
 
-- Build command: `npm run build`
-- Start command: `npm start`
-- Set all required environment variables in Render dashboard.
+For support and questions:
 
-- **Database:** Use MongoDB Atlas for production.
-
-- **Other Services:**  
-
-- Cloudinary for image uploads  
-- Stripe for payments
-
----
-
-## Extending & Reusing
-
-- **Components:** All UI components are reusable and can be imported anywhere in the frontend.
-- **Hooks:** Custom hooks in `src/hooks/` for context and logic.
-- **Forms:** Modular form components for booking, guest info, and hotel management.
-- **API Client:** Centralized API logic for easy integration with other projects.
-- **Config:** Easily add new filters or options via `src/config/`.
-- **Backend:** Add new models, routes, or middleware as needed.
-- **Types:** Use and extend types from `shared/types.ts` for type safety across backend and frontend.
+- Create an issue in the repository
+- Contact: <support@mernholidays.com>
 
 ---
 
-## Keywords
-
-`React`, `TypeScript`, `Vite`, `Tailwind CSS`, `Stripe`, `Cloudinary`, `React Query`, `React Router`, `Node.js`, `Express`, `MongoDB`, `Mongoose`, `JWT`, `bcryptjs`, `REST API`, `MERN`, `SPA`, `Full Stack`, `Reusable Components`, `Open Source`, `Netlify`, `Render`, `Playwright`, `Testing`, `Learning`, `Project Based Learning`
-
----
-
-## Conclusion
-
-This project is designed for real-world hotel booking applications, learning, and rapid prototyping. It is modular, extensible, and ready for production deployment. Pair the frontend and backend for a complete MERN stack experience!
-
----
-
-## Happy Coding! 🎉
-
-Feel free to use this project repository and extend this project further!
-
-If you have any questions or want to share your work, reach out via GitHub or my portfolio at [https://arnob-mahmud.vercel.app/](https://arnob-mahmud.vercel.app/).
-
-**Enjoy building and learning!** 🚀
-
-Thank you! 😊
-
----
+**Built with ❤️ using modern web technologies**

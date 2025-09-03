@@ -5,9 +5,12 @@ import {
   HotelType,
   PaymentIntentResponse,
   UserType,
+  HotelWithBookingsType,
+  BookingType,
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:7001";
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await fetch(`${API_BASE_URL}/api/users/me`, {
@@ -79,6 +82,20 @@ export const signOut = async () => {
   if (!response.ok) {
     throw new Error("Error during sign out");
   }
+};
+
+// Development utility to clear all browser storage
+export const clearAllStorage = () => {
+  // Clear localStorage
+  localStorage.clear();
+  // Clear sessionStorage
+  sessionStorage.clear();
+  // Clear cookies (by setting them to expire in the past)
+  document.cookie.split(";").forEach((c) => {
+    document.cookie = c
+      .replace(/^ +/, "")
+      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+  });
 };
 
 export const addMyHotel = async (hotelFormData: FormData) => {
@@ -240,13 +257,67 @@ export const createRoomBooking = async (formData: BookingFormData) => {
   }
 };
 
-export const fetchMyBookings = async (): Promise<HotelType[]> => {
+export const fetchMyBookings = async (): Promise<HotelWithBookingsType[]> => {
   const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
     credentials: "include",
   });
 
   if (!response.ok) {
     throw new Error("Unable to fetch bookings");
+  }
+
+  return response.json();
+};
+
+export const fetchHotelBookings = async (
+  hotelId: string
+): Promise<BookingType[]> => {
+  const response = await fetch(
+    `${API_BASE_URL}/api/bookings/hotel/${hotelId}`,
+    {
+      credentials: "include",
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch hotel bookings");
+  }
+
+  return response.json();
+};
+
+// Analytics API functions
+export const fetchAnalyticsDashboard = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/analytics/dashboard`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch analytics dashboard data");
+  }
+
+  return response.json();
+};
+
+export const fetchAnalyticsForecast = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/analytics/forecast`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch analytics forecast data");
+  }
+
+  return response.json();
+};
+
+export const fetchAnalyticsPerformance = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/analytics/performance`, {
+    credentials: "include",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch analytics performance data");
   }
 
   return response.json();

@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
+import Booking from "../models/booking";
+import User from "../models/user";
 import { BookingType, HotelSearchResponse } from "../../../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
@@ -154,20 +156,32 @@ router.post(
       const newBooking: BookingType = {
         ...req.body,
         userId: req.userId,
+        hotelId: req.params.hotelId,
+        createdAt: new Date(), // Add booking creation timestamp
+        status: "confirmed", // Set initial status
+        paymentStatus: "paid", // Set payment status since payment succeeded
       };
 
-      const hotel = await Hotel.findOneAndUpdate(
-        { _id: req.params.hotelId },
-        {
-          $push: { bookings: newBooking },
-        }
-      );
+      // Create booking in separate collection
+      const booking = new Booking(newBooking);
+      await booking.save();
 
-      if (!hotel) {
-        return res.status(400).json({ message: "hotel not found" });
-      }
+      // Update hotel analytics
+      await Hotel.findByIdAndUpdate(req.params.hotelId, {
+        $inc: {
+          totalBookings: 1,
+          totalRevenue: newBooking.totalCost,
+        },
+      });
 
-      await hotel.save();
+      // Update user analytics
+      await User.findByIdAndUpdate(req.userId, {
+        $inc: {
+          totalBookings: 1,
+          totalSpent: newBooking.totalCost,
+        },
+      });
+
       res.status(200).send();
     } catch (error) {
       console.log(error);

@@ -1,4 +1,3 @@
-
 import express, { Request, Response } from "express";
 import cors from "cors";
 import "dotenv/config";
@@ -11,6 +10,15 @@ import { v2 as cloudinary } from "cloudinary";
 import myHotelRoutes from "./routes/my-hotels";
 import hotelRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
+import bookingsManagementRoutes from "./routes/bookings";
+import healthRoutes from "./routes/health";
+import analyticsRoutes from "./routes/analytics";
+import swaggerUi from "swagger-ui-express";
+import { specs } from "./swagger";
+import helmet from "helmet";
+import morgan from "morgan";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -20,12 +28,30 @@ cloudinary.config({
 
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
 
-
 const app = express();
+
+// Security middleware
+app.use(helmet());
+
+// Rate limiting
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: "Too many requests from this IP, please try again later.",
+});
+app.use("/api/", limiter);
+
+// Compression middleware
+app.use(compression());
+
+// Logging middleware
+app.use(morgan("combined"));
+
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5174",
-  "https://mern-booking-hotel.netlify.app"
+  "http://localhost:5173",
+  "https://mern-booking-hotel.netlify.app",
 ].filter((origin): origin is string => Boolean(origin));
 app.use(
   cors({
@@ -41,17 +67,20 @@ app.use(
   })
 );
 // Explicit preflight handler for all routes
-app.options("*", cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    return callback(new Error("Not allowed by CORS"));
-  },
-  credentials: true,
-  optionsSuccessStatus: 204,
-}));
+app.options(
+  "*",
+  cors({
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    optionsSuccessStatus: 204,
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -66,16 +95,25 @@ app.get("/", (req: Request, res: Response) => {
   res.send("<h1>Hotel Booking Backend API is running 🚀</h1>");
 });
 
-
-
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/my-hotels", myHotelRoutes);
 app.use("/api/hotels", hotelRoutes);
 app.use("/api/my-bookings", bookingRoutes);
+app.use("/api/bookings", bookingsManagementRoutes);
+app.use("/api/health", healthRoutes);
+app.use("/api/analytics", analyticsRoutes);
 
+// Swagger API Documentation
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, {
+    customCss: ".swagger-ui .topbar { display: none }",
+    customSiteTitle: "Hotel Booking API Documentation",
+  })
+);
 
-
-app.listen(7001, () => {
-  console.log("server running on localhost:7001");
+app.listen(7002, () => {
+  console.log("server running on localhost:7002");
 });

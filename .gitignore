@@ -27,3 +27,4 @@ dist-ssr
 .env
 .env.e2e
 node_modules
+.cursorignore

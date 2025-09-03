@@ -1,31 +1,39 @@
 import express, { Request, Response } from "express";
 import verifyToken from "../middleware/auth";
 import Hotel from "../models/hotel";
-import { HotelType } from "../../../shared/types";
+import Booking from "../models/booking";
 
 const router = express.Router();
 
 // /api/my-bookings
 router.get("/", verifyToken, async (req: Request, res: Response) => {
   try {
-    const hotels = await Hotel.find({
-      bookings: { $elemMatch: { userId: req.userId } },
+    // Get user's bookings from separate collection
+    const userBookings = await Booking.find({ userId: req.userId }).sort({
+      createdAt: -1,
     });
 
-    const results = hotels.map((hotel) => {
-      const userBookings = hotel.bookings.filter(
-        (booking) => booking.userId === req.userId
-      );
+    // Get hotel details for each booking
+    const results = await Promise.all(
+      userBookings.map(async (booking) => {
+        const hotel = await Hotel.findById(booking.hotelId);
+        if (!hotel) {
+          return null;
+        }
 
-      const hotelWithUserBookings: HotelType = {
-        ...hotel.toObject(),
-        bookings: userBookings,
-      };
+        // Create response object with hotel and booking data
+        const hotelWithUserBookings = {
+          ...hotel.toObject(),
+          bookings: [booking.toObject()],
+        };
 
-      return hotelWithUserBookings;
-    });
+        return hotelWithUserBookings;
+      })
+    );
 
-    res.status(200).send(results);
+    // Filter out null results and send
+    const validResults = results.filter((result) => result !== null);
+    res.status(200).send(validResults);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Unable to fetch bookings" });

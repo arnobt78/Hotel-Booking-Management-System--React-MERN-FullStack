@@ -48,6 +48,21 @@ router.post(
         newHotel.type = [newHotel.type];
       }
 
+      // Handle nested objects from FormData
+      newHotel.contact = {
+        phone: req.body["contact.phone"] || "",
+        email: req.body["contact.email"] || "",
+        website: req.body["contact.website"] || "",
+      };
+
+      newHotel.policies = {
+        checkInTime: req.body["policies.checkInTime"] || "",
+        checkOutTime: req.body["policies.checkOutTime"] || "",
+        cancellationPolicy: req.body["policies.cancellationPolicy"] || "",
+        petPolicy: req.body["policies.petPolicy"] || "",
+        smokingPolicy: req.body["policies.smokingPolicy"] || "",
+      };
+
       const imageUrls = await uploadImages(imageFiles);
 
       newHotel.imageUrls = imageUrls;
@@ -93,34 +108,91 @@ router.put(
   upload.array("imageFiles"),
   async (req: Request, res: Response) => {
     try {
-      const updatedHotel: HotelType = req.body;
-      updatedHotel.lastUpdated = new Date();
+      console.log("Request body:", req.body);
+      console.log("Hotel ID:", req.params.hotelId);
+      console.log("User ID:", req.userId);
 
-      const hotel = await Hotel.findOneAndUpdate(
-        {
-          _id: req.params.hotelId,
-          userId: req.userId,
-        },
-        updatedHotel,
-        { new: true }
-      );
+      // First, find the existing hotel
+      const existingHotel = await Hotel.findOne({
+        _id: req.params.hotelId,
+        userId: req.userId,
+      });
 
-      if (!hotel) {
+      if (!existingHotel) {
         return res.status(404).json({ message: "Hotel not found" });
       }
 
+      // Prepare update data
+      const updateData: any = {
+        name: req.body.name,
+        city: req.body.city,
+        country: req.body.country,
+        description: req.body.description,
+        type: Array.isArray(req.body.type) ? req.body.type : [req.body.type],
+        pricePerNight: Number(req.body.pricePerNight),
+        starRating: Number(req.body.starRating),
+        adultCount: Number(req.body.adultCount),
+        childCount: Number(req.body.childCount),
+        facilities: Array.isArray(req.body.facilities)
+          ? req.body.facilities
+          : [req.body.facilities],
+        lastUpdated: new Date(),
+      };
+
+      // Handle contact information
+      updateData.contact = {
+        phone: req.body["contact.phone"] || "",
+        email: req.body["contact.email"] || "",
+        website: req.body["contact.website"] || "",
+      };
+
+      // Handle policies
+      updateData.policies = {
+        checkInTime: req.body["policies.checkInTime"] || "",
+        checkOutTime: req.body["policies.checkOutTime"] || "",
+        cancellationPolicy: req.body["policies.cancellationPolicy"] || "",
+        petPolicy: req.body["policies.petPolicy"] || "",
+        smokingPolicy: req.body["policies.smokingPolicy"] || "",
+      };
+
+      console.log("Update data:", updateData);
+
+      // Update the hotel
+      const updatedHotel = await Hotel.findByIdAndUpdate(
+        req.params.hotelId,
+        updateData,
+        { new: true }
+      );
+
+      if (!updatedHotel) {
+        return res.status(404).json({ message: "Hotel not found" });
+      }
+
+      // Handle image uploads if any
       const files = req.files as Express.Multer.File[];
-      const updatedImageUrls = await uploadImages(files);
+      if (files && files.length > 0) {
+        const updatedImageUrls = await uploadImages(files);
+        updatedHotel.imageUrls = [
+          ...updatedImageUrls,
+          ...(req.body.imageUrls
+            ? Array.isArray(req.body.imageUrls)
+              ? req.body.imageUrls
+              : [req.body.imageUrls]
+            : []),
+        ];
+        await updatedHotel.save();
+      }
 
-      hotel.imageUrls = [
-        ...updatedImageUrls,
-        ...(updatedHotel.imageUrls || []),
-      ];
-
-      await hotel.save();
-      res.status(201).json(hotel);
+      res.status(200).json(updatedHotel);
     } catch (error) {
-      res.status(500).json({ message: "Something went throw" });
+      console.error("Error updating hotel:", error);
+      console.error("Request body:", req.body);
+      console.error("Hotel ID:", req.params.hotelId);
+      console.error("User ID:", req.userId);
+      res.status(500).json({
+        message: "Something went wrong",
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
     }
   }
 );

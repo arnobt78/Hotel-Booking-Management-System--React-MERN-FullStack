@@ -14,9 +14,12 @@ export type SearchContext = {
     adultCount: number,
     childCount: number
   ) => void;
+  clearSearchValues: () => void;
 };
 
-export const SearchContext = React.createContext<SearchContext | undefined>(undefined);
+export const SearchContext = React.createContext<SearchContext | undefined>(
+  undefined
+);
 
 type SearchContextProviderProps = {
   children: React.ReactNode;
@@ -74,6 +77,32 @@ export const SearchContextProvider = ({
     }
   };
 
+  const clearSearchValues = () => {
+    setDestination("");
+    setCheckIn(new Date());
+    setCheckOut(new Date());
+    setAdultCount(1);
+    setChildCount(0);
+    setHotelId("");
+
+    sessionStorage.removeItem("destination");
+    sessionStorage.removeItem("checkIn");
+    sessionStorage.removeItem("checkOut");
+    sessionStorage.removeItem("adultCount");
+    sessionStorage.removeItem("childCount");
+    sessionStorage.removeItem("hotelId");
+
+    // Clear cached places data if it's older than 5 minutes
+    const cacheTime = localStorage.getItem("hotelPlacesTime");
+    if (cacheTime) {
+      const now = Date.now();
+      if (now - parseInt(cacheTime) > 5 * 60 * 1000) {
+        localStorage.removeItem("hotelPlaces");
+        localStorage.removeItem("hotelPlacesTime");
+      }
+    }
+  };
+
   return (
     <SearchContext.Provider
       value={{
@@ -84,6 +113,7 @@ export const SearchContextProvider = ({
         childCount,
         hotelId,
         saveSearchValues,
+        clearSearchValues,
       }}
     >
       {children}
