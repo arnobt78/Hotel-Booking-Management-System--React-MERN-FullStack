@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import * as apiClient from "../api-client";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
 import { useToast } from "../hooks/use-toast";
+import Cookies from "js-cookie";
 
 const STRIPE_PUB_KEY = import.meta.env.VITE_STRIPE_PUB_KEY || "";
 
@@ -40,13 +41,24 @@ export const AppContextProvider = ({
   );
   const { toast } = useToast();
 
+  // Simple check for stored tokens without API calls
+  const checkStoredAuth = () => {
+    const cookieToken = Cookies.get("session_id");
+    const localToken = localStorage.getItem("session_id");
+    return !!(cookieToken || localToken);
+  };
+
+  // Only validate token if we have one stored (don't validate on every load)
+  const hasStoredToken = checkStoredAuth();
+
   const { isError, isLoading, data } = useQuery(
     "validateToken",
     apiClient.validateToken,
     {
       retry: false,
-      refetchOnWindowFocus: true,
-      staleTime: 0,
+      refetchOnWindowFocus: false, // Don't refetch on focus
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      enabled: !!hasStoredToken, // Only run if we have a token
       // Add fallback for incognito mode
       onError: (error: any) => {
         // If validateToken fails, check if we have a token in localStorage
@@ -64,7 +76,6 @@ export const AppContextProvider = ({
 
   // Only logged in if not loading, not error, and data is present
   // OR if we have a token in localStorage (for incognito mode)
-  const hasStoredToken = localStorage.getItem("session_id");
   const isLoggedIn = (!isLoading && !isError && !!data) || !!hasStoredToken;
 
   const showToast = (toastMessage: ToastMessage) => {

@@ -1,8 +1,24 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
+// Define base URL based on environment
+const getBaseURL = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+
+  // Fallback URLs
+  if (window.location.hostname === "mern-booking-hotel.netlify.app") {
+    return "https://mern-hotel-booking-68ej.onrender.com";
+  }
+
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:7002";
+  }
+
+  // Default to production
+  return "https://mern-hotel-booking-68ej.onrender.com";
+};
 
 // Extend axios config to include metadata
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -11,7 +27,7 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 // Create axios instance with consistent configuration
 const axiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: getBaseURL(),
   headers: {
     "Content-Type": "application/json",
   },
@@ -63,24 +79,25 @@ axiosInstance.interceptors.response.use(
     if (error.response?.status === 401) {
       Cookies.remove("session_id");
       localStorage.removeItem("session_id");
-      // Redirect to login if not already there
-      if (window.location.pathname !== "/sign-in") {
-        window.location.href = "/sign-in";
-      }
+      // Don't redirect automatically - let components handle it
     }
 
     // Handle rate limiting (429) with retry logic
     if (error.response?.status === 429 && config) {
       const customConfig = config as CustomAxiosRequestConfig;
       if (customConfig.metadata && customConfig.metadata.retryCount < 3) {
-        customConfig.metadata.retryCount += 1;
+        const customConfig = config as CustomAxiosRequestConfig;
+        if (customConfig.metadata) {
+          customConfig.metadata.retryCount += 1;
 
-        // Exponential backoff: wait 1s, 2s, 4s
-        const delay = Math.pow(2, customConfig.metadata.retryCount - 1) * 1000;
+          // Exponential backoff: wait 1s, 2s, 4s
+          const delay =
+            Math.pow(2, customConfig.metadata.retryCount - 1) * 1000;
 
-        await new Promise((resolve) => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
 
-        return axiosInstance(config);
+          return axiosInstance(config);
+        }
       }
     }
 
@@ -88,12 +105,15 @@ axiosInstance.interceptors.response.use(
     if (!error.response && config) {
       const customConfig = config as CustomAxiosRequestConfig;
       if (customConfig.metadata && customConfig.metadata.retryCount < 2) {
-        customConfig.metadata.retryCount += 1;
+        const customConfig = config as CustomAxiosRequestConfig;
+        if (customConfig.metadata) {
+          customConfig.metadata.retryCount += 1;
 
-        // Wait 2 seconds before retry
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+          // Wait 2 seconds before retry
+          await new Promise((resolve) => setTimeout(resolve, 2000));
 
-        return axiosInstance(config);
+          return axiosInstance(config);
+        }
       }
     }
 

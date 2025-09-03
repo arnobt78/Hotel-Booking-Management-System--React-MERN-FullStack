@@ -31,6 +31,13 @@ export const signIn = async (formData: SignInFormData) => {
     localStorage.setItem("session_id", token);
   }
 
+  // Force validate token after successful login
+  try {
+    await validateToken();
+  } catch (error) {
+    console.log("Token validation failed after login, but continuing...");
+  }
+
   return response.data;
 };
 
