@@ -39,6 +39,9 @@ export const signIn = async (formData: SignInFormData) => {
 
     // Invalidate and refetch the validateToken query to update the UI
     queryClient.invalidateQueries("validateToken");
+
+    // Force a refetch to ensure the UI updates
+    await queryClient.refetchQueries("validateToken");
   } catch (error) {
     console.log("Token validation failed after login, but continuing...");
   }
@@ -55,7 +58,8 @@ export const validateToken = async () => {
       // Not logged in, throw error so React Query knows it failed
       throw new Error("Token invalid");
     }
-    throw new Error("Token invalid");
+    // For any other error (network, etc.), also throw
+    throw new Error("Token validation failed");
   }
 };
 

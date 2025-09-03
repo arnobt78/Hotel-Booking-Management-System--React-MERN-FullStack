@@ -48,9 +48,7 @@ export const AppContextProvider = ({
     return !!(cookieToken || localToken);
   };
 
-  // Only validate token if we have one stored (don't validate on every load)
-  const hasStoredToken = checkStoredAuth();
-
+  // Always run validation query - let it handle token checking internally
   const { isError, isLoading, data } = useQuery(
     "validateToken",
     apiClient.validateToken,
@@ -58,7 +56,8 @@ export const AppContextProvider = ({
       retry: false,
       refetchOnWindowFocus: false, // Don't refetch on focus
       staleTime: 5 * 60 * 1000, // 5 minutes
-      enabled: !!hasStoredToken, // Only run if we have a token
+      // Always enabled - let validateToken handle missing tokens
+      enabled: true,
       // Add fallback for incognito mode
       onError: (error: any) => {
         // If validateToken fails, check if we have a token in localStorage
@@ -79,15 +78,20 @@ export const AppContextProvider = ({
     isLoading,
     isError,
     hasData: !!data,
-    hasStoredToken,
+    hasStoredToken: checkStoredAuth(),
     data,
   });
 
   // Simple logic: logged in if we have valid data OR stored token as fallback
   const isLoggedIn =
-    (!isLoading && !isError && !!data) || (!!hasStoredToken && isError); // Use stored token only if validation failed
+    (!isLoading && !isError && !!data) || (checkStoredAuth() && isError); // Use stored token only if validation failed
 
-  console.log("Final isLoggedIn:", isLoggedIn);
+  // Additional fallback: if we just logged in and have a token, consider logged in
+  const justLoggedIn = checkStoredAuth() && !isLoading && !data && !isError;
+
+  const finalIsLoggedIn = isLoggedIn || justLoggedIn;
+
+  console.log("Final isLoggedIn:", finalIsLoggedIn);
 
   const showToast = (toastMessage: ToastMessage) => {
     const variant =
@@ -119,7 +123,7 @@ export const AppContextProvider = ({
     <AppContext.Provider
       value={{
         showToast,
-        isLoggedIn,
+        isLoggedIn: finalIsLoggedIn,
         stripePromise,
         showGlobalLoading,
         hideGlobalLoading,
