@@ -36,15 +36,26 @@ app.use(helmet());
 // Trust proxy for production (fixes rate limiting issues)
 app.set("trust proxy", 1);
 
-// Rate limiting
-const limiter = rateLimit({
+// Rate limiting - more lenient for payment endpoints
+const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 200, // Increased limit for general requests
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
 });
-app.use("/api/", limiter);
+
+// Special limiter for payment endpoints
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // Higher limit for payment requests
+  message: "Too many payment requests, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api/", generalLimiter);
+app.use("/api/hotels/*/bookings/payment-intent", paymentLimiter);
 
 // Compression middleware
 app.use(compression());
@@ -62,16 +73,34 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
+
+      // Allow all Netlify preview URLs
+      if (origin.includes("netlify.app")) {
+        return callback(null, true);
+      }
+
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
+
+      // Log blocked origins in development
+      if (process.env.NODE_ENV === "development") {
+        console.log("CORS blocked origin:", origin);
+      }
+
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     optionsSuccessStatus: 204,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Cookie",
+      "X-Requested-With",
+    ],
   })
 );
 // Explicit preflight handler for all routes
@@ -79,16 +108,29 @@ app.options(
   "*",
   cors({
     origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
+
+      // Allow all Netlify preview URLs
+      if (origin.includes("netlify.app")) {
+        return callback(null, true);
+      }
+
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
+
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     optionsSuccessStatus: 204,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Cookie",
+      "X-Requested-With",
+    ],
   })
 );
 app.use(cookieParser());

@@ -83,16 +83,17 @@ router.post(
         }
       );
 
-      res.cookie("auth_token", token, {
-        httpOnly: true,
+      // Set session cookie for consistent authentication
+      res.cookie("session_id", token, {
+        httpOnly: false, // Allow client-side access for axios interceptor
         secure: true,
         sameSite: "none",
-        maxAge: 86400000,
+        maxAge: 86400000, // 24 hours
         path: "/",
       });
+
       res.status(200).json({
         userId: user._id,
-        token: token, // Include token in response for privacy-focused browsers
         message: "Login successful",
       });
     } catch (error) {
@@ -141,10 +142,10 @@ router.get("/validate-token", verifyToken, (req: Request, res: Response) => {
  *         description: Logout successful
  */
 router.post("/logout", (req: Request, res: Response) => {
-  res.cookie("auth_token", "", {
+  res.cookie("session_id", "", {
     expires: new Date(0),
     maxAge: 0,
-    httpOnly: true,
+    httpOnly: false,
     secure: true,
     sameSite: "none",
     path: "/",

@@ -1,3 +1,4 @@
+import axiosInstance from "./lib/api-client";
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import {
@@ -9,122 +10,38 @@ import {
   BookingType,
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
-const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
-
-// Store token for privacy-focused browsers
-let authToken: string | null = null;
-
-// Helper function to get auth headers
-const getAuthHeaders = () => {
-  const headers: Record<string, string> = {
-    "Content-Type": "application/json",
-  };
-
-  // If we have a stored token, use Authorization header
-  if (authToken) {
-    headers["Authorization"] = `Bearer ${authToken}`;
-  }
-
-  return headers;
-};
-
-// Helper function to get request options
-const getRequestOptions = (method: string = "GET", body?: any) => {
-  const options: RequestInit = {
-    method,
-    credentials: "include", // Still try cookies first
-    headers: getAuthHeaders(),
-  };
-
-  if (body) {
-    options.body = JSON.stringify(body);
-  }
-
-  return options;
-};
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/users/me`,
-    getRequestOptions()
-  );
-  if (!response.ok) {
-    throw new Error("Error fetching user");
-  }
-  return response.json();
+  const response = await axiosInstance.get("/api/users/me");
+  return response.data;
 };
 
 export const register = async (formData: RegisterFormData) => {
-  const response = await fetch(`${API_BASE_URL}/api/users/register`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
-
-  const responseBody = await response.json();
-
-  if (!response.ok) {
-    throw new Error(responseBody.message);
-  }
+  const response = await axiosInstance.post("/api/users/register", formData);
+  return response.data;
 };
 
 export const signIn = async (formData: SignInFormData) => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(formData),
-  });
-
-  const body = await response.json();
-  if (!response.ok) {
-    throw new Error(body.message);
-  }
-
-  // Store token for privacy-focused browsers
-  if (body.token) {
-    authToken = body.token;
-  }
-
-  return body;
+  const response = await axiosInstance.post("/api/auth/login", formData);
+  return response.data;
 };
 
 export const validateToken = async () => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/auth/validate-token`,
-    getRequestOptions()
-  );
-
-  if (response.status === 401) {
-    // Not logged in, return null for smoother UX
-    return null;
-  }
-
-  if (!response.ok) {
+  try {
+    const response = await axiosInstance.get("/api/auth/validate-token");
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 401) {
+      // Not logged in, return null for smoother UX
+      return null;
+    }
     throw new Error("Token invalid");
   }
-
-  return response.json();
 };
 
 export const signOut = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/logout`, {
-    credentials: "include",
-    method: "POST",
-  });
-
-  if (!response.ok) {
-    throw new Error("Error during sign out");
-  }
-
-  // Clear stored token
-  authToken = null;
+  const response = await axiosInstance.post("/api/auth/logout");
+  return response.data;
 };
 
 // Development utility to clear all browser storage
@@ -142,59 +59,36 @@ export const clearAllStorage = () => {
 };
 
 export const addMyHotel = async (hotelFormData: FormData) => {
-  const response = await fetch(`${API_BASE_URL}/api/my-hotels`, {
-    method: "POST",
-    credentials: "include",
-    body: hotelFormData,
+  const response = await axiosInstance.post("/api/my-hotels", hotelFormData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to add hotel");
-  }
-
-  return response.json();
+  return response.data;
 };
 
 export const fetchMyHotels = async (): Promise<HotelType[]> => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/my-hotels`,
-    getRequestOptions()
-  );
-
-  if (!response.ok) {
-    throw new Error("Error fetching hotels");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get("/api/my-hotels");
+  return response.data;
 };
 
 export const fetchMyHotelById = async (hotelId: string): Promise<HotelType> => {
-  const response = await fetch(`${API_BASE_URL}/api/my-hotels/${hotelId}`, {
-    credentials: "include",
-  });
-
-  if (!response.ok) {
-    throw new Error("Error fetching Hotels");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get(`/api/my-hotels/${hotelId}`);
+  return response.data;
 };
 
 export const updateMyHotelById = async (hotelFormData: FormData) => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/my-hotels/${hotelFormData.get("hotelId")}`,
+  const hotelId = hotelFormData.get("hotelId");
+  const response = await axiosInstance.put(
+    `/api/my-hotels/${hotelId}`,
+    hotelFormData,
     {
-      method: "PUT",
-      body: hotelFormData,
-      credentials: "include",
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     }
   );
-
-  if (!response.ok) {
-    throw new Error("Failed to update Hotel");
-  }
-
-  return response.json();
+  return response.data;
 };
 
 export type SearchParams = {
@@ -221,7 +115,6 @@ export const searchHotels = async (
   queryParams.append("adultCount", searchParams.adultCount || "");
   queryParams.append("childCount", searchParams.childCount || "");
   queryParams.append("page", searchParams.page || "");
-
   queryParams.append("maxPrice", searchParams.maxPrice || "");
   queryParams.append("sortOption", searchParams.sortOption || "");
 
@@ -232,141 +125,65 @@ export const searchHotels = async (
   searchParams.types?.forEach((type) => queryParams.append("types", type));
   searchParams.stars?.forEach((star) => queryParams.append("stars", star));
 
-  const response = await fetch(
-    `${API_BASE_URL}/api/hotels/search?${queryParams}`
-  );
-
-  if (!response.ok) {
-    throw new Error("Error fetching hotels");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get(`/api/hotels/search?${queryParams}`);
+  return response.data;
 };
 
 export const fetchHotels = async (): Promise<HotelType[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/hotels`);
-  if (!response.ok) {
-    throw new Error("Error fetching hotels");
-  }
-  return response.json();
+  const response = await axiosInstance.get("/api/hotels");
+  return response.data;
 };
 
 export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
-  const response = await fetch(`${API_BASE_URL}/api/hotels/${hotelId}`);
-  if (!response.ok) {
-    throw new Error("Error fetching Hotels");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get(`/api/hotels/${hotelId}`);
+  return response.data;
 };
 
 export const createPaymentIntent = async (
   hotelId: string,
   numberOfNights: string
 ): Promise<PaymentIntentResponse> => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/hotels/${hotelId}/bookings/payment-intent`,
-    {
-      credentials: "include",
-      method: "POST",
-      body: JSON.stringify({ numberOfNights }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
+  const response = await axiosInstance.post(
+    `/api/hotels/${hotelId}/bookings/payment-intent`,
+    { numberOfNights }
   );
-
-  if (!response.ok) {
-    throw new Error("Error fetching payment intent");
-  }
-
-  return response.json();
+  return response.data;
 };
 
 export const createRoomBooking = async (formData: BookingFormData) => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/hotels/${formData.hotelId}/bookings`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      credentials: "include",
-      body: JSON.stringify(formData),
-    }
+  const response = await axiosInstance.post(
+    `/api/hotels/${formData.hotelId}/bookings`,
+    formData
   );
-
-  if (!response.ok) {
-    throw new Error("Error booking room");
-  }
+  return response.data;
 };
 
 export const fetchMyBookings = async (): Promise<HotelWithBookingsType[]> => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/my-bookings`,
-    getRequestOptions()
-  );
-
-  if (!response.ok) {
-    throw new Error("Unable to fetch bookings");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get("/api/my-bookings");
+  return response.data;
 };
 
 export const fetchHotelBookings = async (
   hotelId: string
 ): Promise<BookingType[]> => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/bookings/hotel/${hotelId}`,
-    {
-      credentials: "include",
-    }
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch hotel bookings");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get(`/api/bookings/hotel/${hotelId}`);
+  return response.data;
 };
 
 // Business Insights API functions
 export const fetchBusinessInsightsDashboard = async () => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/business-insights/dashboard`,
-    getRequestOptions()
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch business insights dashboard data");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get("/api/business-insights/dashboard");
+  return response.data;
 };
 
 export const fetchBusinessInsightsForecast = async () => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/business-insights/forecast`,
-    getRequestOptions()
-  );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch business insights forecast data");
-  }
-
-  return response.json();
+  const response = await axiosInstance.get("/api/business-insights/forecast");
+  return response.data;
 };
 
 export const fetchBusinessInsightsPerformance = async () => {
-  const response = await fetch(
-    `${API_BASE_URL}/api/business-insights/performance`,
-    getRequestOptions()
+  const response = await axiosInstance.get(
+    "/api/business-insights/performance"
   );
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch business insights performance data");
-  }
-
-  return response.json();
+  return response.data;
 };

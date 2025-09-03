@@ -10,15 +10,15 @@ declare global {
 }
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  // Check for token in Authorization header first (for privacy-focused browsers)
+  // Check for token in Authorization header first (for axios interceptor)
   const authHeader = req.headers.authorization;
   let token: string | undefined;
 
   if (authHeader && authHeader.startsWith("Bearer ")) {
     token = authHeader.substring(7);
   } else {
-    // Fallback to cookie (for normal browsers)
-    token = req.cookies["auth_token"];
+    // Fallback to session cookie
+    token = req.cookies["session_id"];
   }
 
   if (!token) {
