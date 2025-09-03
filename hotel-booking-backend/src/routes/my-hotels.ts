@@ -6,17 +6,6 @@ import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
 import { HotelType } from "../../../shared/types";
 
-// Add type declarations for Multer
-declare global {
-  namespace Express {
-    interface Request {
-      files?:
-        | { [fieldname: string]: Express.Multer.File[] }
-        | Express.Multer.File[];
-    }
-  }
-}
-
 const router = express.Router();
 
 const storage = multer.memoryStorage();
@@ -51,7 +40,7 @@ router.post(
   upload.array("imageFiles", 6),
   async (req: Request, res: Response) => {
     try {
-      const imageFiles = req.files as Express.Multer.File[];
+      const imageFiles = req.files as any[];
       const newHotel: HotelType = req.body;
 
       // Ensure type is always an array
@@ -180,7 +169,7 @@ router.put(
       }
 
       // Handle image uploads if any
-      const files = req.files as Express.Multer.File[];
+      const files = req.files as any[];
       if (files && files.length > 0) {
         const updatedImageUrls = await uploadImages(files);
         updatedHotel.imageUrls = [
@@ -208,7 +197,7 @@ router.put(
   }
 );
 
-async function uploadImages(imageFiles: Express.Multer.File[]) {
+async function uploadImages(imageFiles: any[]) {
   const uploadPromises = imageFiles.map(async (image) => {
     const b64 = Buffer.from(image.buffer as Uint8Array).toString("base64");
     let dataURI = "data:" + image.mimetype + ";base64," + b64;
