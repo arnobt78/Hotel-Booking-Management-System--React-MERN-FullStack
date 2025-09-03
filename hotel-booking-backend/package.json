@@ -5,7 +5,7 @@
   "main": "./src/index.ts",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "start": "node dist/hotel-booking-backend/src/index.js",
     "e2e": "cross-env DOTENV_CONFIG_PATH=.env.e2e nodemon"
   },
