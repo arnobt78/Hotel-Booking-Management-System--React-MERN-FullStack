@@ -89,8 +89,6 @@ router.post(
         sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
         maxAge: 86400000,
         path: "/",
-        domain:
-          process.env.NODE_ENV === "production" ? ".onrender.com" : undefined,
       });
       res.status(200).json({ userId: user._id });
     } catch (error) {
@@ -146,7 +144,6 @@ router.post("/logout", (req: Request, res: Response) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
-    domain: process.env.NODE_ENV === "production" ? ".onrender.com" : undefined,
   });
   res.send();
 });
