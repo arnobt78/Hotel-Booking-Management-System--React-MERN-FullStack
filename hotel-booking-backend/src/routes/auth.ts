@@ -90,7 +90,11 @@ router.post(
         maxAge: 86400000,
         path: "/",
       });
-      res.status(200).json({ userId: user._id });
+      res.status(200).json({
+        userId: user._id,
+        token: token, // Include token in response for privacy-focused browsers
+        message: "Login successful",
+      });
     } catch (error) {
       console.log(error);
       res.status(500).json({ message: "Something went wrong" });

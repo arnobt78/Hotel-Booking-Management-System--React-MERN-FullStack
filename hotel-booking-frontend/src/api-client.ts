@@ -12,10 +12,43 @@ import { BookingFormData } from "./forms/BookingForm/BookingForm";
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
 
+// Store token for privacy-focused browsers
+let authToken: string | null = null;
+
+// Helper function to get auth headers
+const getAuthHeaders = () => {
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  // If we have a stored token, use Authorization header
+  if (authToken) {
+    headers["Authorization"] = `Bearer ${authToken}`;
+  }
+
+  return headers;
+};
+
+// Helper function to get request options
+const getRequestOptions = (method: string = "GET", body?: any) => {
+  const options: RequestInit = {
+    method,
+    credentials: "include", // Still try cookies first
+    headers: getAuthHeaders(),
+  };
+
+  if (body) {
+    options.body = JSON.stringify(body);
+  }
+
+  return options;
+};
+
 export const fetchCurrentUser = async (): Promise<UserType> => {
-  const response = await fetch(`${API_BASE_URL}/api/users/me`, {
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/api/users/me`,
+    getRequestOptions()
+  );
   if (!response.ok) {
     throw new Error("Error fetching user");
   }
@@ -53,13 +86,20 @@ export const signIn = async (formData: SignInFormData) => {
   if (!response.ok) {
     throw new Error(body.message);
   }
+
+  // Store token for privacy-focused browsers
+  if (body.token) {
+    authToken = body.token;
+  }
+
   return body;
 };
 
 export const validateToken = async () => {
-  const response = await fetch(`${API_BASE_URL}/api/auth/validate-token`, {
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/api/auth/validate-token`,
+    getRequestOptions()
+  );
 
   if (response.status === 401) {
     // Not logged in, return null for smoother UX
@@ -82,6 +122,9 @@ export const signOut = async () => {
   if (!response.ok) {
     throw new Error("Error during sign out");
   }
+
+  // Clear stored token
+  authToken = null;
 };
 
 // Development utility to clear all browser storage
@@ -113,9 +156,10 @@ export const addMyHotel = async (hotelFormData: FormData) => {
 };
 
 export const fetchMyHotels = async (): Promise<HotelType[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/my-hotels`, {
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/api/my-hotels`,
+    getRequestOptions()
+  );
 
   if (!response.ok) {
     throw new Error("Error fetching hotels");
@@ -258,9 +302,10 @@ export const createRoomBooking = async (formData: BookingFormData) => {
 };
 
 export const fetchMyBookings = async (): Promise<HotelWithBookingsType[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/my-bookings`, {
-    credentials: "include",
-  });
+  const response = await fetch(
+    `${API_BASE_URL}/api/my-bookings`,
+    getRequestOptions()
+  );
 
   if (!response.ok) {
     throw new Error("Unable to fetch bookings");
@@ -290,9 +335,7 @@ export const fetchHotelBookings = async (
 export const fetchBusinessInsightsDashboard = async () => {
   const response = await fetch(
     `${API_BASE_URL}/api/business-insights/dashboard`,
-    {
-      credentials: "include",
-    }
+    getRequestOptions()
   );
 
   if (!response.ok) {
@@ -305,9 +348,7 @@ export const fetchBusinessInsightsDashboard = async () => {
 export const fetchBusinessInsightsForecast = async () => {
   const response = await fetch(
     `${API_BASE_URL}/api/business-insights/forecast`,
-    {
-      credentials: "include",
-    }
+    getRequestOptions()
   );
 
   if (!response.ok) {
@@ -320,9 +361,7 @@ export const fetchBusinessInsightsForecast = async () => {
 export const fetchBusinessInsightsPerformance = async () => {
   const response = await fetch(
     `${API_BASE_URL}/api/business-insights/performance`,
-    {
-      credentials: "include",
-    }
+    getRequestOptions()
   );
 
   if (!response.ok) {

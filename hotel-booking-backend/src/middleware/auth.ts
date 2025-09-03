@@ -10,7 +10,17 @@ declare global {
 }
 
 const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies["auth_token"];
+  // Check for token in Authorization header first (for privacy-focused browsers)
+  const authHeader = req.headers.authorization;
+  let token: string | undefined;
+
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    token = authHeader.substring(7);
+  } else {
+    // Fallback to cookie (for normal browsers)
+    token = req.cookies["auth_token"];
+  }
+
   if (!token) {
     return res.status(401).json({ message: "unauthorized" });
   }
