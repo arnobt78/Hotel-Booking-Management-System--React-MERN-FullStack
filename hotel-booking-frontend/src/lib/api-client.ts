@@ -59,8 +59,21 @@ axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
     }
   }
 
+  // Enhanced incognito mode detection
+  const isIncognitoMode = () => {
+    // Check if we have a token in localStorage but not in cookies
+    const hasLocalToken = localStorage.getItem("session_id");
+    const hasCookieToken = Cookies.get("session_id");
+    return hasLocalToken && !hasCookieToken;
+  };
+
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
+
+    // Log for debugging
+    if (isIncognitoMode()) {
+      console.log("Using localStorage token for incognito mode");
+    }
   }
 
   // Add retry count to track retries

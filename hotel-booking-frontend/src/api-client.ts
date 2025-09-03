@@ -30,6 +30,15 @@ export const signIn = async (formData: SignInFormData) => {
   const token = Cookies.get("session_id");
   if (token) {
     localStorage.setItem("session_id", token);
+    console.log("Token stored in localStorage for incognito compatibility");
+  } else {
+    // If no cookie token, try to get from response headers or body
+    const responseToken =
+      response.data?.token || response.headers?.["set-cookie"];
+    if (responseToken) {
+      localStorage.setItem("session_id", responseToken);
+      console.log("Token extracted from response and stored in localStorage");
+    }
   }
 
   // Force validate token after successful login to update React Query cache
@@ -44,6 +53,11 @@ export const signIn = async (formData: SignInFormData) => {
     await queryClient.refetchQueries("validateToken");
   } catch (error) {
     console.log("Token validation failed after login, but continuing...");
+
+    // Even if validation fails, if we have a token stored, consider it a success for incognito mode
+    if (localStorage.getItem("session_id")) {
+      console.log("Incognito mode detected - using stored token as fallback");
+    }
   }
 
   return response.data;

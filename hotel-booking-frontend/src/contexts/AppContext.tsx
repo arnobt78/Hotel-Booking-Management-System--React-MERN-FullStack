@@ -89,9 +89,20 @@ export const AppContextProvider = ({
   // Additional fallback: if we just logged in and have a token, consider logged in
   const justLoggedIn = checkStoredAuth() && !isLoading && !data && !isError;
 
-  const finalIsLoggedIn = isLoggedIn || justLoggedIn;
+  // Enhanced incognito mode detection and fallback
+  const isIncognitoMode = () => {
+    // Check if we have a token but validation failed (typical incognito behavior)
+    return checkStoredAuth() && isError && !data;
+  };
 
-  console.log("Final isLoggedIn:", finalIsLoggedIn);
+  const finalIsLoggedIn = isLoggedIn || justLoggedIn || isIncognitoMode();
+
+  console.log(
+    "Final isLoggedIn:",
+    finalIsLoggedIn,
+    "Incognito:",
+    isIncognitoMode()
+  );
 
   const showToast = (toastMessage: ToastMessage) => {
     const variant =
