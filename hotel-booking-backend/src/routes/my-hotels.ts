@@ -6,6 +6,17 @@ import verifyToken from "../middleware/auth";
 import { body } from "express-validator";
 import { HotelType } from "../../../shared/types";
 
+// Add type declarations for Multer
+declare global {
+  namespace Express {
+    interface Request {
+      files?:
+        | { [fieldname: string]: Express.Multer.File[] }
+        | Express.Multer.File[];
+    }
+  }
+}
+
 const router = express.Router();
 
 const storage = multer.memoryStorage();
