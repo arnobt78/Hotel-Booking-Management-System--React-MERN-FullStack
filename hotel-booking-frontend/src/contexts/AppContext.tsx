@@ -74,9 +74,20 @@ export const AppContextProvider = ({
     }
   );
 
-  // Only logged in if not loading, not error, and data is present
-  // OR if we have a token in localStorage (for incognito mode)
-  const isLoggedIn = (!isLoading && !isError && !!data) || !!hasStoredToken;
+  // Debug logging to understand the state
+  console.log("Auth Debug:", {
+    isLoading,
+    isError,
+    hasData: !!data,
+    hasStoredToken,
+    data,
+  });
+
+  // Simple logic: logged in if we have valid data OR stored token as fallback
+  const isLoggedIn =
+    (!isLoading && !isError && !!data) || (!!hasStoredToken && isError); // Use stored token only if validation failed
+
+  console.log("Final isLoggedIn:", isLoggedIn);
 
   const showToast = (toastMessage: ToastMessage) => {
     const variant =

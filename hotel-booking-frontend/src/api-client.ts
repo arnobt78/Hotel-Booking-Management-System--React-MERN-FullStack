@@ -11,6 +11,7 @@ import {
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import Cookies from "js-cookie";
+import { queryClient } from "./main";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await axiosInstance.get("/api/users/me");
@@ -31,9 +32,13 @@ export const signIn = async (formData: SignInFormData) => {
     localStorage.setItem("session_id", token);
   }
 
-  // Force validate token after successful login
+  // Force validate token after successful login to update React Query cache
   try {
-    await validateToken();
+    const validationResult = await validateToken();
+    console.log("Token validation after login:", validationResult);
+
+    // Invalidate and refetch the validateToken query to update the UI
+    queryClient.invalidateQueries("validateToken");
   } catch (error) {
     console.log("Token validation failed after login, but continuing...");
   }
@@ -47,8 +52,8 @@ export const validateToken = async () => {
     return response.data;
   } catch (error: any) {
     if (error.response?.status === 401) {
-      // Not logged in, return null for smoother UX
-      return null;
+      // Not logged in, throw error so React Query knows it failed
+      throw new Error("Token invalid");
     }
     throw new Error("Token invalid");
   }
