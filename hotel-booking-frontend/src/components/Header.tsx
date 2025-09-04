@@ -1,5 +1,6 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAppContext from "../hooks/useAppContext";
+import useSearchContext from "../hooks/useSearchContext";
 import SignOutButton from "./SignOutButton";
 import {
   FileText,
@@ -12,6 +13,14 @@ import {
 
 const Header = () => {
   const { isLoggedIn } = useAppContext();
+  const search = useSearchContext();
+  const navigate = useNavigate();
+
+  const handleLogoClick = () => {
+    // Clear search context when going to home page
+    search.clearSearchValues();
+    navigate("/");
+  };
 
   return (
     <>
@@ -25,14 +34,17 @@ const Header = () => {
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2 group">
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center space-x-2 group"
+            >
               <div className="bg-white p-2 rounded-lg shadow-soft group-hover:shadow-medium transition-all duration-300">
                 <Building2 className="w-6 h-6 text-primary-600" />
               </div>
               <span className="text-2xl font-bold text-white tracking-tight group-hover:text-primary-100 transition-colors">
                 MernHolidays
               </span>
-            </Link>
+            </button>
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-1">

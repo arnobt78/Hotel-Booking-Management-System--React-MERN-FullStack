@@ -132,8 +132,40 @@ const SearchBar = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+
+    // Allow empty destination to show all hotels
+    // Only proceed if destination is not empty
+    if (!destination || destination.trim() === "") {
+      // Show all hotels when destination is empty
+      search.saveSearchValues(
+        "", // Empty destination to show all hotels
+        checkIn,
+        checkOut,
+        adultCount,
+        childCount
+      );
+
+      // Close dropdown before navigation
+      setShowDropdown(false);
+      setFilteredPlaces([]);
+
+      navigate("/search");
+
+      // Don't clear search values immediately - let the search page use them
+      // Only clear the local form state
+      setTimeout(() => {
+        setDestination("");
+        setCheckIn(minDate);
+        setCheckOut(minDate);
+        setAdultCount(1);
+        setChildCount(0);
+        // Remove this line: search.clearSearchValues();
+      }, 100);
+      return;
+    }
+
     search.saveSearchValues(
-      destination,
+      destination.trim(),
       checkIn,
       checkOut,
       adultCount,
@@ -145,14 +177,16 @@ const SearchBar = () => {
     setFilteredPlaces([]);
 
     navigate("/search");
-    // Clear the search inputs after navigation
+
+    // Don't clear search values immediately - let the search page use them
+    // Only clear the local form state
     setTimeout(() => {
       setDestination("");
       setCheckIn(minDate);
       setCheckOut(minDate);
       setAdultCount(1);
       setChildCount(0);
-      search.clearSearchValues();
+      // Remove this line: search.clearSearchValues();
     }, 100);
   };
 
@@ -177,10 +211,10 @@ const SearchBar = () => {
       <CardContent className="p-0">
         <form
           onSubmit={handleSubmit}
-          className="grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 items-center gap-4"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 items-center gap-4"
           autoComplete="off"
         >
-          <div className="flex flex-row items-center flex-1 relative">
+          <div className="flex flex-row items-center flex-1 relative sm:col-span-2 lg:col-span-1">
             <MdTravelExplore
               size={20}
               className="mr-2 text-gray-500 absolute left-3 z-10"
@@ -225,7 +259,7 @@ const SearchBar = () => {
             )}
           </div>
 
-          <div>
+          <div className="sm:col-span-1">
             <DatePicker
               selected={checkIn}
               onChange={(date) => setCheckIn(date as Date)}
@@ -239,7 +273,7 @@ const SearchBar = () => {
               wrapperClassName="min-w-full"
             />
           </div>
-          <div>
+          <div className="sm:col-span-1">
             <DatePicker
               selected={checkOut}
               onChange={(date) => setCheckOut(date as Date)}
@@ -253,9 +287,11 @@ const SearchBar = () => {
               wrapperClassName="min-w-full"
             />
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 sm:col-span-2 lg:col-span-1">
             <div className="flex items-center gap-2">
-              <label className="text-sm text-muted-foreground">Adults:</label>
+              <label className="text-sm text-muted-foreground whitespace-nowrap">
+                Adults:
+              </label>
               <Input
                 type="number"
                 min={1}
@@ -268,7 +304,9 @@ const SearchBar = () => {
               />
             </div>
             <div className="flex items-center gap-2">
-              <label className="text-sm text-muted-foreground">Children:</label>
+              <label className="text-sm text-muted-foreground whitespace-nowrap">
+                Children:
+              </label>
               <Input
                 type="number"
                 min={0}
@@ -282,7 +320,7 @@ const SearchBar = () => {
             </div>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2 sm:col-span-2 lg:col-span-1">
             <Button
               type="submit"
               className="flex-1 items-center text-white bg-primary-600 px-6 py-2 rounded-md font-semibold hover:bg-primary-500 hover:shadow-medium transition-all duration-200 group"

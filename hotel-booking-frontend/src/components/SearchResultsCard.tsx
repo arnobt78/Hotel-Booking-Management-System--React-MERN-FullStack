@@ -38,10 +38,10 @@ const SearchResultsCard = ({ hotel }: Props) => {
   };
 
   return (
-    <div className="group bg-white rounded-2xl shadow-soft hover:shadow-large transition-all duration-300 border border-gray-100 overflow-hidden">
-      <div className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] gap-0">
+    <div className="group bg-white rounded-2xl shadow-soft hover:shadow-large transition-all duration-300 border border-gray-100 overflow-hidden h-auto xl:h-[500px] flex">
+      <div className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] gap-0 w-full h-full">
         {/* Image Section */}
-        <div className="relative overflow-hidden">
+        <div className="relative overflow-hidden h-64 xl:h-[500px]">
           <img
             src={hotel.imageUrls[0]}
             className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
@@ -71,8 +71,8 @@ const SearchResultsCard = ({ hotel }: Props) => {
         </div>
 
         {/* Content Section */}
-        <div className="p-6 flex flex-col justify-between">
-          <div className="space-y-4">
+        <div className="p-6 flex flex-col justify-between h-auto xl:h-full overflow-hidden">
+          <div className="space-y-4 overflow-y-auto xl:flex-1">
             {/* Header */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">

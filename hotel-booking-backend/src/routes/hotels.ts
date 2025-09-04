@@ -193,10 +193,12 @@ router.post(
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
 
-  if (queryParams.destination) {
+  if (queryParams.destination && queryParams.destination.trim() !== "") {
+    const destination = queryParams.destination.trim();
+
     constructedQuery.$or = [
-      { city: new RegExp(queryParams.destination, "i") },
-      { country: new RegExp(queryParams.destination, "i") },
+      { city: { $regex: destination, $options: "i" } },
+      { country: { $regex: destination, $options: "i" } },
     ];
   }
 

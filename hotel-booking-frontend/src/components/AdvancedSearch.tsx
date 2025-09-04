@@ -172,9 +172,80 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   };
 
   const handleSearch = () => {
+    // Only proceed if destination is not empty
+    if (!searchData.destination || searchData.destination.trim() === "") {
+      // Show all hotels when destination is empty
+      search.saveSearchValues(
+        "", // Empty destination to show all hotels
+        searchData.checkIn,
+        searchData.checkOut,
+        searchData.adultCount,
+        searchData.childCount
+      );
+
+      // Close dropdown before navigation
+      setShowDropdown(false);
+      setFilteredPlaces([]);
+
+      // Navigate to search page with advanced filters
+      const searchParams = new URLSearchParams();
+      searchParams.append("destination", ""); // Empty destination
+      searchParams.append("checkIn", searchData.checkIn.toISOString());
+      searchParams.append("checkOut", searchData.checkOut.toISOString());
+      searchParams.append("adultCount", searchData.adultCount.toString());
+      searchParams.append("childCount", searchData.childCount.toString());
+
+      // Add advanced filters
+      if (searchData.minPrice)
+        searchParams.append("minPrice", searchData.minPrice);
+      if (searchData.maxPrice)
+        searchParams.append("maxPrice", searchData.maxPrice);
+      if (searchData.starRating)
+        searchParams.append("starRating", searchData.starRating);
+      if (searchData.hotelType)
+        searchParams.append("hotelType", searchData.hotelType);
+      if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
+      if (searchData.radius) searchParams.append("radius", searchData.radius);
+      searchData.facilities.forEach((facility) =>
+        searchParams.append("facilities", facility)
+      );
+
+      navigate(`/search?${searchParams.toString()}`);
+      onSearch(searchData);
+
+      // Don't clear search values immediately - let the search page use them
+      // Only clear the local form state
+      setTimeout(() => {
+        setSearchData({
+          destination: "",
+          checkIn: new Date(),
+          checkOut: new Date(),
+          adultCount: 1,
+          childCount: 0,
+          minPrice: "",
+          maxPrice: "",
+          starRating: "",
+          hotelType: "",
+          facilities: [],
+          sortBy: "relevance",
+          radius: "50",
+          instantBooking: false,
+          freeCancellation: false,
+          breakfast: false,
+          wifi: false,
+          parking: false,
+          pool: false,
+          gym: false,
+          spa: false,
+        });
+        // Remove this line: search.clearSearchValues();
+      }, 100);
+      return;
+    }
+
     // Update search context
     search.saveSearchValues(
-      searchData.destination,
+      searchData.destination.trim(),
       searchData.checkIn,
       searchData.checkOut,
       searchData.adultCount,
@@ -187,7 +258,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
     // Navigate to search page with advanced filters
     const searchParams = new URLSearchParams();
-    searchParams.append("destination", searchData.destination);
+    searchParams.append("destination", searchData.destination.trim());
     searchParams.append("checkIn", searchData.checkIn.toISOString());
     searchParams.append("checkOut", searchData.checkOut.toISOString());
     searchParams.append("adultCount", searchData.adultCount.toString());
@@ -211,7 +282,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     navigate(`/search?${searchParams.toString()}`);
     onSearch(searchData);
 
-    // Clear the search inputs after navigation
+    // Don't clear search values immediately - let the search page use them
+    // Only clear the local form state
     setTimeout(() => {
       setSearchData({
         destination: "",
@@ -235,12 +307,19 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         gym: false,
         spa: false,
       });
-      search.clearSearchValues();
+      // Remove this line: search.clearSearchValues();
     }, 100);
   };
 
   const handleQuickSearch = (destination: string) => {
-    setSearchData((prev) => ({ ...prev, destination }));
+    if (!destination || destination.trim() === "") {
+      // Show all hotels when destination is empty
+      setSearchData((prev) => ({ ...prev, destination: "" }));
+      setTimeout(() => handleSearch(), 100);
+      return;
+    }
+
+    setSearchData((prev) => ({ ...prev, destination: destination.trim() }));
     setTimeout(() => handleSearch(), 100);
   };
 

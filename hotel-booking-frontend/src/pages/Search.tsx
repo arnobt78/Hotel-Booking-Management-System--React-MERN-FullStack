@@ -20,7 +20,7 @@ const Search = () => {
   const [sortOption, setSortOption] = useState<string>("");
 
   const searchParams = {
-    destination: search.destination,
+    destination: search.destination?.trim() || "",
     checkIn: search.checkIn.toISOString(),
     checkOut: search.checkOut.toISOString(),
     adultCount: search.adultCount.toString(),
@@ -85,7 +85,7 @@ const Search = () => {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
-        <div className="rounded-lg border border-slate-300 p-5 h-fit sticky top-10">
+        <div className="rounded-lg border border-slate-300 p-5 h-fit lg:sticky lg:top-10 order-2 lg:order-1">
           <div className="space-y-5">
             <h3 className="text-lg font-semibold border-b border-slate-300 pb-5">
               Filter by:
@@ -108,7 +108,7 @@ const Search = () => {
             />
           </div>
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col gap-5 order-1 lg:order-2">
           <div className="flex justify-between items-center">
             <span className="text-xl font-bold">
               {hotelData?.pagination.total} Hotels found
