@@ -18,6 +18,9 @@ import {
   CreditCard,
   Shield,
   CheckCircle,
+  Copy,
+  Check,
+  AlertTriangle,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -54,6 +57,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
   // Use local state for form fields to prevent losing data
   const [phone, setPhone] = useState<string>("");
   const [specialRequests, setSpecialRequests] = useState<string>("");
+  const [isCopied, setIsCopied] = useState<boolean>(false);
 
   const { mutate: bookRoom, isLoading } = useMutation(
     apiClient.createRoomBooking,
@@ -97,6 +101,19 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
     mode: "onChange",
     shouldUnregister: false,
   });
+
+  const handleCopyCredentials = async () => {
+    const credentials = `Card: 4242 4242 4242 4242
+MM/YY: 12/35 CVC: 123`;
+
+    try {
+      await navigator.clipboard.writeText(credentials);
+      setIsCopied(true);
+      setTimeout(() => setIsCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy credentials:", err);
+    }
+  };
 
   const onSubmit = async (formData: BookingFormData) => {
     if (!stripe || !elements) {
@@ -275,6 +292,50 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
             <div className="flex items-center gap-2 text-xs text-gray-500">
               <Shield className="h-3 w-3 text-green-500" />
               Your payment information is secure and encrypted
+            </div>
+          </div>
+
+          {/* Test Credentials Note */}
+          <div className="space-y-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  <h4 className="text-sm font-semibold text-yellow-800 mb-2">
+                    For Testing Purpose
+                  </h4>
+                  <p className="text-sm text-yellow-700 mb-3">
+                    You can use these dummy credentials to complete checkout and
+                    see the booking status page, analytical page, or other pages
+                    to see the interactive results:
+                  </p>
+                  <div className="bg-white border border-yellow-300 rounded-md p-3 relative">
+                    <div className="flex items-center justify-between">
+                      <div className="text-sm font-mono text-gray-800">
+                        <div>Card: 4242 4242 4242 4242</div>
+                        <div>MM/YY: 12/35 CVC: 123 ZIP: 12345</div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={handleCopyCredentials}
+                        className="flex items-center gap-1 px-2 py-1 text-xs bg-yellow-100 hover:bg-yellow-200 text-yellow-800 rounded transition-colors duration-200"
+                      >
+                        {isCopied ? (
+                          <>
+                            <Check className="h-3 w-3 text-green-600" />
+                            <span className="text-green-600">Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="h-3 w-3" />
+                            <span>Copy</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
