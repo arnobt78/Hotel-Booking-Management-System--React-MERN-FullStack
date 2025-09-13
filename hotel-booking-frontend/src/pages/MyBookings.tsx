@@ -13,6 +13,7 @@ import {
   Building,
   TrendingUp,
   Package,
+  DollarSign,
 } from "lucide-react";
 
 const MyBookings = () => {
@@ -37,6 +38,35 @@ const MyBookings = () => {
       </div>
     );
   }
+
+  // Calculate booking statistics
+  const totalBookings = hotels.reduce(
+    (total, hotel) => total + hotel.bookings.length,
+    0
+  );
+
+  // Count unique hotels by hotel ID
+  const uniqueHotelIds = new Set(hotels.map((hotel) => hotel._id));
+  const differentHotels = uniqueHotelIds.size;
+
+  // Calculate total spent across all bookings
+  const totalSpent = hotels.reduce((total, hotel) => {
+    return (
+      total +
+      hotel.bookings.reduce((hotelTotal, booking) => {
+        const checkInDate = new Date(booking.checkIn);
+        const checkOutDate = new Date(booking.checkOut);
+        const nights = Math.max(
+          1,
+          Math.ceil(
+            (checkOutDate.getTime() - checkInDate.getTime()) /
+              (1000 * 60 * 60 * 24)
+          )
+        );
+        return hotelTotal + hotel.pricePerNight * nights;
+      }, 0)
+    );
+  }, 0);
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -100,17 +130,19 @@ const MyBookings = () => {
             <div className="flex items-center gap-2">
               <Calendar className="w-5 h-5" />
               <span className="text-blue-100">
-                {hotels.reduce(
-                  (total, hotel) => total + hotel.bookings.length,
-                  0
-                )}{" "}
-                Total Bookings
+                {totalBookings} Total Bookings
               </span>
             </div>
             <div className="flex items-center gap-2">
               <MapPin className="w-5 h-5" />
               <span className="text-blue-100">
-                {hotels.length} Different Hotels
+                {differentHotels} Different Hotels
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5" />
+              <span className="text-blue-100">
+                £{totalSpent.toFixed(2)} Total Spent
               </span>
             </div>
           </div>
