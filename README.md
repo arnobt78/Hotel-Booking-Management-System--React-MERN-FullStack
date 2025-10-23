@@ -1,4 +1,4 @@
-# Hotel Booking Management System - React, Express.js MERN Project
+# Hotel Booking Management System - React, Express.js FullStack MERN Project (including Business-Insights Dashboard)
 
 ![Screenshot 2025-09-04 at 12 02 23](https://github.com/user-attachments/assets/7b87581f-8a1a-4de4-99c3-ba5fab14f20d)
 ![Screenshot 2025-09-04 at 12 03 00](https://github.com/user-attachments/assets/76e284bb-4324-4798-8e87-0079aab65a57)
