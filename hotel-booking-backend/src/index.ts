@@ -20,13 +20,64 @@ import morgan from "morgan";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
 
+// Environment Variables Validation
+const requiredEnvVars = [
+  "MONGODB_CONNECTION_STRING",
+  "JWT_SECRET_KEY",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
+  "STRIPE_API_KEY",
+];
+
+const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
+
+if (missingEnvVars.length > 0) {
+  console.error("❌ Missing required environment variables:");
+  missingEnvVars.forEach((envVar) => console.error(`   - ${envVar}`));
+  process.exit(1);
+}
+
+console.log("✅ All required environment variables are present");
+console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
+console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || "Not set"}`);
+
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
+console.log("☁️  Cloudinary configured successfully");
+
+// MongoDB Connection with Error Handling
+const connectDB = async () => {
+  try {
+    console.log("📡 Attempting to connect to MongoDB...");
+    await mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
+    console.log("✅ MongoDB connected successfully");
+    console.log(`📦 Database: ${mongoose.connection.db.databaseName}`);
+  } catch (error) {
+    console.error("❌ MongoDB connection error:", error);
+    console.error("💡 Please check your MONGODB_CONNECTION_STRING");
+    process.exit(1);
+  }
+};
+
+// Handle MongoDB connection events
+mongoose.connection.on("disconnected", () => {
+  console.warn("⚠️  MongoDB disconnected. Attempting to reconnect...");
+});
+
+mongoose.connection.on("error", (error) => {
+  console.error("❌ MongoDB connection error:", error);
+});
+
+mongoose.connection.on("reconnected", () => {
+  console.log("✅ MongoDB reconnected successfully");
+});
+
+connectDB();
 
 const app = express();
 
@@ -166,6 +217,55 @@ app.use(
   })
 );
 
-app.listen(7002, () => {
-  console.log("server running on localhost:7002");
+// Dynamic Port Configuration (for Render and local development)
+const PORT = process.env.PORT || 7002;
+
+const server = app.listen(PORT, () => {
+  console.log("🚀 ============================================");
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🌐 Local: http://localhost:${PORT}`);
+  console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
+  console.log(`💚 Health Check: http://localhost:${PORT}/api/health`);
+  console.log("🚀 ============================================");
+});
+
+// Graceful Shutdown Handler
+const gracefulShutdown = (signal: string) => {
+  console.log(`\n⚠️  ${signal} received. Starting graceful shutdown...`);
+
+  server.close(async () => {
+    console.log("🔒 HTTP server closed");
+
+    try {
+      await mongoose.connection.close();
+      console.log("🔒 MongoDB connection closed");
+      console.log("✅ Graceful shutdown completed");
+      process.exit(0);
+    } catch (error) {
+      console.error("❌ Error during shutdown:", error);
+      process.exit(1);
+    }
+  });
+
+  // Force shutdown after 30 seconds
+  setTimeout(() => {
+    console.error("⚠️  Forced shutdown after timeout");
+    process.exit(1);
+  }, 30000);
+};
+
+// Handle shutdown signals
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+
+// Handle uncaught exceptions
+process.on("uncaughtException", (error) => {
+  console.error("❌ Uncaught Exception:", error);
+  gracefulShutdown("UNCAUGHT_EXCEPTION");
+});
+
+// Handle unhandled promise rejections
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
+  gracefulShutdown("UNHANDLED_REJECTION");
 });
