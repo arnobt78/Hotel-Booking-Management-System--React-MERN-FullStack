@@ -13,7 +13,7 @@ import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import { queryClient } from "./main";
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
-  const response = await axiosInstance.get("/api/users/me");
+  const response = await axiosInstance.get("/api/users/me",{ withCredentials: true });
   return response.data;
 };
 

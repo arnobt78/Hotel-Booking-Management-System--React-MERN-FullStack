@@ -8,7 +8,6 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true },
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
-    // New fields for better user management
     role: {
       type: String,
       enum: ["user", "admin", "hotel_owner"],

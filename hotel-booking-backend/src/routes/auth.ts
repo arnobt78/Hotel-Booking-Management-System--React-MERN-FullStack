@@ -76,7 +76,10 @@ router.post(
       }
 
       const token = jwt.sign(
-        { userId: user.id },
+        { 
+          userId: user.id, 
+          userRole: user.role
+        },
         process.env.JWT_SECRET_KEY as string,
         {
           expiresIn: "1d",
@@ -93,6 +96,7 @@ router.post(
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          role: user.role
         },
       });
     } catch (error) {

@@ -198,20 +198,40 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       // Add advanced filters
       if (searchData.minPrice)
         searchParams.append("minPrice", searchData.minPrice);
-      if (searchData.maxPrice)
-        searchParams.append("maxPrice", searchData.maxPrice);
+      if (searchData.maxPrice !== "" && !isNaN(Number(searchData.maxPrice))) {
+          searchParams.append("maxPrice", searchData.maxPrice);
+      }
       if (searchData.starRating)
         searchParams.append("starRating", searchData.starRating);
       if (searchData.hotelType)
         searchParams.append("hotelType", searchData.hotelType);
-      if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
+      if (searchData.sortBy)
+        searchParams.append("sortOption", searchData.sortBy);
       if (searchData.radius) searchParams.append("radius", searchData.radius);
       searchData.facilities.forEach((facility) =>
         searchParams.append("facilities", facility)
       );
+      if (searchData.checkOut <= searchData.checkIn) {
+        alert("Check-out date must be after check-in date.");
+        return;
+      }
 
-      navigate(`/search?${searchParams.toString()}`);
-      onSearch(searchData);
+// Debug logs
+console.log("🔥 SEARCH DATA FRONTEND → BACKEND:", searchData);
+console.log("🌍 GENERATED SEARCH URL:", `/search?${searchParams.toString()}`);
+
+// TEST fetch to see backend response BEFORE navigate
+fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:7002"}/api/hotels/search?${searchParams.toString()}`)
+  .then(res => res.json())
+  .then(data => {
+    console.log("📦 BACKEND RESPONSE:", data);
+  })
+  .catch(err => console.error("❌ BACKEND ERROR:", err));
+
+// Normal navigation
+navigate(`/search?${searchParams.toString()}`);
+onSearch(searchData);
+
 
       // Don't clear search values immediately - let the search page use them
       // Only clear the local form state
@@ -267,13 +287,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     // Add advanced filters
     if (searchData.minPrice)
       searchParams.append("minPrice", searchData.minPrice);
-    if (searchData.maxPrice)
-      searchParams.append("maxPrice", searchData.maxPrice);
+    if (searchData.maxPrice !== "" && !isNaN(Number(searchData.maxPrice))) {
+        searchParams.append("maxPrice", searchData.maxPrice);
+    }
     if (searchData.starRating)
       searchParams.append("starRating", searchData.starRating);
     if (searchData.hotelType)
       searchParams.append("hotelType", searchData.hotelType);
-    if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
+    if (searchData.sortBy) searchParams.append("sortOption", searchData.sortBy);
     if (searchData.radius) searchParams.append("radius", searchData.radius);
     searchData.facilities.forEach((facility) =>
       searchParams.append("facilities", facility)
