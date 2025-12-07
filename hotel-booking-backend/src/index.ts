@@ -27,7 +27,7 @@ const requiredEnvVars = [
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
-  "STRIPE_API_KEY",
+  "STRIPE_SECRET_KEY",
 ];
 
 const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
@@ -118,6 +118,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URL,
   "http://localhost:5174",
   "http://localhost:5173",
+  "http://localhost:7002",
   "https://mern-booking-hotel.netlify.app",
   "https://mern-booking-hotel.netlify.app/",
 ].filter((origin): origin is string => Boolean(origin));

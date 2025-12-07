@@ -80,6 +80,8 @@
     "esModuleInterop": true /* Emit additional JavaScript to ease support for importing CommonJS modules. This enables 'allowSyntheticDefaultImports' for type compatibility. */,
     // "preserveSymlinks": true,                         /* Disable resolving symlinks to their realpath. This correlates to the same flag in node. */
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
+    "moduleResolution": "node",            
+    "resolveJsonModule": true,            
 
     /* Type Checking */
     "strict": false /* Enable all strict type-checking options. */,
@@ -106,5 +108,6 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */,
     "noEmitOnError": false /* Disable emitting files if any type checking errors are reported. */
+    
   }
 }

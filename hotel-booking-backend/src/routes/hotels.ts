@@ -7,10 +7,66 @@ import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
 
-const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
-
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 const router = express.Router();
 
+/**
+ * @swagger
+ * tags:
+ *   - name: Hotels
+ *     description: Public hotel search & details
+ *   - name: HotelBookings
+ *     description: Payment and booking operations for a selected hotel
+ */
+
+/**
+ * @swagger
+ * /api/hotels/search:
+ *   get:
+ *     summary: Search hotels using various filters
+ *     tags: [Hotels]
+ *     parameters:
+ *       - name: destination
+ *         in: query
+ *         schema:
+ *           type: string
+ *         description: City or country
+ *       - name: facilities
+ *         in: query
+ *         schema:
+ *           type: array
+ *           items: { type: string }
+ *         description: Facility filter (array or single)
+ *       - name: types
+ *         in: query
+ *         schema:
+ *           type: array
+ *           items: { type: string }
+ *         description: Hotel types
+ *       - name: stars
+ *         in: query
+ *         schema:
+ *           type: array
+ *           items: { type: number }
+ *       - name: maxPrice
+ *         in: query
+ *         schema:
+ *           type: number
+ *       - name: sortOption
+ *         in: query
+ *         schema:
+ *           type: string
+ *           enum: [starRating, pricePerNightAsc, pricePerNightDesc]
+ *       - name: page
+ *         in: query
+ *         schema:
+ *           type: number
+ *     responses:
+ *       200:
+ *         description: List of filtered hotels with pagination metadata
+ *       500:
+ *         description: Something went wrong
+ */
 router.get("/search", async (req: Request, res: Response) => {
   try {
     const query = constructSearchQuery(req.query);
@@ -29,9 +85,7 @@ router.get("/search", async (req: Request, res: Response) => {
     }
 
     const pageSize = 5;
-    const pageNumber = parseInt(
-      req.query.page ? req.query.page.toString() : "1"
-    );
+    const pageNumber = parseInt(req.query.page ? req.query.page.toString() : "1");
     const skip = (pageNumber - 1) * pageSize;
 
     const hotels = await Hotel.find(query)
@@ -57,6 +111,18 @@ router.get("/search", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/hotels:
+ *   get:
+ *     summary: Get all hotels (public)
+ *     tags: [Hotels]
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved hotel list
+ *       500:
+ *         description: Error fetching hotels
+ */
 router.get("/", async (req: Request, res: Response) => {
   try {
     const hotels = await Hotel.find().sort("-lastUpdated");
@@ -67,6 +133,27 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/hotels/{id}:
+ *   get:
+ *     summary: Get hotel details by ID
+ *     tags: [Hotels]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: Hotel ID
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Hotel details returned
+ *       400:
+ *         description: Validation error
+ *       500:
+ *         description: Something went wrong
+ */
 router.get(
   "/:id",
   [param("id").notEmpty().withMessage("Hotel ID is required")],
@@ -88,6 +175,45 @@ router.get(
   }
 );
 
+/**
+ * @swagger
+ * /api/hotels/{hotelId}/bookings/payment-intent:
+ *   post:
+ *     summary: Create a Stripe payment intent for a hotel booking
+ *     tags: [HotelBookings]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: hotelId
+ *         in: path
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               numberOfNights:
+ *                 type: number
+ *                 example: 3
+ *     responses:
+ *       200:
+ *         description: Payment intent created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 paymentIntentId: { type: string }
+ *                 clientSecret: { type: string }
+ *                 totalCost: { type: number }
+ *       400:
+ *         description: Hotel not found
+ *       500:
+ *         description: Stripe error or server failure
+ */
 router.post(
   "/:hotelId/bookings/payment-intent",
   verifyToken,
@@ -125,6 +251,42 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /api/hotels/{hotelId}/bookings:
+ *   post:
+ *     summary: Confirm a booking after successful Stripe payment
+ *     tags: [HotelBookings]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: hotelId
+ *         in: path
+ *         required: true
+ *         schema: { type: string }
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               paymentIntentId:
+ *                 type: string
+ *               totalCost:
+ *                 type: number
+ *               startDate:
+ *                 type: string
+ *               endDate:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Booking confirmed
+ *       400:
+ *         description: Payment intent mismatch or unpaid
+ *       500:
+ *         description: Server error while saving booking
+ */
 router.post(
   "/:hotelId/bookings",
   verifyToken,
@@ -157,16 +319,14 @@ router.post(
         ...req.body,
         userId: req.userId,
         hotelId: req.params.hotelId,
-        createdAt: new Date(), // Add booking creation timestamp
-        status: "confirmed", // Set initial status
-        paymentStatus: "paid", // Set payment status since payment succeeded
+        createdAt: new Date(),
+        status: "confirmed",
+        paymentStatus: "paid",
       };
 
-      // Create booking in separate collection
       const booking = new Booking(newBooking);
       await booking.save();
 
-      // Update hotel analytics
       await Hotel.findByIdAndUpdate(req.params.hotelId, {
         $inc: {
           totalBookings: 1,
@@ -174,7 +334,6 @@ router.post(
         },
       });
 
-      // Update user analytics
       await User.findByIdAndUpdate(req.userId, {
         $inc: {
           totalBookings: 1,
@@ -193,25 +352,13 @@ router.post(
 const constructSearchQuery = (queryParams: any) => {
   let constructedQuery: any = {};
 
-  if (queryParams.destination && queryParams.destination.trim() !== "") {
+  if (queryParams.destination?.trim()) {
     const destination = queryParams.destination.trim();
 
     constructedQuery.$or = [
       { city: { $regex: destination, $options: "i" } },
       { country: { $regex: destination, $options: "i" } },
     ];
-  }
-
-  if (queryParams.adultCount) {
-    constructedQuery.adultCount = {
-      $gte: parseInt(queryParams.adultCount),
-    };
-  }
-
-  if (queryParams.childCount) {
-    constructedQuery.childCount = {
-      $gte: parseInt(queryParams.childCount),
-    };
   }
 
   if (queryParams.facilities) {
@@ -233,14 +380,13 @@ const constructSearchQuery = (queryParams: any) => {
   if (queryParams.stars) {
     const starRatings = Array.isArray(queryParams.stars)
       ? queryParams.stars.map((star: string) => parseInt(star))
-      : parseInt(queryParams.stars);
-
+      : [parseInt(queryParams.stars)];
     constructedQuery.starRating = { $in: starRatings };
   }
 
   if (queryParams.maxPrice) {
     constructedQuery.pricePerNight = {
-      $lte: parseInt(queryParams.maxPrice).toString(),
+      $lte: parseInt(queryParams.maxPrice),
     };
   }
 
