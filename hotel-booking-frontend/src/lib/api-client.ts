@@ -3,11 +3,11 @@ import Cookies from "js-cookie";
 
 const getBaseURL = () => {
   if (window.location.hostname === "localhost") {
-    return "http://localhost:7002/api";
+    return "http://localhost:7002";
   }
 
   // production → AWS
-  return "/api";
+  return "/";
 };
 
 // Define base URL based on environment
