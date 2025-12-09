@@ -1,8 +1,17 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
-// Define base URL based on environment
 const getBaseURL = () => {
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:7002/api";
+  }
+
+  // production → AWS
+  return "/api";
+};
+
+// Define base URL based on environment
+/*const getBaseURL = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
@@ -18,7 +27,7 @@ const getBaseURL = () => {
 
   // Default to production
   return "https://mern-hotel-booking-68ej.onrender.com";
-};
+};*/
 
 // Extend axios config to include metadata
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
@@ -27,13 +36,22 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 
 // Create axios instance with consistent configuration
 const axiosInstance = axios.create({
+  baseURL: getBaseURL(), // sada je /api
+  headers: {
+    "Content-Type": "application/json",
+  },
+  withCredentials: true,
+  timeout: 30000,
+});
+
+/*const axiosInstance = axios.create({
   baseURL: getBaseURL(),
   headers: {
     "Content-Type": "application/json",
   },
   withCredentials: true, // Ensure cookies are sent with requests
   timeout: 30000, // 30 second timeout
-});
+});*/
 
 // Request interceptor to add Authorization header with JWT token
 axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
