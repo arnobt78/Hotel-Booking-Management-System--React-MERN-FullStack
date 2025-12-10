@@ -116,6 +116,7 @@ app.use(morgan("combined"));
 
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  "http://3.216.117.30",
   "http://localhost:5174",
   "http://localhost:5173",
   "http://localhost:7002",
