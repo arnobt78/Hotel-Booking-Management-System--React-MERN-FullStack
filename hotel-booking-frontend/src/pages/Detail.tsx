@@ -4,6 +4,8 @@ import * as apiClient from "./../api-client";
 import { AiFillStar } from "react-icons/ai";
 import GuestInfoForm from "../forms/GuestInfoForm/GuestInfoForm";
 import { Badge } from "../components/ui/badge";
+import { User, Star } from "lucide-react";
+
 import {
   MapPin,
   Phone,
@@ -27,6 +29,15 @@ const Detail = () => {
     {
       enabled: !!hotelId,
       loadingMessage: "Loading hotel details...",
+    }
+  );
+
+  const { data: reviews = [] } = useQueryWithLoading(
+    ["fetchReviewsByHotelId", hotelId],
+    () => apiClient.fetchReviewsByHotelId(hotelId || ""),
+    {
+      enabled: !!hotelId,
+      loadingMessage: "Loading reviews...",
     }
   );
 
@@ -303,6 +314,83 @@ const Detail = () => {
           />
         </div>
       </div>
+
+    {/* Reviews */}
+    <div className="border border-slate-300 rounded-lg p-4">
+      <div className="flex items-center justify-between gap-4 mb-3">
+        <h3 className="text-xl font-semibold">Reviews</h3>
+
+        <Badge variant="outline" className="text-gray-600">
+          {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
+        </Badge>
+        </div>
+
+        {reviews.length === 0 ? (
+          <div className="text-gray-600">
+            No reviews yet. Be the first to leave a review after your stay.
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {reviews.map((review: any) => (
+              <div
+                key={review._id}
+                className="border border-slate-200 rounded-lg p-4 bg-white"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-2 text-gray-700">
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">
+                      {review.isVerified ? "Verified guest" : "Guest"}
+                    </span>
+                    {review.isVerified && (
+                      <Badge className="bg-green-100 text-green-800">Verified</Badge>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: Number(review.rating || 0) }).map((_, i) => (
+                      <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    ))}
+                    <span className="text-sm text-gray-600 ml-2">
+                      {Number(review.rating || 0).toFixed(0)}/5
+                    </span>
+                  </div>
+                </div>
+
+                <p className="mt-3 text-gray-700 leading-relaxed whitespace-pre-line">
+                  {review.comment}
+                </p>
+
+                {/* Category ratings */}
+                {review.categories && (
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-4">
+                    {Object.entries(review.categories).map(([key, value]) => (
+                      <div
+                        key={key}
+                        className="border border-slate-200 rounded-md px-2 py-2 text-center bg-gray-50"
+                      >
+                        <div className="text-xs text-gray-500 capitalize">
+                          {key}
+                        </div>
+                        <div className="text-sm font-semibold text-gray-800">
+                          {Number(value)}/5
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-3 text-xs text-gray-500">
+                  {review.createdAt
+                    ? new Date(review.createdAt).toLocaleDateString()
+                    : ""}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
     </div>
   );
 };

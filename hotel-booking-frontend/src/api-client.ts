@@ -232,3 +232,15 @@ export const fetchBusinessInsightsPerformance = async () => {
   );
   return response.data;
 };
+
+export const fetchReviewsByHotelId = async (hotelId: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/reviews/${hotelId}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404) return [];
+    throw new Error("Failed to fetch reviews");
+  }
+};
