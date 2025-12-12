@@ -2,12 +2,44 @@ import { Link } from "react-router-dom";
 import { HotelType } from "../../../shared/types";
 import { MapPin, Star, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { Heart } from "lucide-react";
+import { useMutation, useQuery } from "react-query";
+import { queryClient } from "../main";
+
+import {
+  addFavorite,
+  removeFavorite,
+  fetchFavorites,
+} from "../api-client";
 
 type Props = {
   hotel: HotelType;
 };
 
 const LatestDestinationCard = ({ hotel }: Props) => {
+
+  const { data: favorites } = useQuery(
+    "favorites",
+    fetchFavorites,
+    { retry: false }
+  );
+
+  const isFavorite = favorites?.some(
+    (fav) => fav.hotelId === hotel._id
+  );
+
+  const addMutation = useMutation(addFavorite, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favorites");
+    },
+  });
+
+  const removeMutation = useMutation(removeFavorite, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favorites");
+    },
+  });
+
   return (
     <Link
       to={`/detail/${hotel._id}`}
@@ -21,18 +53,41 @@ const LatestDestinationCard = ({ hotel }: Props) => {
           style={{ minHeight: 350, maxHeight: 350 }}
         />
 
-        {/* Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-        {/* Hotel Stats Badge */}
-        <div className="absolute top-4 right-4">
+        {/* Top-right actions: rating + favorite */}
+        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
+          {/* Rating */}
           <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">
             <Star className="w-4 h-4 text-yellow-500 fill-current" />
             <span className="text-sm font-semibold text-gray-800">
               {hotel.starRating}
             </span>
           </div>
+
+          {/* Favorite Heart */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              if (isFavorite) {
+                removeMutation.mutate(hotel._id);
+              } else {
+                addMutation.mutate(hotel._id);
+              }
+            }}
+            className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:scale-110 transition"
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart
+              className={`w-5 h-5 ${
+                isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"
+              }`}
+            />
+          </button>
         </div>
+
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
         {/* Price Badge */}
         <div className="absolute top-4 left-4">

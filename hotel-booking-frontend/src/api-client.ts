@@ -244,3 +244,28 @@ export const fetchReviewsByHotelId = async (hotelId: string) => {
     throw new Error("Failed to fetch reviews");
   }
 };
+
+// Favorites API
+export const fetchFavorites = async (): Promise<{ hotelId: string }[]> => {
+  const response = await axiosInstance.get("/api/favorites", {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+export const addFavorite = async (hotelId: string) => {
+  const response = await axiosInstance.post(
+    `/api/favorites/${hotelId}`,
+    {},
+    { withCredentials: true }
+  );
+  return response.data;
+};
+
+export const removeFavorite = async (hotelId: string) => {
+  const response = await axiosInstance.delete(
+    `/api/favorites/${hotelId}`,
+    { withCredentials: true }
+  );
+  return response.data;
+};

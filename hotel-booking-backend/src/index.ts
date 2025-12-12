@@ -11,6 +11,7 @@ import hotelRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
 import bookingsManagementRoutes from "./routes/bookings";
 import reviewRoutes from "./routes/reviews";
+import favoriteRoutes from "./routes/favorites";
 import healthRoutes from "./routes/health";
 import businessInsightsRoutes from "./routes/business-insights";
 import swaggerUi from "swagger-ui-express";
@@ -186,6 +187,7 @@ const paymentLimiter = rateLimit({
 app.use("/api/", generalLimiter);
 app.use("/api/hotels/*/bookings/payment-intent", paymentLimiter);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/favorites", favoriteRoutes);
 
 // Compression middleware
 app.use(compression());
