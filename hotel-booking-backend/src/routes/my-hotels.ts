@@ -80,9 +80,7 @@ const upload = multer({
  *               type: string
  */
 
-// ------------------------------------------------------------
 // CREATE HOTEL
-// ------------------------------------------------------------
 /**
  * @swagger
  * /api/my-hotels:
@@ -217,9 +215,7 @@ router.post(
   }
 );
 
-// ------------------------------------------------------------
 // GET ALL HOTELS (owned by current user)
-// ------------------------------------------------------------
 /**
  * @swagger
  * /api/my-hotels:
@@ -243,7 +239,7 @@ router.post(
  *       500:
  *         description: Error fetching hotels.
  */
-router.get("/", verifyToken, async (req: Request, res: Response) => {
+router.get("/", verifyToken, requireRole("hotel_owner"), async (req: Request, res: Response) => {
   try {
     const hotels = await Hotel.find({ userId: (req as any).userId });
     res.json(hotels);
@@ -252,9 +248,7 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// ------------------------------------------------------------
 // GET ONE HOTEL (owned by current user)
-// ------------------------------------------------------------
 /**
  * @swagger
  * /api/my-hotels/{id}:
@@ -285,7 +279,7 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
  *       500:
  *         description: Error fetching hotel.
  */
-router.get("/:id", verifyToken, async (req: Request, res: Response) => {
+router.get("/:id", verifyToken, requireRole("hotel_owner"), async (req: Request, res: Response) => {
   const id = req.params.id.toString();
 
   try {
@@ -302,9 +296,7 @@ router.get("/:id", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// ------------------------------------------------------------
 // UPDATE HOTEL (owned by current user)
-// ------------------------------------------------------------
 /**
  * @swagger
  * /api/my-hotels/{hotelId}:
@@ -477,9 +469,7 @@ router.put(
   }
 );
 
-// ------------------------------------------------------------
 // FIREBASE UPLOAD FUNCTION
-// ------------------------------------------------------------
 async function uploadImages(imageFiles: Express.Multer.File[]) {
   const uploadPromises = imageFiles.map(async (file) => {
     const filename = `hotels/${uuidv4()}-${file.originalname}`;

@@ -13,6 +13,7 @@ import bookingsManagementRoutes from "./routes/bookings";
 import reviewRoutes from "./routes/reviews";
 import favoriteRoutes from "./routes/favorites";
 import healthRoutes from "./routes/health";
+import adminRoutes from "./routes/admin";
 import businessInsightsRoutes from "./routes/business-insights";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./swagger";
@@ -188,6 +189,7 @@ app.use("/api/", generalLimiter);
 app.use("/api/hotels/*/bookings/payment-intent", paymentLimiter);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/favorites", favoriteRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Compression middleware
 app.use(compression());

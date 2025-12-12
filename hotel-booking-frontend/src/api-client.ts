@@ -269,3 +269,11 @@ export const removeFavorite = async (hotelId: string) => {
   );
   return response.data;
 };
+
+// Admin API
+export const fetchAdminDashboard = async () => {
+  const response = await axiosInstance.get("/api/admin/dashboard", {
+    withCredentials: true,
+  });
+  return response.data;
+};

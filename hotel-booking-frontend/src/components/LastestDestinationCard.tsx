@@ -53,7 +53,6 @@ const LatestDestinationCard = ({ hotel }: Props) => {
           style={{ minHeight: 350, maxHeight: 350 }}
         />
 
-        {/* Top-right actions: rating + favorite */}
         <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
           {/* Rating */}
           <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">

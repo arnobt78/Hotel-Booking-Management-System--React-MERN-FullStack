@@ -8,10 +8,10 @@ import Layout from "./layouts/Layout";
 import AuthLayout from "./layouts/AuthLayout";
 import ScrollToTop from "./components/ScrollToTop";
 import { Toaster } from "./components/ui/toaster";
+
 import Register from "./pages/Register";
 import SignIn from "./pages/SignIn";
 import AddHotel from "./pages/AddHotel";
-import useAppContext from "./hooks/useAppContext";
 import MyHotels from "./pages/MyHotels";
 import EditHotel from "./pages/EditHotel";
 import Search from "./pages/Search";
@@ -21,14 +21,17 @@ import MyBookings from "./pages/MyBookings";
 import Home from "./pages/Home";
 import ApiDocs from "./pages/ApiDocs";
 import ApiStatus from "./pages/ApiStatus";
-import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+
+import ProtectedRoute from "./components/ProtectedRoute";
+import Unauthorized from "./pages/Unauthorized";
 
 const App = () => {
-  const { isLoggedIn } = useAppContext();
   return (
     <Router>
       <ScrollToTop />
       <Routes>
+        {/* Public routes */}
         <Route
           path="/"
           element={
@@ -69,14 +72,8 @@ const App = () => {
             </Layout>
           }
         />
-        <Route
-          path="/analytics"
-          element={
-            <Layout>
-              <AnalyticsDashboard />
-            </Layout>
-          }
-        />
+
+        {/* Auth routes */}
         <Route
           path="/register"
           element={
@@ -94,53 +91,79 @@ const App = () => {
           }
         />
 
-        {isLoggedIn && (
-          <>
-            <Route
-              path="/hotel/:hotelId/booking"
-              element={
-                <Layout>
-                  <Booking />
-                </Layout>
-              }
-            />
+        {/* Logged-in users (any role) */}
+        <Route
+          path="/hotel/:hotelId/booking"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <Booking />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <ProtectedRoute>
+              <Layout>
+                <MyBookings />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
 
-            <Route
-              path="/add-hotel"
-              element={
-                <Layout>
-                  <AddHotel />
-                </Layout>
-              }
-            />
-            <Route
-              path="/edit-hotel/:hotelId"
-              element={
-                <Layout>
-                  <EditHotel />
-                </Layout>
-              }
-            />
-            <Route
-              path="/my-hotels"
-              element={
-                <Layout>
-                  <MyHotels />
-                </Layout>
-              }
-            />
-            <Route
-              path="/my-bookings"
-              element={
-                <Layout>
-                  <MyBookings />
-                </Layout>
-              }
-            />
-          </>
-        )}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* Hotel owner only */}
+        <Route
+          path="/add-hotel"
+          element={
+            <ProtectedRoute roles={["hotel_owner"]}>
+              <Layout>
+                <AddHotel />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/edit-hotel/:hotelId"
+          element={
+            <ProtectedRoute roles={["hotel_owner"]}>
+              <Layout>
+                <EditHotel />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-hotels"
+          element={
+            <ProtectedRoute roles={["hotel_owner"]}>
+              <Layout>
+                <MyHotels />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Admin only */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <Layout>
+                <AdminDashboard />
+              </Layout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+        
+        <Route path="/unauthorized" element={<Unauthorized />} />
+
       </Routes>
+
       <Toaster />
     </Router>
   );
