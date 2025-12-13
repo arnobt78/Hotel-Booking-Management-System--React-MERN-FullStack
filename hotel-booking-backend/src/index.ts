@@ -5,13 +5,15 @@ import mongoose from "mongoose";
 import userRoutes from "./routes/users";
 import authRoutes from "./routes/auth";
 import cookieParser from "cookie-parser";
-import path from "path";
 import { v2 as cloudinary } from "cloudinary";
 import myHotelRoutes from "./routes/my-hotels";
 import hotelRoutes from "./routes/hotels";
 import bookingRoutes from "./routes/my-bookings";
 import bookingsManagementRoutes from "./routes/bookings";
+import reviewRoutes from "./routes/reviews";
+import favoriteRoutes from "./routes/favorites";
 import healthRoutes from "./routes/health";
+import adminRoutes from "./routes/admin";
 import businessInsightsRoutes from "./routes/business-insights";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./swagger";
@@ -33,14 +35,14 @@ const requiredEnvVars = [
 const missingEnvVars = requiredEnvVars.filter((envVar) => !process.env[envVar]);
 
 if (missingEnvVars.length > 0) {
-  console.error("❌ Missing required environment variables:");
+  console.error("Missing required environment variables:");
   missingEnvVars.forEach((envVar) => console.error(`   - ${envVar}`));
   process.exit(1);
 }
 
-console.log("✅ All required environment variables are present");
-console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || "Not set"}`);
+console.log("All required environment variables are present");
+console.log(`Environment: ${process.env.NODE_ENV || "development"}`);
+console.log(`Frontend URL: ${process.env.FRONTEND_URL || "Not set"}`);
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -48,80 +50,49 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-console.log("☁️  Cloudinary configured successfully");
-
 // MongoDB Connection with Error Handling
 const connectDB = async () => {
   try {
-    console.log("📡 Attempting to connect to MongoDB...");
+    console.log("Attempting to connect to MongoDB...");
     await mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
-    console.log("✅ MongoDB connected successfully");
-    console.log(`📦 Database: ${mongoose.connection.db.databaseName}`);
+    console.log("MongoDB connected successfully");
+    console.log(`Database: ${mongoose.connection.db.databaseName}`);
   } catch (error) {
-    console.error("❌ MongoDB connection error:", error);
-    console.error("💡 Please check your MONGODB_CONNECTION_STRING");
+    console.error("MongoDB connection error:", error);
+    console.error("Please check your MONGODB_CONNECTION_STRING");
     process.exit(1);
   }
 };
 
 // Handle MongoDB connection events
 mongoose.connection.on("disconnected", () => {
-  console.warn("⚠️  MongoDB disconnected. Attempting to reconnect...");
+  console.warn("MongoDB disconnected. Attempting to reconnect...");
 });
 
 mongoose.connection.on("error", (error) => {
-  console.error("❌ MongoDB connection error:", error);
+  console.error("MongoDB connection error:", error);
 });
 
 mongoose.connection.on("reconnected", () => {
-  console.log("✅ MongoDB reconnected successfully");
+  console.log("MongoDB reconnected successfully");
 });
 
 connectDB();
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
-
-// Trust proxy for production (fixes rate limiting issues)
-app.set("trust proxy", 1);
-
-// Rate limiting - more lenient for payment endpoints
-const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // Increased limit for general requests
-  message: "Too many requests from this IP, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-// Special limiter for payment endpoints
-const paymentLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Higher limit for payment requests
-  message: "Too many payment requests, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-
-app.use("/api/", generalLimiter);
-app.use("/api/hotels/*/bookings/payment-intent", paymentLimiter);
-
-// Compression middleware
-app.use(compression());
-
-// Logging middleware
-app.use(morgan("combined"));
-
+// Izbaci koji se ne koriste
 const allowedOrigins = [
   process.env.FRONTEND_URL,
+  "https://3.216.117.30.sslip.io",
+  "http://3.216.117.30",
   "http://localhost:5174",
   "http://localhost:5173",
   "http://localhost:7002",
   "https://mern-booking-hotel.netlify.app",
   "https://mern-booking-hotel.netlify.app/",
 ].filter((origin): origin is string => Boolean(origin));
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -129,6 +100,7 @@ app.use(
       if (!origin) return callback(null, true);
 
       // Allow all Netlify preview URLs
+      // Izbaci netlify
       if (origin.includes("netlify.app")) {
         return callback(null, true);
       }
@@ -185,9 +157,46 @@ app.options(
     ],
   })
 );
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Security middleware
+app.use(helmet());
+
+// Trust proxy for production (fixes rate limiting issues)
+app.set("trust proxy", 1);
+
+// Rate limiting - more lenient for payment endpoints
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 200, // Increased limit for general requests
+  message: "Too many requests from this IP, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Special limiter for payment endpoints
+const paymentLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 50, // Higher limit for payment requests
+  message: "Too many payment requests, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+app.use("/api/", generalLimiter);
+app.use("/api/hotels/*/bookings/payment-intent", paymentLimiter);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/favorites", favoriteRoutes);
+app.use("/api/admin", adminRoutes);
+
+// Compression middleware
+app.use(compression());
+
+// Logging middleware
+app.use(morgan("combined"));
 
 app.use((req, res, next) => {
   // Ensure Vary header for CORS
