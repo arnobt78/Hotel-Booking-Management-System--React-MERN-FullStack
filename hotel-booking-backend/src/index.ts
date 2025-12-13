@@ -84,7 +84,7 @@ const app = express();
 // Izbaci koji se ne koriste
 const allowedOrigins = [
   process.env.FRONTEND_URL,
-  "https://3.216.117.30",
+  "https://3.216.117.30.sslip.io",
   "http://3.216.117.30",
   "http://localhost:5174",
   "http://localhost:5173",
