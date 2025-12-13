@@ -12,7 +12,12 @@ interface ImagePreview {
   isExisting: boolean;
 }
 
-const ImagesSection = () => {
+type Props = {
+  newImageFiles: File[];
+  setNewImageFiles: React.Dispatch<React.SetStateAction<File[]>>;
+};
+
+const ImagesSection = ({ newImageFiles, setNewImageFiles }: Props) => {
   const {
     formState: { errors },
     watch,
@@ -23,84 +28,53 @@ const ImagesSection = () => {
 
   const [imagePreviews, setImagePreviews] = useState<ImagePreview[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const existingImageUrls = watch("imageUrls");
 
-  // Initialize with existing images
+  const existingImageUrls = watch("imageUrls") || [];
+
   useEffect(() => {
-    if (existingImageUrls && existingImageUrls.length > 0) {
-      const existingPreviews: ImagePreview[] = existingImageUrls.map(
-        (url, index) => ({
-          id: `existing-${index}`,
-          url,
-          isExisting: true,
-        })
-      );
-      setImagePreviews(existingPreviews);
-    }
-  }, [existingImageUrls]);
+    const existingPreviews: ImagePreview[] = existingImageUrls.map((url, index) => ({
+      id: `existing-${index}-${url}`, 
+      url,
+      isExisting: true,
+    }));
+
+    const newPreviews: ImagePreview[] = newImageFiles.map((file, index) => ({
+      id: `new-${index}-${file.name}-${file.lastModified}`,
+      file,
+      url: URL.createObjectURL(file),
+      isExisting: false,
+    }));
+
+    setImagePreviews([...existingPreviews, ...newPreviews]);
+
+    return () => {
+      newPreviews.forEach((p) => URL.revokeObjectURL(p.url));
+    };
+  }, [existingImageUrls, newImageFiles]);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return;
 
-    const newPreviews: ImagePreview[] = Array.from(files).map(
-      (file, index) => ({
-        id: `new-${Date.now()}-${index}`,
-        file,
-        url: URL.createObjectURL(file),
-        isExisting: false,
-      })
-    );
+    const picked = Array.from(files);
 
-    const updatedPreviews = [...imagePreviews, ...newPreviews];
-
-    // Update form values
-    const newFiles = Array.from(files);
-    const currentFiles = Array.from(watch("imageFiles") || []);
-    const allFiles = [...currentFiles, ...newFiles];
-
-    // Create a new FileList-like object
-    const dataTransfer = new DataTransfer();
-    allFiles.forEach((file) => dataTransfer.items.add(file));
-
-    setValue("imageFiles", dataTransfer.files);
-    setImagePreviews(updatedPreviews);
+    setNewImageFiles((prev) => [...prev, ...picked]);
+    event.target.value = "";
   };
 
   const handleDeleteImage = (imageId: string) => {
-    const imageToDelete = imagePreviews.find((img) => img.id === imageId);
-    if (!imageToDelete) return;
+    const img = imagePreviews.find((x) => x.id === imageId);
+    if (!img) return;
 
-    const updatedPreviews = imagePreviews.filter((img) => img.id !== imageId);
-    setImagePreviews(updatedPreviews);
-
-    if (imageToDelete.isExisting) {
-      // Remove from existing imageUrls
-      const updatedUrls = existingImageUrls.filter(
-        (url) => url !== imageToDelete.url
-      );
-      setValue("imageUrls", updatedUrls);
+    if (img.isExisting) {
+      const updatedUrls = existingImageUrls.filter((url) => url !== img.url);
+      setValue("imageUrls", updatedUrls, { shouldDirty: true });
     } else {
-      // Remove from new imageFiles
-      const currentFiles = Array.from(watch("imageFiles") || []);
-      const updatedFiles = currentFiles.filter((file) => {
-        if (imageToDelete.file) {
-          return file !== imageToDelete.file;
-        }
-        return true;
-      });
-
-      const dataTransfer = new DataTransfer();
-      updatedFiles.forEach((file) => dataTransfer.items.add(file));
-      setValue(
-        "imageFiles",
-        updatedFiles.length > 0 ? dataTransfer.files : undefined
+      setNewImageFiles((prev) =>
+        prev.filter((f) => !(img.file && f === img.file))
       );
-    }
 
-    // Clean up object URL
-    if (!imageToDelete.isExisting) {
-      URL.revokeObjectURL(imageToDelete.url);
+      URL.revokeObjectURL(img.url);
     }
   };
 
@@ -109,26 +83,20 @@ const ImagesSection = () => {
     fileInputRef.current?.click();
   };
 
-  const totalImages = imagePreviews.length;
+  const totalImages = existingImageUrls.length + newImageFiles.length;
 
-  // Custom validation
   const validateImages = useCallback(() => {
-    if (totalImages === 0) {
-      return "At least one image should be added";
-    }
-    if (totalImages > 6) {
-      return "Total number of images cannot be more than 6";
-    }
+    if (totalImages === 0) return "At least one image should be added";
+    if (totalImages > 6) return "Total number of images cannot be more than 6";
     return true;
   }, [totalImages]);
 
-  // Set validation error if needed
   useEffect(() => {
     const validationResult = validateImages();
     if (validationResult !== true) {
-      setError("imageFiles", { message: validationResult });
+      setError("imageUrls", { message: validationResult as string });
     } else {
-      clearErrors("imageFiles");
+      clearErrors("imageUrls");
     }
   }, [totalImages, setError, clearErrors, validateImages]);
 
@@ -136,7 +104,6 @@ const ImagesSection = () => {
     <div>
       <h2 className="text-2xl font-bold mb-3">Images</h2>
       <div className="border rounded-lg p-6 flex flex-col gap-6">
-        {/* Upload Area */}
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
           <div className="flex flex-col items-center gap-4">
             <div className="p-3 bg-blue-50 rounded-full">
@@ -147,8 +114,7 @@ const ImagesSection = () => {
                 Upload Hotel Images
               </h3>
               <p className="text-gray-500 mb-4">
-                Select multiple images to upload. You can upload up to 6 images
-                total.
+                Select multiple images to upload. You can upload up to 6 images total.
               </p>
               <Button
                 onClick={handleUploadClick}
@@ -160,6 +126,7 @@ const ImagesSection = () => {
               </Button>
             </div>
           </div>
+
           <input
             ref={fileInputRef}
             type="file"
@@ -170,7 +137,6 @@ const ImagesSection = () => {
           />
         </div>
 
-        {/* Image Previews */}
         {imagePreviews.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
@@ -195,6 +161,7 @@ const ImagesSection = () => {
                     alt="Hotel preview"
                     className="w-full h-32 object-cover"
                   />
+
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-200 flex items-center justify-center">
                     <Button
                       onClick={(e) => {
@@ -208,6 +175,7 @@ const ImagesSection = () => {
                       <X className="w-4 h-4 text-white" />
                     </Button>
                   </div>
+
                   <div className="p-2">
                     <Badge
                       variant={image.isExisting ? "outline" : "default"}
@@ -222,10 +190,9 @@ const ImagesSection = () => {
           </div>
         )}
 
-        {/* Error Message */}
-        {errors.imageFiles && (
+        {(errors.imageUrls as any)?.message && (
           <div className="text-red-500 text-sm font-medium bg-red-50 p-3 rounded-lg">
-            {errors.imageFiles.message}
+            {(errors.imageUrls as any).message}
           </div>
         )}
       </div>

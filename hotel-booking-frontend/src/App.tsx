@@ -4,6 +4,7 @@ import {
   Routes,
   Navigate,
 } from "react-router-dom";
+
 import Layout from "./layouts/Layout";
 import AuthLayout from "./layouts/AuthLayout";
 import ScrollToTop from "./components/ScrollToTop";
@@ -22,58 +23,24 @@ import Home from "./pages/Home";
 import ApiDocs from "./pages/ApiDocs";
 import ApiStatus from "./pages/ApiStatus";
 import AdminDashboard from "./pages/AdminDashboard";
+import Unauthorized from "./pages/Unauthorized";
 
 import ProtectedRoute from "./components/ProtectedRoute";
-import Unauthorized from "./pages/Unauthorized";
 
 const App = () => {
   return (
     <Router>
       <ScrollToTop />
-      <Routes>
-        {/* Public routes */}
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Home />
-            </Layout>
-          }
-        />
-        <Route
-          path="/search"
-          element={
-            <Layout>
-              <Search />
-            </Layout>
-          }
-        />
-        <Route
-          path="/detail/:hotelId"
-          element={
-            <Layout>
-              <Detail />
-            </Layout>
-          }
-        />
-        <Route
-          path="/api-docs"
-          element={
-            <Layout>
-              <ApiDocs />
-            </Layout>
-          }
-        />
-        <Route
-          path="/api-status"
-          element={
-            <Layout>
-              <ApiStatus />
-            </Layout>
-          }
-        />
 
-        {/* Auth routes */}
+      <Routes>
+        {/* PUBLIC ROUTES */}
+        <Route path="/" element={<Layout><Home /></Layout>} />
+        <Route path="/search" element={<Layout><Search /></Layout>} />
+        <Route path="/detail/:hotelId" element={<Layout><Detail /></Layout>} />
+        <Route path="/api-docs" element={<Layout><ApiDocs /></Layout>} />
+        <Route path="/api-status" element={<Layout><ApiStatus /></Layout>} />
+
+        {/* AUTH ROUTES */}
         <Route
           path="/register"
           element={
@@ -91,7 +58,7 @@ const App = () => {
           }
         />
 
-        {/* Logged-in users (any role) */}
+        {/* LOGGED-IN USERS */}
         <Route
           path="/hotel/:hotelId/booking"
           element={
@@ -102,6 +69,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/my-bookings"
           element={
@@ -113,7 +81,7 @@ const App = () => {
           }
         />
 
-        {/* Hotel owner only */}
+        {/* HOTEL OWNER */}
         <Route
           path="/add-hotel"
           element={
@@ -124,6 +92,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/edit-hotel/:hotelId"
           element={
@@ -134,6 +103,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+
         <Route
           path="/my-hotels"
           element={
@@ -145,7 +115,7 @@ const App = () => {
           }
         />
 
-        {/* Admin only */}
+        {/* ADMIN */}
         <Route
           path="/admin"
           element={
@@ -157,11 +127,11 @@ const App = () => {
           }
         />
 
-        {/* Fallback */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-        
+        {/* SYSTEM */}
         <Route path="/unauthorized" element={<Unauthorized />} />
 
+        {/* FALLBACK */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
 
       <Toaster />

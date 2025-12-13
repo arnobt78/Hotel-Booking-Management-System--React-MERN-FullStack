@@ -389,17 +389,28 @@ router.put(
   "/:hotelId",
   verifyToken,
   requireRole("hotel_owner"),
-  upload.array("imageFiles"),
+  upload.array("imageFiles", 6),
   async (req: Request, res: Response) => {
     try {
-      const existingHotel = await Hotel.findOne({
-        _id: req.params.hotelId,
-        userId: (req as any).userId,
-      });
+      const userId = (req as any).userId;
+      const hotelId = req.params.hotelId;
 
+      const existingHotel = await Hotel.findOne({ _id: hotelId, userId });
       if (!existingHotel) {
         return res.status(404).json({ message: "Hotel not found" });
       }
+
+      const keptImageUrls = parseImageUrls(req.body.imageUrls);
+
+      const files = (req as any).files as Express.Multer.File[];
+      const newImageUrls =
+        files && files.length > 0 ? await uploadImages(files) : [];
+
+      const finalImageUrls = [...keptImageUrls, ...newImageUrls];
+
+      const removedImageUrls = (existingHotel.imageUrls || []).filter(
+        (url: string) => !keptImageUrls.includes(url)
+      );
 
       const updateData: any = {
         name: req.body.name,
@@ -415,50 +426,42 @@ router.put(
           ? req.body.facilities
           : [req.body.facilities],
         lastUpdated: new Date(),
+        imageUrls: finalImageUrls,
+        contact: {
+          phone: req.body["contact.phone"] || "",
+          email: req.body["contact.email"] || "",
+          website: req.body["contact.website"] || "",
+        },
+        policies: {
+          checkInTime: req.body["policies.checkInTime"] || "",
+          checkOutTime: req.body["policies.checkOutTime"] || "",
+          cancellationPolicy: req.body["policies.cancellationPolicy"] || "",
+          petPolicy: req.body["policies.petPolicy"] || "",
+          smokingPolicy: req.body["policies.smokingPolicy"] || "",
+        },
       };
 
-      updateData.contact = {
-        phone: req.body["contact.phone"] || "",
-        email: req.body["contact.email"] || "",
-        website: req.body["contact.website"] || "",
-      };
-
-      updateData.policies = {
-        checkInTime: req.body["policies.checkInTime"] || "",
-        checkOutTime: req.body["policies.checkOutTime"] || "",
-        cancellationPolicy: req.body["policies.cancellationPolicy"] || "",
-        petPolicy: req.body["policies.petPolicy"] || "",
-        smokingPolicy: req.body["policies.smokingPolicy"] || "",
-      };
-
-      const updatedHotel = await Hotel.findByIdAndUpdate(
-        req.params.hotelId,
-        updateData,
-        { new: true }
-      );
+      const updatedHotel = await Hotel.findByIdAndUpdate(hotelId, updateData, {
+        new: true,
+      });
 
       if (!updatedHotel) {
         return res.status(404).json({ message: "Hotel not found" });
       }
 
-      const files = (req as any).files as Express.Multer.File[];
+      await Promise.all(
+        removedImageUrls.map(async (url: string) => {
+          const path = getFirebasePathFromDownloadUrl(url);
+          if (!path) return;
+          try {
+            await bucket.file(path).delete({ ignoreNotFound: true });
+          } catch (e) {
+            console.warn("Failed to delete file from Firebase:", path, e);
+          }
+        })
+      );
 
-      if (files && files.length > 0) {
-        const newImageUrls = await uploadImages(files);
-
-        updatedHotel.imageUrls = [
-          ...newImageUrls,
-          ...(req.body.imageUrls
-            ? Array.isArray(req.body.imageUrls)
-              ? req.body.imageUrls
-              : [req.body.imageUrls]
-            : []),
-        ];
-
-        await updatedHotel.save();
-      }
-
-      res.status(200).json(updatedHotel);
+      return res.status(200).json(updatedHotel);
     } catch (error: any) {
       console.error("Error updating hotel:", error);
       res.status(500).json({
@@ -468,6 +471,41 @@ router.put(
     }
   }
 );
+
+
+function parseImageUrls(value: any): string[] {
+  if (!value) return [];
+
+  if (Array.isArray(value)) return value.filter(Boolean);
+
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return Array.isArray(parsed) ? parsed.filter(Boolean) : [];
+      } catch {
+        return [];
+      }
+    }
+    return [value];
+  }
+
+  return [];
+}
+
+function getFirebasePathFromDownloadUrl(url: string): string | null {
+  const marker = "/o/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+
+  const after = url.substring(idx + marker.length);
+  const pathEncoded = after.split("?")[0];
+  if (!pathEncoded) return null;
+
+  return decodeURIComponent(pathEncoded); 
+}
+
 
 // FIREBASE UPLOAD FUNCTION
 async function uploadImages(imageFiles: Express.Multer.File[]) {

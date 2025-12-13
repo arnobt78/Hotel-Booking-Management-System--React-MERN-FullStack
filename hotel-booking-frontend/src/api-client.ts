@@ -277,3 +277,22 @@ export const fetchAdminDashboard = async () => {
   });
   return response.data;
 };
+
+export type CreateReviewPayload = {
+  rating: number;
+  comment: string;
+  categories: {
+    cleanliness: number;
+    service: number;
+    location: number;
+    value: number;
+    amenities: number;
+  };
+};
+
+export const createReview = async (hotelId: string, payload: CreateReviewPayload) => {
+  const response = await axiosInstance.post(`/api/reviews/${hotelId}`, payload, {
+    withCredentials: true,
+  });
+  return response.data;
+};

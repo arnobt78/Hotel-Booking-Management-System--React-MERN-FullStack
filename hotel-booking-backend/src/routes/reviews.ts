@@ -1,6 +1,7 @@
 import express from "express";
 import Review from "../models/review";
 import Hotel from "../models/hotel";
+import Booking from "../models/booking";
 import verifyToken from "../middleware/auth";
 
 const router = express.Router();
@@ -25,10 +26,8 @@ const router = express.Router();
  *         application/json:
  *           schema:
  *             type: object
- *             required: [bookingId, rating, comment, categories]
+ *             required: [rating, comment, categories]
  *             properties:
- *               bookingId:
- *                 type: string
  *               rating:
  *                 type: number
  *                 example: 5
@@ -49,12 +48,37 @@ const router = express.Router();
  *         description: Unauthorized
  */
 router.post("/:hotelId", verifyToken, async (req, res) => {
-  const { rating, comment, categories, bookingId } = req.body;
+  const { rating, comment, categories } = req.body;
+  const userId = req.userId;
+  const hotelId = req.params.hotelId;
+
+  const booking = await Booking.findOne({
+    userId,
+    hotelId,
+    status: "paid", 
+  });
+
+  if (!booking) {
+    return res.status(403).json({
+      message: "You can only review hotels you have stayed in",
+    });
+  }
+
+  const existingReview = await Review.findOne({
+    userId,
+    hotelId,
+  });
+
+  if (existingReview) {
+    return res.status(400).json({
+      message: "You already reviewed this hotel",
+    });
+  }
 
   const review = await Review.create({
-    userId: req.userId,
-    hotelId: req.params.hotelId,
-    bookingId,
+    userId,
+    hotelId,
+    bookingId: booking._id,
     rating,
     comment,
     categories,
@@ -62,7 +86,7 @@ router.post("/:hotelId", verifyToken, async (req, res) => {
   });
 
   const stats = await Review.aggregate([
-    { $match: { hotelId: req.params.hotelId } },
+    { $match: { hotelId } },
     {
       $group: {
         _id: null,
@@ -72,7 +96,7 @@ router.post("/:hotelId", verifyToken, async (req, res) => {
     },
   ]);
 
-  await Hotel.findByIdAndUpdate(req.params.hotelId, {
+  await Hotel.findByIdAndUpdate(hotelId, {
     averageRating: stats[0]?.avgRating || 0,
     reviewCount: stats[0]?.count || 0,
   });

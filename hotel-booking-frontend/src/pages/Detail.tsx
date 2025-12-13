@@ -5,6 +5,13 @@ import { AiFillStar } from "react-icons/ai";
 import GuestInfoForm from "../forms/GuestInfoForm/GuestInfoForm";
 import { Badge } from "../components/ui/badge";
 import { User, Star } from "lucide-react";
+import { useMutation } from "react-query";
+import { useForm } from "react-hook-form";
+import useAppContext from "../hooks/useAppContext";
+import { queryClient } from "../main";
+import { Button } from "../components/ui/button";
+import { Textarea } from "../components/ui/textarea";
+import { Input } from "../components/ui/input";
 
 import {
   MapPin,
@@ -40,6 +47,76 @@ const Detail = () => {
       loadingMessage: "Loading reviews...",
     }
   );
+
+  type ReviewFormData = {
+    rating: number;
+    comment: string;
+    cleanliness: number;
+    service: number;
+    location: number;
+    value: number;
+    amenities: number;
+  };
+
+  const { isLoggedIn, showToast } = useAppContext();
+
+  const {
+    register: reviewRegister,
+    handleSubmit: handleReviewSubmit,
+    reset: resetReviewForm,
+    formState: { errors: reviewErrors },
+  } = useForm<ReviewFormData>({
+    defaultValues: {
+      rating: 5,
+      cleanliness: 5,
+      service: 5,
+      location: 5,
+      value: 5,
+      amenities: 5,
+    },
+  });
+
+  const createReviewMutation = useMutation(
+    (form: ReviewFormData) =>
+      apiClient.createReview(hotelId!, {
+  rating: form.rating,
+  comment: form.comment,
+  categories: {
+    cleanliness: form.cleanliness,
+    service: form.service,
+    location: form.location,
+    value: form.value,
+    amenities: form.amenities,
+  },
+}),
+
+    {
+      onSuccess: () => {
+        showToast({
+          title: "Review added",
+          description: "Thanks for your feedback!",
+          type: "SUCCESS",
+        });
+
+        queryClient.invalidateQueries(["fetchReviewsByHotelId", hotelId]);
+        queryClient.invalidateQueries("fetchHotelById"); 
+        resetReviewForm();
+      },
+      onError: (err: any) => {
+        showToast({
+          title: "Failed to add review",
+          description: err?.response?.data?.message || "Try again later.",
+          type: "ERROR",
+        });
+      },
+    }
+  );
+
+  const onSubmitReview = handleReviewSubmit((form) => {
+    if (!hotelId) return;
+    createReviewMutation.mutate(form);
+  });
+
 
   if (!hotel) {
     return (
@@ -314,6 +391,97 @@ const Detail = () => {
           />
         </div>
       </div>
+
+      {/* Leave a Review */}
+<div className="border border-slate-300 rounded-lg p-4 bg-white">
+  <div className="flex items-center justify-between mb-3">
+    <h3 className="text-xl font-semibold">Leave a review</h3>
+    {!isLoggedIn && (
+      <Badge variant="outline" className="text-gray-600">
+        Sign in to review
+      </Badge>
+    )}
+  </div>
+
+  {!isLoggedIn ? (
+    <div className="text-gray-600">
+      You need to be signed in to leave a review.
+    </div>
+  ) : (
+    <form onSubmit={onSubmitReview} className="space-y-4">
+
+      {/* Overall rating */}
+      <div>
+        <label className="text-sm font-medium text-gray-700">Overall rating</label>
+        <Input
+          type="number"
+          min={1}
+          max={5}
+          {...reviewRegister("rating", {
+            required: "Rating is required",
+            min: { value: 1, message: "Min 1" },
+            max: { value: 5, message: "Max 5" },
+            valueAsNumber: true,
+          })}
+        />
+        {reviewErrors.rating && (
+          <p className="text-sm text-red-600 mt-1">{reviewErrors.rating.message}</p>
+        )}
+      </div>
+
+      {/* Comment */}
+      <div>
+        <label className="text-sm font-medium text-gray-700">Comment</label>
+        <Textarea
+          rows={4}
+          placeholder="Write your experience..."
+          {...reviewRegister("comment", {
+            required: "Comment is required",
+            minLength: { value: 10, message: "Minimum 10 characters" },
+          })}
+        />
+        {reviewErrors.comment && (
+          <p className="text-sm text-red-600 mt-1">{reviewErrors.comment.message}</p>
+        )}
+      </div>
+
+      {/* Categories */}
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+        {[
+          ["cleanliness", "Cleanliness"],
+          ["service", "Service"],
+          ["location", "Location"],
+          ["value", "Value"],
+          ["amenities", "Amenities"],
+        ].map(([key, label]) => (
+          <div key={key}>
+            <label className="text-xs font-medium text-gray-700">{label}</label>
+            <Input
+              type="number"
+              min={1}
+              max={5}
+              {...reviewRegister(key as keyof ReviewFormData, {
+                required: true,
+                min: 1,
+                max: 5,
+                valueAsNumber: true,
+              })}
+            />
+          </div>
+        ))}
+      </div>
+
+      <Button
+        type="submit"
+        disabled={createReviewMutation.isLoading}
+        className="w-full"
+      >
+        {createReviewMutation.isLoading ? "Submitting..." : "Submit review"}
+      </Button>
+    </form>
+  )}
+</div>
+
 
     {/* Reviews */}
     <div className="border border-slate-300 rounded-lg p-4">
