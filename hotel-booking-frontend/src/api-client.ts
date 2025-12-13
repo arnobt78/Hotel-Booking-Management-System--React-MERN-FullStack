@@ -232,3 +232,67 @@ export const fetchBusinessInsightsPerformance = async () => {
   );
   return response.data;
 };
+
+export const fetchReviewsByHotelId = async (hotelId: string) => {
+  try {
+    const response = await axiosInstance.get(`/api/reviews/${hotelId}`, {
+      withCredentials: true,
+    });
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.status === 404) return [];
+    throw new Error("Failed to fetch reviews");
+  }
+};
+
+// Favorites API
+export const fetchFavorites = async (): Promise<{ hotelId: string }[]> => {
+  const response = await axiosInstance.get("/api/favorites", {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+export const addFavorite = async (hotelId: string) => {
+  const response = await axiosInstance.post(
+    `/api/favorites/${hotelId}`,
+    {},
+    { withCredentials: true }
+  );
+  return response.data;
+};
+
+export const removeFavorite = async (hotelId: string) => {
+  const response = await axiosInstance.delete(
+    `/api/favorites/${hotelId}`,
+    { withCredentials: true }
+  );
+  return response.data;
+};
+
+// Admin API
+export const fetchAdminDashboard = async () => {
+  const response = await axiosInstance.get("/api/admin/dashboard", {
+    withCredentials: true,
+  });
+  return response.data;
+};
+
+export type CreateReviewPayload = {
+  rating: number;
+  comment: string;
+  categories: {
+    cleanliness: number;
+    service: number;
+    location: number;
+    value: number;
+    amenities: number;
+  };
+};
+
+export const createReview = async (hotelId: string, payload: CreateReviewPayload) => {
+  const response = await axiosInstance.post(`/api/reviews/${hotelId}`, payload, {
+    withCredentials: true,
+  });
+  return response.data;
+};

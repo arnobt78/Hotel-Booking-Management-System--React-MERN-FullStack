@@ -89,16 +89,6 @@ const SignIn = () => {
               Sign in to your account to continue
             </CardDescription>
 
-            {/* Development Notice */}
-            {!import.meta.env.PROD && (
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                <p className="text-sm text-yellow-800">
-                  <strong>Development Note:</strong> Authentication state
-                  persists between sessions. If you're seeing a logged-in state
-                  unexpectedly, use the "Clear Auth" button in the header.
-                </p>
-              </div>
-            )}
           </CardHeader>
 
           {/* Form */}

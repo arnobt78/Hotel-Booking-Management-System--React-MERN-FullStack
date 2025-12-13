@@ -277,7 +277,7 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
 ```typescript
 // Login endpoint returns both cookie and token
-res.cookie("auth_token", token, {
+res.cookie("session_id", token, {
   httpOnly: true,
   secure: true,
   sameSite: "none",
