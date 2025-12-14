@@ -153,14 +153,14 @@ const SearchBar = () => {
 
       // Don't clear search values immediately - let the search page use them
       // Only clear the local form state
-      setTimeout(() => {
+      /*setTimeout(() => {
         setDestination("");
         setCheckIn(minDate);
         setCheckOut(minDate);
         setAdultCount(1);
         setChildCount(0);
         // Remove this line: search.clearSearchValues();
-      }, 100);
+      }, 100);*/
       return;
     }
 
@@ -180,14 +180,14 @@ const SearchBar = () => {
 
     // Don't clear search values immediately - let the search page use them
     // Only clear the local form state
-    setTimeout(() => {
+   /* setTimeout(() => {
       setDestination("");
       setCheckIn(minDate);
       setCheckOut(minDate);
       setAdultCount(1);
       setChildCount(0);
       // Remove this line: search.clearSearchValues();
-    }, 100);
+    }, 100);*/
   };
 
   const handleClear = () => {

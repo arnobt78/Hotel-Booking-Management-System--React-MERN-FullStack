@@ -216,10 +216,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         return;
       }
 
-// Debug logs
-console.log("🔥 SEARCH DATA FRONTEND → BACKEND:", searchData);
-console.log("🌍 GENERATED SEARCH URL:", `/search?${searchParams.toString()}`);
-
 // TEST fetch to see backend response BEFORE navigate
 fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:7002"}/api/hotels/search?${searchParams.toString()}`)
   .then(res => res.json())
@@ -235,7 +231,7 @@ onSearch(searchData);
 
       // Don't clear search values immediately - let the search page use them
       // Only clear the local form state
-      setTimeout(() => {
+      /*setTimeout(() => {
         setSearchData({
           destination: "",
           checkIn: new Date(),
@@ -259,7 +255,7 @@ onSearch(searchData);
           spa: false,
         });
         // Remove this line: search.clearSearchValues();
-      }, 100);
+      }, 100);*/
       return;
     }
 
@@ -305,7 +301,7 @@ onSearch(searchData);
 
     // Don't clear search values immediately - let the search page use them
     // Only clear the local form state
-    setTimeout(() => {
+    /*setTimeout(() => {
       setSearchData({
         destination: "",
         checkIn: new Date(),
@@ -329,7 +325,7 @@ onSearch(searchData);
         spa: false,
       });
       // Remove this line: search.clearSearchValues();
-    }, 100);
+    }, 100);*/
   };
 
   const handleQuickSearch = (destination: string) => {

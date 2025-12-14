@@ -55,7 +55,7 @@ router.post("/:hotelId", verifyToken, async (req, res) => {
   const booking = await Booking.findOne({
     userId,
     hotelId,
-    status: "paid", 
+    paymentStatus: "paid", 
   });
 
   if (!booking) {
