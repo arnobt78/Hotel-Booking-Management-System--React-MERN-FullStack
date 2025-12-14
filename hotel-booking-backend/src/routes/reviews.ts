@@ -155,11 +155,7 @@ router.get("/:hotelId", async (req, res) => {
     .sort({ createdAt: -1 })
     .lean();
 
-  if (!reviews || reviews.length === 0) {
-    return res.status(404).json({ message: "No reviews found for this hotel" });
-  }
-
-  res.status(200).json(reviews);
+  return res.status(200).json(reviews); 
 });
 
 export default router;
