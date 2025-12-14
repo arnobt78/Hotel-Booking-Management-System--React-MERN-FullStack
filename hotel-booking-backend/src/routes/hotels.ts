@@ -390,6 +390,21 @@ const constructSearchQuery = (queryParams: any) => {
     };
   }
 
+  // Guests capacity filtering
+  if (queryParams.adultCount) {
+    const adults = parseInt(queryParams.adultCount);
+    if (!isNaN(adults)) {
+      constructedQuery.adultCount = { $gte: adults };
+    }
+  }
+
+  if (queryParams.childCount) {
+    const children = parseInt(queryParams.childCount);
+    if (!isNaN(children)) {
+      constructedQuery.childCount = { $gte: children };
+    }
+  }
+
   return constructedQuery;
 };
 

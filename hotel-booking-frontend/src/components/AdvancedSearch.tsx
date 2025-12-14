@@ -112,7 +112,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     };
 
     fetchPlaces();
-  }, []); // Remove all dependencies to run only once on mount
+  }, []); 
 
   // Clear dropdown state when component mounts
   useEffect(() => {
@@ -216,50 +216,10 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         return;
       }
 
-// Debug logs
-console.log("🔥 SEARCH DATA FRONTEND → BACKEND:", searchData);
-console.log("🌍 GENERATED SEARCH URL:", `/search?${searchParams.toString()}`);
+      // Normal navigation
+      navigate(`/search?${searchParams.toString()}`);
+      onSearch(searchData);
 
-// TEST fetch to see backend response BEFORE navigate
-fetch(`${import.meta.env.VITE_API_BASE_URL || "http://localhost:7002"}/api/hotels/search?${searchParams.toString()}`)
-  .then(res => res.json())
-  .then(data => {
-    console.log("📦 BACKEND RESPONSE:", data);
-  })
-  .catch(err => console.error("❌ BACKEND ERROR:", err));
-
-// Normal navigation
-navigate(`/search?${searchParams.toString()}`);
-onSearch(searchData);
-
-
-      // Don't clear search values immediately - let the search page use them
-      // Only clear the local form state
-      setTimeout(() => {
-        setSearchData({
-          destination: "",
-          checkIn: new Date(),
-          checkOut: new Date(),
-          adultCount: 1,
-          childCount: 0,
-          minPrice: "",
-          maxPrice: "",
-          starRating: "",
-          hotelType: "",
-          facilities: [],
-          sortBy: "relevance",
-          radius: "50",
-          instantBooking: false,
-          freeCancellation: false,
-          breakfast: false,
-          wifi: false,
-          parking: false,
-          pool: false,
-          gym: false,
-          spa: false,
-        });
-        // Remove this line: search.clearSearchValues();
-      }, 100);
       return;
     }
 
@@ -302,34 +262,6 @@ onSearch(searchData);
 
     navigate(`/search?${searchParams.toString()}`);
     onSearch(searchData);
-
-    // Don't clear search values immediately - let the search page use them
-    // Only clear the local form state
-    setTimeout(() => {
-      setSearchData({
-        destination: "",
-        checkIn: new Date(),
-        checkOut: new Date(),
-        adultCount: 1,
-        childCount: 0,
-        minPrice: "",
-        maxPrice: "",
-        starRating: "",
-        hotelType: "",
-        facilities: [],
-        sortBy: "relevance",
-        radius: "50",
-        instantBooking: false,
-        freeCancellation: false,
-        breakfast: false,
-        wifi: false,
-        parking: false,
-        pool: false,
-        gym: false,
-        spa: false,
-      });
-      // Remove this line: search.clearSearchValues();
-    }, 100);
   };
 
   const handleQuickSearch = (destination: string) => {
@@ -344,32 +276,6 @@ onSearch(searchData);
     setTimeout(() => handleSearch(), 100);
   };
 
-  // const handleClear = () => {
-  //   setSearchData({
-  //     destination: "",
-  //     checkIn: new Date(),
-  //     checkOut: new Date(),
-  //     adultCount: 1,
-  //     childCount: 0,
-  //     minPrice: "",
-  //     maxPrice: "",
-  //     starRating: "",
-  //     hotelType: "",
-  //     facilities: [],
-  //     sortBy: "relevance",
-  //     radius: "50",
-  //     instantBooking: false,
-  //     freeCancellation: false,
-  //     breakfast: false,
-  //     wifi: false,
-  //     parking: false,
-  //     pool: false,
-  //     gym: false,
-  //     spa: false,
-  //   });
-  //   search.clearSearchValues();
-  // };
-
   const popularDestinations = [
     "New York",
     "London",
@@ -380,6 +286,8 @@ onSearch(searchData);
     "Singapore",
     "Barcelona",
   ];
+
+  const toDateInputValue = (d: Date) => d.toISOString().split("T")[0];
 
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-large p-8 max-w-6xl mx-auto border border-white/20">
@@ -431,10 +339,21 @@ onSearch(searchData);
             <input
               type="date"
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-              value={searchData.checkIn.toISOString().split("T")[0]}
-              onChange={(e) =>
-                handleInputChange("checkIn", new Date(e.target.value))
-              }
+              value={toDateInputValue(searchData.checkIn)}
+              onChange={(e) => {
+                const newCheckIn = new Date(e.target.value);
+
+                setSearchData((prev) => {
+                  const adjustedCheckOut =
+                    prev.checkOut && prev.checkOut < newCheckIn ? newCheckIn : prev.checkOut;
+
+                  return {
+                    ...prev,
+                    checkIn: newCheckIn,
+                    checkOut: adjustedCheckOut,
+                  };
+                });
+              }}
             />
             <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
           </div>
@@ -450,10 +369,18 @@ onSearch(searchData);
             <input
               type="date"
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-              value={searchData.checkOut.toISOString().split("T")[0]}
-              onChange={(e) =>
-                handleInputChange("checkOut", new Date(e.target.value))
-              }
+              value={toDateInputValue(searchData.checkOut)}
+              min={toDateInputValue(searchData.checkIn)} 
+              onChange={(e) => {
+                const newCheckOut = new Date(e.target.value);
+
+                if (newCheckOut <= searchData.checkIn) {
+                  alert("Check-out date must be after check-in date.");
+                  return;
+                }
+
+                handleInputChange("checkOut", newCheckOut);
+              }}
             />
             <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
           </div>
