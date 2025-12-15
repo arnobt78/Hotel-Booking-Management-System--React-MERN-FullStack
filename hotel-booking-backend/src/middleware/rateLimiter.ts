@@ -6,7 +6,7 @@ import rateLimit from "express-rate-limit";
 // 5 pokušaja unutar 15 minuta po IP adresi
 export const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minuta
-  max: 5, // Maksimalno 5 zahtjeva po IP adresi
+  max: 10, // Maksimalno 5 zahtjeva po IP adresi
   message: JSON.stringify({
     message: "Too many requests, please try again after 15 minutes",
     status: 429,
