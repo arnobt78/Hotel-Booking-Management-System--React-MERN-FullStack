@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HotelType } from "../../../shared/types";
 import { MapPin, Star, Users, Heart } from "lucide-react";
 import { Badge } from "./ui/badge";
@@ -13,12 +13,11 @@ type Props = {
 };
 
 const LatestDestinationCard = ({ hotel }: Props) => {
-  const navigate = useNavigate();
   const { showToast, isLoggedIn } = useAppContext();
 
   const { data: favorites } = useQuery("favorites", fetchFavorites, {
     retry: false,
-    enabled: !!isLoggedIn, // ne zovi endpoint ako nije logovan
+    enabled: !!isLoggedIn,
   });
 
   const isFavorite = favorites?.some((fav) => fav.hotelId === hotel._id);
@@ -107,7 +106,6 @@ const LatestDestinationCard = ({ hotel }: Props) => {
                   type: "ERROR",
                 });
 
-                // navigate("/sign-in", { state: { from: { pathname: `/detail/${hotel._id}` } } });
                 return;
               }
 
