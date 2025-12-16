@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HotelType } from "../../../shared/types";
 import { AiFillStar } from "react-icons/ai";
 import {
@@ -27,7 +27,6 @@ type Props = {
 };
 
 const SearchResultsCard = ({ hotel }: Props) => {
-  const navigate = useNavigate();
   const { showToast, isLoggedIn } = useAppContext();
 
   const getFacilityIcon = (facility: string) => {
@@ -109,8 +108,6 @@ const SearchResultsCard = ({ hotel }: Props) => {
         type: "ERROR",
       });
 
-      // opcionalno:
-      // navigate("/sign-in", { state: { from: { pathname: `/detail/${hotel._id}` } } });
       return;
     }
 
