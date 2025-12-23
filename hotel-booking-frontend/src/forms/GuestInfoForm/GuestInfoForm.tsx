@@ -15,6 +15,7 @@ import {
 } from "../../components/ui/card";
 import { Badge } from "../../components/ui/badge";
 import { Calendar, Users, User, Baby, CreditCard } from "lucide-react";
+import { useEffect } from "react";
 
 type Props = {
   hotelId: string;
@@ -28,11 +29,23 @@ type GuestInfoFormData = {
   childCount: number;
 };
 
+const addDays = (date: Date, days: number) => {
+  const d = new Date(date);
+  d.setDate(d.getDate() + days);
+  return d;
+};
+
 const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
   const search = useSearchContext();
   const { isLoggedIn } = useAppContext();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const defaultCheckIn = search.checkIn ?? new Date();
+  const defaultCheckOut =
+    search.checkOut && search.checkOut.getTime() > addDays(defaultCheckIn, 0).getTime()
+      ? search.checkOut
+      : addDays(defaultCheckIn, 1);
 
   const {
     watch,
@@ -43,7 +56,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
   } = useForm<GuestInfoFormData>({
     defaultValues: {
       checkIn: search.checkIn,
-      checkOut: search.checkOut,
+      checkOut: defaultCheckOut,
       adultCount: search.adultCount,
       childCount: search.childCount,
     },
@@ -51,6 +64,15 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
 
   const checkIn = watch("checkIn");
   const checkOut = watch("checkOut");
+
+  useEffect(() => {
+  if (checkIn && (!checkOut || checkOut.getTime() <= checkIn.getTime())) {
+    const nextDay = new Date(checkIn);
+    nextDay.setDate(nextDay.getDate() + 1);
+
+    setValue("checkOut", nextDay, { shouldValidate: true });
+  }
+}, [checkIn]);
 
   // Calculate number of nights
   let numberOfNights = 1;
@@ -75,7 +97,15 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
     navigate("/sign-in", { state: { from: location } });
   };
 
+  const isCheckoutValid = (checkIn?: Date, checkOut?: Date) => {
+    if (!checkIn || !checkOut) return false;
+    return checkOut.getTime() > checkIn.getTime();
+  };
+
   const onSubmit = (data: GuestInfoFormData) => {
+    if (!isCheckoutValid(data.checkIn, data.checkOut)) {
+      return;
+    }
     search.saveSearchValues(
       "",
       data.checkIn,
@@ -84,6 +114,14 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
       data.childCount
     );
     navigate(`/hotel/${hotelId}/booking`);
+  };
+
+  const getMinCheckoutDate = () => {
+    if (!checkIn) return minDate;
+
+    const d = new Date(checkIn);
+    d.setDate(d.getDate() + 1);
+    return d;
   };
 
   return (
@@ -207,10 +245,10 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                     required
                     selected={checkOut}
                     onChange={(date) => setValue("checkOut", date as Date)}
-                    selectsStart
+                    selectsEnd
                     startDate={checkIn}
                     endDate={checkOut}
-                    minDate={minDate}
+                    minDate={getMinCheckoutDate()} 
                     maxDate={maxDate}
                     placeholderText="Check-out Date"
                     className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
