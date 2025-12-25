@@ -1,42 +1,71 @@
 import { Link } from "react-router-dom";
 import { HotelType } from "../../../shared/types";
-import { MapPin, Star, Users } from "lucide-react";
+import { MapPin, Star, Users, Heart } from "lucide-react";
 import { Badge } from "./ui/badge";
-import { Heart } from "lucide-react";
 import { useMutation, useQuery } from "react-query";
 import { queryClient } from "../main";
+import useAppContext from "../hooks/useAppContext";
 
-import {
-  addFavorite,
-  removeFavorite,
-  fetchFavorites,
-} from "../api-client";
+import { addFavorite, removeFavorite, fetchFavorites } from "../api-client";
 
 type Props = {
   hotel: HotelType;
 };
 
 const LatestDestinationCard = ({ hotel }: Props) => {
+  const { showToast, isLoggedIn } = useAppContext();
 
-  const { data: favorites } = useQuery(
-    "favorites",
-    fetchFavorites,
-    { retry: false }
-  );
+  const { data: favorites } = useQuery("favorites", fetchFavorites, {
+    retry: false,
+    enabled: !!isLoggedIn,
+  });
 
-  const isFavorite = favorites?.some(
-    (fav) => fav.hotelId === hotel._id
-  );
+  const isFavorite = favorites?.some((fav) => fav.hotelId === hotel._id);
 
   const addMutation = useMutation(addFavorite, {
     onSuccess: () => {
       queryClient.invalidateQueries("favorites");
+    },
+    onError: (error: any) => {
+      // fallback ako backend vrati 401
+      const status = error?.response?.status;
+      if (status === 401) {
+        showToast({
+          title: "Unauthorized",
+          description: "Please sign in to add hotels to your favorites.",
+          type: "ERROR",
+        });
+        return;
+      }
+
+      showToast({
+        title: "Failed to add favorite",
+        description: error?.message || "Something went wrong. Please try again.",
+        type: "ERROR",
+      });
     },
   });
 
   const removeMutation = useMutation(removeFavorite, {
     onSuccess: () => {
       queryClient.invalidateQueries("favorites");
+    },
+    onError: (error: any) => {
+      const status = error?.response?.status;
+      if (status === 401) {
+        showToast({
+          title: "Unauthorized",
+          description: "Please sign in to manage your favorites.",
+          type: "ERROR",
+        });
+        return;
+      }
+
+      showToast({
+        title: "Failed to remove favorite",
+        description: error?.message || "Something went wrong. Please try again.",
+        type: "ERROR",
+      });
     },
   });
 
@@ -51,6 +80,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
           src={hotel.imageUrls[0]}
           className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
           style={{ minHeight: 350, maxHeight: 350 }}
+          alt={hotel.name}
         />
 
         <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
@@ -67,6 +97,17 @@ const LatestDestinationCard = ({ hotel }: Props) => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
+
+              if (!isLoggedIn) {
+                showToast({
+                  title: "Unauthorized",
+                  description:
+                    "Please sign in to add hotels to your favorites.",
+                  type: "ERROR",
+                });
+
+                return;
+              }
 
               if (isFavorite) {
                 removeMutation.mutate(hotel._id);

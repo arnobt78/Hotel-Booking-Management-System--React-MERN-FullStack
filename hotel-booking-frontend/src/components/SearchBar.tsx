@@ -50,9 +50,7 @@ const SearchBar = () => {
           }
         }
 
-        const apiBaseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
-        const response = await fetch(`${apiBaseUrl}/api/hotels`);
+        const response = await fetch("/api/hotels");
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

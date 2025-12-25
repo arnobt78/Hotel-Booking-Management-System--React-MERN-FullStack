@@ -14,7 +14,7 @@ const ProtectedRoute = ({ children, roles }: Props) => {
   }
 
   if (roles && user && !roles.includes(user.role!)) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
   return children;

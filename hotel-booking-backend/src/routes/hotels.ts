@@ -3,12 +3,23 @@ import Hotel from "../models/hotel";
 import Booking from "../models/booking";
 import User from "../models/user";
 import { BookingType, HotelSearchResponse } from "../../../shared/types";
-import { param, validationResult } from "express-validator";
+import { body, param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
 const router = express.Router();
+
+const MS_PER_DAY = 1000 * 60 * 60 * 24;
+
+const toMidnightUTC = (d: Date) =>
+  new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
+
+const diffNights = (start: Date, end: Date) => {
+  const s = toMidnightUTC(start);
+  const e = toMidnightUTC(end);
+  return (e.getTime() - s.getTime()) / MS_PER_DAY;
+};
 
 /**
  * @swagger
@@ -217,37 +228,50 @@ router.get(
 router.post(
   "/:hotelId/bookings/payment-intent",
   verifyToken,
+  [
+    body("numberOfNights")
+      .isInt({ min: 1 })
+      .withMessage("numberOfNights must be an integer >= 1"),
+  ],
   async (req: Request, res: Response) => {
-    const { numberOfNights } = req.body;
-    const hotelId = req.params.hotelId;
-
-    const hotel = await Hotel.findById(hotelId);
-    if (!hotel) {
-      return res.status(400).json({ message: "Hotel not found" });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const totalCost = hotel.pricePerNight * numberOfNights;
+    try {
+      const { numberOfNights } = req.body;
+      const hotelId = req.params.hotelId;
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: totalCost * 100,
-      currency: "gbp",
-      metadata: {
-        hotelId,
-        userId: req.userId,
-      },
-    });
+      const hotel = await Hotel.findById(hotelId);
+      if (!hotel) {
+        return res.status(400).json({ message: "Hotel not found" });
+      }
 
-    if (!paymentIntent.client_secret) {
-      return res.status(500).json({ message: "Error creating payment intent" });
+      const totalCost = hotel.pricePerNight * Number(numberOfNights);
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: Math.round(totalCost * 100),
+        currency: "gbp",
+        metadata: {
+          hotelId,
+          userId: req.userId,
+        },
+      });
+
+      if (!paymentIntent.client_secret) {
+        return res.status(500).json({ message: "Error creating payment intent" });
+      }
+
+      res.send({
+        paymentIntentId: paymentIntent.id,
+        clientSecret: paymentIntent.client_secret.toString(),
+        totalCost,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Something went wrong" });
     }
-
-    const response = {
-      paymentIntentId: paymentIntent.id,
-      clientSecret: paymentIntent.client_secret.toString(),
-      totalCost,
-    };
-
-    res.send(response);
   }
 );
 
@@ -290,7 +314,52 @@ router.post(
 router.post(
   "/:hotelId/bookings",
   verifyToken,
+  [
+    body("paymentIntentId")
+      .notEmpty()
+      .withMessage("paymentIntentId is required"),
+
+    body("totalCost")
+      .isNumeric()
+      .withMessage("totalCost must be a number"),
+
+    body("startDate")
+      .notEmpty()
+      .withMessage("startDate is required")
+      .isISO8601()
+      .withMessage("startDate must be a valid ISO date"),
+
+    body("endDate")
+      .notEmpty()
+      .withMessage("endDate is required")
+      .isISO8601()
+      .withMessage("endDate must be a valid ISO date"),
+
+    // bar 1 noćenje (endDate mora biti nakon startDate)
+    body().custom((_, { req }) => {
+      const start = new Date(req.body.startDate);
+      const end = new Date(req.body.endDate);
+
+      const nights = diffNights(start, end);
+      if (nights < 1) {
+        throw new Error(
+          "Booking must be at least 1 night (endDate must be after startDate)"
+        );
+      }
+
+      if (req.body.numberOfNights && Number(req.body.numberOfNights) !== nights) {
+        throw new Error("numberOfNights mismatch");
+      }
+
+      return true;
+    }),
+  ],
   async (req: Request, res: Response) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
     try {
       const paymentIntentId = req.body.paymentIntentId;
 

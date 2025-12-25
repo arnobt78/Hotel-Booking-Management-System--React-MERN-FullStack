@@ -21,6 +21,8 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
+  LabelList,
 } from "recharts";
 
 import { fetchAdminDashboard } from "../api-client";
@@ -67,6 +69,37 @@ const AdminDashboard = () => {
       retryDelay: 1000,
     }
   );
+
+  const formatCurrency = (v: number) => `£${Number(v).toLocaleString()}`;
+  const formatShort = (v: number) =>
+    Number(v) >= 1000 ? `${(Number(v) / 1000).toFixed(1)}k` : `${Number(v)}`;
+
+  const trimLabel = (s?: string, max = 14) => {
+    const str = s || "Unknown";
+    return str.length > max ? str.slice(0, max - 1) + "…" : str;
+  };
+
+  const NiceTooltip = ({
+    active,
+    payload,
+    label,
+    valueFormatter,
+  }: any) => {
+    if (!active || !payload?.length) return null;
+    return (
+      <div className="rounded-xl border bg-white/95 backdrop-blur px-4 py-3 shadow-lg">
+        <div className="text-sm font-semibold text-gray-900 mb-1">{label}</div>
+        {payload.map((p: any) => (
+          <div key={p.dataKey} className="flex items-center justify-between gap-6 text-sm">
+            <span className="text-gray-600">{p.name}</span>
+            <span className="font-semibold text-gray-900">
+              {valueFormatter ? valueFormatter(p.value) : p.value}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -121,7 +154,7 @@ const AdminDashboard = () => {
     },
     {
       label: "Total Revenue",
-      value: `£${Number(kpis.totalRevenue).toLocaleString()}`,
+      value: formatCurrency(kpis.totalRevenue),
       icon: <PoundSterling className="w-5 h-5 text-orange-600" />,
     },
     {
@@ -185,35 +218,95 @@ const AdminDashboard = () => {
 
         {/* Charts row 1 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white rounded-2xl shadow-sm border p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Bookings by Month
             </h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.bookingsByMonth}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="value" />
+                <LineChart
+                  data={charts.bookingsByMonth}
+                  margin={{ top: 16, right: 20, left: 10, bottom: 12 }}
+                >
+                  <CartesianGrid strokeDasharray="4 6" />
+                  <XAxis
+                    dataKey="month"
+                    tickMargin={10}
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "", position: "insideBottom", offset: -6 }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    label={{ value: "Bookings", angle: -90, position: "insideLeft" }}
+                  />
+                  <Tooltip
+                    content={(p) => (
+                      <NiceTooltip {...p} valueFormatter={(v: number) => `${v}`} />
+                    )}
+                  />
+                  <Legend verticalAlign="top" height={20} />
+                  <Line
+                    name="Bookings"
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#2563eb"
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  {/* ✅ value label na svakoj tački */}
+                  <LabelList dataKey="value" position="top" />
                 </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white rounded-2xl shadow-sm border p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Revenue by Month
             </h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.revenueByMonth}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Line type="monotone" dataKey="value" />
+                <LineChart
+                  data={charts.revenueByMonth}
+                  margin={{ top: 16, right: 20, left: 10, bottom: 12 }}
+                >
+                  <CartesianGrid strokeDasharray="4 6" />
+                  <XAxis
+                    dataKey="month"
+                    tickMargin={10}
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "", position: "insideBottom", offset: -6 }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v) => formatShort(v)}
+                    label={{ value: "Revenue (£)", angle: -90, position: "insideLeft" }}
+                  />
+                  <Tooltip
+                    content={(p) => (
+                      <NiceTooltip {...p} valueFormatter={(v: number) => formatCurrency(v)} />
+                    )}
+                  />
+                  <Legend verticalAlign="top" height={20} />
+                  <Line
+                    name="Revenue"
+                    type="monotone"
+                    dataKey="value"
+                    stroke="#16a34a"
+                    strokeWidth={3}
+                    dot={{ r: 4 }}
+                    activeDot={{ r: 6 }}
+                  />
+                  <LabelList
+                    dataKey="value"
+                    position="top"
+                    formatter={(v: any) => formatShort(Number(v))}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -222,35 +315,106 @@ const AdminDashboard = () => {
 
         {/* Charts row 2 */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white rounded-2xl shadow-sm border p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Top 5 Hotels by Revenue
             </h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={charts.topHotelsByRevenue}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="revenue" />
+                <BarChart
+                  data={charts.topHotelsByRevenue.map((h) => ({
+                    ...h,
+                    name: trimLabel(h.name),
+                  }))}
+                  margin={{ top: 16, right: 20, left: 10, bottom: 40 }}
+                >
+                  <CartesianGrid strokeDasharray="4 6" />
+                  <XAxis
+                    dataKey="name"
+                    interval={0}
+                    angle={-18}
+                    textAnchor="end"
+                    height={50}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "Hotel", position: "insideBottom", offset: -28 }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(v) => formatShort(v)}
+                    label={{ value: "Revenue (£)", angle: -90, position: "insideLeft" }}
+                  />
+                  <Tooltip
+                    content={(p) => (
+                      <NiceTooltip {...p} valueFormatter={(v: number) => formatCurrency(v)} />
+                    )}
+                  />
+                  <Legend verticalAlign="top" height={20} />
+                  <Bar
+                    name="Revenue"
+                    dataKey="revenue"
+                    fill="#7c3aed"
+                    radius={[12, 12, 0, 0]}
+                    maxBarSize={48}
+                  >
+                    <LabelList
+                      dataKey="revenue"
+                      position="top"
+                      formatter={(v: any) => formatShort(Number(v))}
+                    />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm border p-6">
+          <div className="bg-white rounded-2xl shadow-sm border p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Top 5 Hotels by Bookings
             </h3>
             <div className="h-72">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={charts.topHotelsByBookings}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                  <YAxis />
-                  <Tooltip />
-                  <Bar dataKey="bookings" />
+                <BarChart
+                  data={charts.topHotelsByBookings.map((h) => ({
+                    ...h,
+                    name: trimLabel(h.name),
+                  }))}
+                  margin={{ top: 16, right: 20, left: 10, bottom: 40 }}
+                >
+                  <CartesianGrid strokeDasharray="4 6" />
+                  <XAxis
+                    dataKey="name"
+                    interval={0}
+                    angle={-18}
+                    textAnchor="end"
+                    height={50}
+                    tickMargin={10}
+                    axisLine={false}
+                    tickLine={false}
+                    label={{ value: "Hotel", position: "insideBottom", offset: -28 }}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    label={{ value: "Bookings", angle: -90, position: "insideLeft" }}
+                  />
+                  <Tooltip
+                    content={(p) => (
+                      <NiceTooltip {...p} valueFormatter={(v: number) => `${v}`} />
+                    )}
+                  />
+                  <Legend verticalAlign="top" height={20} />
+                  <Bar
+                    name="Bookings"
+                    dataKey="bookings"
+                    fill="#0ea5e9"
+                    radius={[12, 12, 0, 0]}
+                    maxBarSize={48}
+                  >
+                    <LabelList dataKey="bookings" position="top" />
+                  </Bar>
                 </BarChart>
               </ResponsiveContainer>
             </div>
