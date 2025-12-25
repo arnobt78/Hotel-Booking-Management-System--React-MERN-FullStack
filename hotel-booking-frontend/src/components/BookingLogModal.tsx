@@ -4,7 +4,6 @@ import * as apiClient from "../api-client";
 import { BookingType } from "../../../shared/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Badge } from "./ui/badge";
-// import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import {
   Calendar,
@@ -16,7 +15,6 @@ import {
   Star,
   CreditCard,
   FileText,
-  // X,
   Filter,
 } from "lucide-react";
 
@@ -154,14 +152,6 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                 </p>
               </div>
             </div>
-            {/* <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-              className="h-8 w-8 p-0"
-            >
-              <X className="h-4 w-4" />
-            </Button> */}
           </DialogTitle>
         </DialogHeader>
 

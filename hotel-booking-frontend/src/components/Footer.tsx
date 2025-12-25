@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   Building2,
   Mail,
@@ -26,140 +27,146 @@ const Footer = () => {
               Discover amazing hotels, resorts, and accommodations worldwide.
               Book with confidence and enjoy unforgettable experiences.
             </p>
+
+            {/* Socials (external) */}
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-gray-300 hover:text-white transition-colors"
+                aria-label="Facebook"
               >
                 <Facebook className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://twitter.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-gray-300 hover:text-white transition-colors"
+                aria-label="Twitter"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-gray-300 hover:text-white transition-colors"
+                aria-label="Instagram"
               >
                 <Instagram className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noreferrer"
                 className="text-gray-300 hover:text-white transition-colors"
+                aria-label="LinkedIn"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Quick Links (internal) */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Home
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/search"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Hotels
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/search"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Destinations
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="text-gray-300 hover:text-white transition-colors"
-                >
-                  Contact
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Support */}
+          {/* Support (internal) */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Support</h3>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/api-docs"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Help Center
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/api-docs"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Booking Guide
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/api-docs"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Cancellation Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/privacy"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Privacy Policy
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/terms"
                   className="text-gray-300 hover:text-white transition-colors"
                 >
                   Terms of Service
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
 
-          {/* Contact Info */}
+          {/* Contact Info (mailto/tel) */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold">Contact Us</h3>
             <div className="space-y-3">
-              <div className="flex items-center space-x-3">
+              <a
+                href="mailto:support@mernholidays.com"
+                className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+              >
                 <Mail className="w-5 h-5 text-primary-300" />
-                <span className="text-gray-300">support@mernholidays.com</span>
-              </div>
-              <div className="flex items-center space-x-3">
+                <span>support@mernholidays.com</span>
+              </a>
+
+              <a
+                href="tel:+15551234567"
+                className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+              >
                 <Phone className="w-5 h-5 text-primary-300" />
-                <span className="text-gray-300">+1 (555) 123-4567</span>
-              </div>
+                <span>+1 (555) 123-4567</span>
+              </a>
+
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-primary-300" />
                 <span className="text-gray-300">
@@ -176,24 +183,24 @@ const Footer = () => {
             © 2025 MernHolidays. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
-            <a
-              href="#"
+            <Link
+              to="/privacy"
               className="text-gray-300 hover:text-white text-sm transition-colors"
             >
               Privacy Policy
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/terms"
               className="text-gray-300 hover:text-white text-sm transition-colors"
             >
               Terms of Service
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              to="/cookies"
               className="text-gray-300 hover:text-white text-sm transition-colors"
             >
               Cookie Policy
-            </a>
+            </Link>
           </div>
         </div>
       </div>

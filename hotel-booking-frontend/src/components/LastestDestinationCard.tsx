@@ -1,13 +1,74 @@
 import { Link } from "react-router-dom";
 import { HotelType } from "../../../shared/types";
-import { MapPin, Star, Users } from "lucide-react";
+import { MapPin, Star, Users, Heart } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useMutation, useQuery } from "react-query";
+import { queryClient } from "../main";
+import useAppContext from "../hooks/useAppContext";
+
+import { addFavorite, removeFavorite, fetchFavorites } from "../api-client";
 
 type Props = {
   hotel: HotelType;
 };
 
 const LatestDestinationCard = ({ hotel }: Props) => {
+  const { showToast, isLoggedIn } = useAppContext();
+
+  const { data: favorites } = useQuery("favorites", fetchFavorites, {
+    retry: false,
+    enabled: !!isLoggedIn,
+  });
+
+  const isFavorite = favorites?.some((fav) => fav.hotelId === hotel._id);
+
+  const addMutation = useMutation(addFavorite, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favorites");
+    },
+    onError: (error: any) => {
+      // fallback ako backend vrati 401
+      const status = error?.response?.status;
+      if (status === 401) {
+        showToast({
+          title: "Unauthorized",
+          description: "Please sign in to add hotels to your favorites.",
+          type: "ERROR",
+        });
+        return;
+      }
+
+      showToast({
+        title: "Failed to add favorite",
+        description: error?.message || "Something went wrong. Please try again.",
+        type: "ERROR",
+      });
+    },
+  });
+
+  const removeMutation = useMutation(removeFavorite, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favorites");
+    },
+    onError: (error: any) => {
+      const status = error?.response?.status;
+      if (status === 401) {
+        showToast({
+          title: "Unauthorized",
+          description: "Please sign in to manage your favorites.",
+          type: "ERROR",
+        });
+        return;
+      }
+
+      showToast({
+        title: "Failed to remove favorite",
+        description: error?.message || "Something went wrong. Please try again.",
+        type: "ERROR",
+      });
+    },
+  });
+
   return (
     <Link
       to={`/detail/${hotel._id}`}
@@ -19,20 +80,54 @@ const LatestDestinationCard = ({ hotel }: Props) => {
           src={hotel.imageUrls[0]}
           className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
           style={{ minHeight: 350, maxHeight: 350 }}
+          alt={hotel.name}
         />
 
-        {/* Overlay Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
-
-        {/* Hotel Stats Badge */}
-        <div className="absolute top-4 right-4">
+        <div className="absolute top-4 right-4 z-10 flex flex-col items-end gap-2">
+          {/* Rating */}
           <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">
             <Star className="w-4 h-4 text-yellow-500 fill-current" />
             <span className="text-sm font-semibold text-gray-800">
               {hotel.starRating}
             </span>
           </div>
+
+          {/* Favorite Heart */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+
+              if (!isLoggedIn) {
+                showToast({
+                  title: "Unauthorized",
+                  description:
+                    "Please sign in to add hotels to your favorites.",
+                  type: "ERROR",
+                });
+
+                return;
+              }
+
+              if (isFavorite) {
+                removeMutation.mutate(hotel._id);
+              } else {
+                addMutation.mutate(hotel._id);
+              }
+            }}
+            className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:scale-110 transition"
+            aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
+            <Heart
+              className={`w-5 h-5 ${
+                isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"
+              }`}
+            />
+          </button>
         </div>
+
+        {/* Overlay Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
 
         {/* Price Badge */}
         <div className="absolute top-4 left-4">

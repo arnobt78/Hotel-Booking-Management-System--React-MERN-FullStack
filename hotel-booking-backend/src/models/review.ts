@@ -4,7 +4,7 @@ export interface IReview extends Document {
   _id: string;
   userId: string;
   hotelId: string;
-  bookingId: string;
+  bookingId?: string;
   rating: number;
   comment: string;
   categories: {
@@ -24,7 +24,7 @@ const reviewSchema = new mongoose.Schema(
   {
     userId: { type: String, required: true, index: true },
     hotelId: { type: String, required: true, index: true },
-    bookingId: { type: String, required: true, index: true },
+    bookingId: { type: String, index: true },
     rating: { type: Number, required: true, min: 1, max: 5, index: true },
     comment: { type: String, required: true },
     categories: {

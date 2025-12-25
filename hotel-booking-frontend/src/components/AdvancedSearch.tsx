@@ -77,9 +77,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           }
         }
 
-        const apiBaseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
-        const response = await fetch(`${apiBaseUrl}/api/hotels`);
+        const response = await fetch("/api/hotels");
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -112,7 +110,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     };
 
     fetchPlaces();
-  }, []); // Remove all dependencies to run only once on mount
+  }, []); 
 
   // Clear dropdown state when component mounts
   useEffect(() => {
@@ -198,48 +196,28 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       // Add advanced filters
       if (searchData.minPrice)
         searchParams.append("minPrice", searchData.minPrice);
-      if (searchData.maxPrice)
-        searchParams.append("maxPrice", searchData.maxPrice);
+      if (searchData.maxPrice !== "" && !isNaN(Number(searchData.maxPrice))) {
+          searchParams.append("maxPrice", searchData.maxPrice);
+      }
       if (searchData.starRating)
         searchParams.append("starRating", searchData.starRating);
       if (searchData.hotelType)
         searchParams.append("hotelType", searchData.hotelType);
-      if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
+      if (searchData.sortBy)
+        searchParams.append("sortOption", searchData.sortBy);
       if (searchData.radius) searchParams.append("radius", searchData.radius);
       searchData.facilities.forEach((facility) =>
         searchParams.append("facilities", facility)
       );
+      if (searchData.checkOut <= searchData.checkIn) {
+        alert("Check-out date must be after check-in date.");
+        return;
+      }
 
+      // Normal navigation
       navigate(`/search?${searchParams.toString()}`);
       onSearch(searchData);
 
-      // Don't clear search values immediately - let the search page use them
-      // Only clear the local form state
-      setTimeout(() => {
-        setSearchData({
-          destination: "",
-          checkIn: new Date(),
-          checkOut: new Date(),
-          adultCount: 1,
-          childCount: 0,
-          minPrice: "",
-          maxPrice: "",
-          starRating: "",
-          hotelType: "",
-          facilities: [],
-          sortBy: "relevance",
-          radius: "50",
-          instantBooking: false,
-          freeCancellation: false,
-          breakfast: false,
-          wifi: false,
-          parking: false,
-          pool: false,
-          gym: false,
-          spa: false,
-        });
-        // Remove this line: search.clearSearchValues();
-      }, 100);
       return;
     }
 
@@ -267,13 +245,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     // Add advanced filters
     if (searchData.minPrice)
       searchParams.append("minPrice", searchData.minPrice);
-    if (searchData.maxPrice)
-      searchParams.append("maxPrice", searchData.maxPrice);
+    if (searchData.maxPrice !== "" && !isNaN(Number(searchData.maxPrice))) {
+        searchParams.append("maxPrice", searchData.maxPrice);
+    }
     if (searchData.starRating)
       searchParams.append("starRating", searchData.starRating);
     if (searchData.hotelType)
       searchParams.append("hotelType", searchData.hotelType);
-    if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
+    if (searchData.sortBy) searchParams.append("sortOption", searchData.sortBy);
     if (searchData.radius) searchParams.append("radius", searchData.radius);
     searchData.facilities.forEach((facility) =>
       searchParams.append("facilities", facility)
@@ -281,34 +260,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
     navigate(`/search?${searchParams.toString()}`);
     onSearch(searchData);
-
-    // Don't clear search values immediately - let the search page use them
-    // Only clear the local form state
-    setTimeout(() => {
-      setSearchData({
-        destination: "",
-        checkIn: new Date(),
-        checkOut: new Date(),
-        adultCount: 1,
-        childCount: 0,
-        minPrice: "",
-        maxPrice: "",
-        starRating: "",
-        hotelType: "",
-        facilities: [],
-        sortBy: "relevance",
-        radius: "50",
-        instantBooking: false,
-        freeCancellation: false,
-        breakfast: false,
-        wifi: false,
-        parking: false,
-        pool: false,
-        gym: false,
-        spa: false,
-      });
-      // Remove this line: search.clearSearchValues();
-    }, 100);
   };
 
   const handleQuickSearch = (destination: string) => {
@@ -323,32 +274,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     setTimeout(() => handleSearch(), 100);
   };
 
-  // const handleClear = () => {
-  //   setSearchData({
-  //     destination: "",
-  //     checkIn: new Date(),
-  //     checkOut: new Date(),
-  //     adultCount: 1,
-  //     childCount: 0,
-  //     minPrice: "",
-  //     maxPrice: "",
-  //     starRating: "",
-  //     hotelType: "",
-  //     facilities: [],
-  //     sortBy: "relevance",
-  //     radius: "50",
-  //     instantBooking: false,
-  //     freeCancellation: false,
-  //     breakfast: false,
-  //     wifi: false,
-  //     parking: false,
-  //     pool: false,
-  //     gym: false,
-  //     spa: false,
-  //   });
-  //   search.clearSearchValues();
-  // };
-
   const popularDestinations = [
     "New York",
     "London",
@@ -359,6 +284,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     "Singapore",
     "Barcelona",
   ];
+
+  const toDateInputValue = (d: Date) => d.toISOString().split("T")[0];
 
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-large p-8 max-w-6xl mx-auto border border-white/20">
@@ -410,10 +337,21 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             <input
               type="date"
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-              value={searchData.checkIn.toISOString().split("T")[0]}
-              onChange={(e) =>
-                handleInputChange("checkIn", new Date(e.target.value))
-              }
+              value={toDateInputValue(searchData.checkIn)}
+              onChange={(e) => {
+                const newCheckIn = new Date(e.target.value);
+
+                setSearchData((prev) => {
+                  const adjustedCheckOut =
+                    prev.checkOut && prev.checkOut < newCheckIn ? newCheckIn : prev.checkOut;
+
+                  return {
+                    ...prev,
+                    checkIn: newCheckIn,
+                    checkOut: adjustedCheckOut,
+                  };
+                });
+              }}
             />
             <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
           </div>
@@ -429,10 +367,18 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             <input
               type="date"
               className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-              value={searchData.checkOut.toISOString().split("T")[0]}
-              onChange={(e) =>
-                handleInputChange("checkOut", new Date(e.target.value))
-              }
+              value={toDateInputValue(searchData.checkOut)}
+              min={toDateInputValue(searchData.checkIn)} 
+              onChange={(e) => {
+                const newCheckOut = new Date(e.target.value);
+
+                if (newCheckOut <= searchData.checkIn) {
+                  alert("Check-out date must be after check-in date.");
+                  return;
+                }
+
+                handleInputChange("checkOut", newCheckOut);
+              }}
             />
             <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
           </div>

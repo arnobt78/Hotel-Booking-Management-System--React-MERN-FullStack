@@ -25,20 +25,20 @@ const options = {
     ],
     components: {
       securitySchemes: {
-        cookieAuth: {
-          type: "apiKey",
-          in: "cookie",
-          name: "jwt",
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
         },
       },
     },
     security: [
       {
-        cookieAuth: [],
+        bearerAuth: [],
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // Path to the API routes
+  apis: ["./src/routes/*.ts"],
 };
 
 export const specs = swaggerJsdoc(options);

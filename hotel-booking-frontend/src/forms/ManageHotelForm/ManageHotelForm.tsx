@@ -7,7 +7,7 @@ import ImagesSection from "./ImagesSection";
 import ContactSection from "./ContactSection";
 import PoliciesSection from "./PoliciesSection";
 import { HotelType } from "../../../../shared/types";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export type HotelFormData = {
   name: string;
@@ -18,11 +18,9 @@ export type HotelFormData = {
   pricePerNight: number;
   starRating: number;
   facilities: string[];
-  imageFiles?: FileList;
-  imageUrls: string[];
+  imageUrls: string[]; 
   adultCount: number;
   childCount: number;
-  // New fields
   contact?: {
     phone: string;
     email: string;
@@ -35,17 +33,6 @@ export type HotelFormData = {
     petPolicy: string;
     smokingPolicy: string;
   };
-  location?: {
-    latitude: number;
-    longitude: number;
-    address: {
-      street: string;
-      city: string;
-      state: string;
-      country: string;
-      zipCode: string;
-    };
-  };
   isFeatured: boolean;
 };
 
@@ -56,14 +43,21 @@ type Props = {
 };
 
 const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
-  const formMethods = useForm<HotelFormData>();
+  const formMethods = useForm<HotelFormData>({
+    defaultValues: {
+      imageUrls: [],
+    },
+  });
+
   const { handleSubmit, reset } = formMethods;
+
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]);
 
   useEffect(() => {
     if (hotel) {
-      // Ensure contact and policies are properly initialized
-      const formData = {
+      reset({
         ...hotel,
+        imageUrls: hotel.imageUrls || [],
         contact: hotel.contact || {
           phone: "",
           email: "",
@@ -76,23 +70,28 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
           petPolicy: "",
           smokingPolicy: "",
         },
-      };
-      reset(formData);
+      });
+
+      setNewImageFiles([]);
     }
   }, [hotel, reset]);
 
-  const onSubmit = handleSubmit((formDataJson: HotelFormData) => {
+  const onSubmit = handleSubmit((formDataJson) => {
     const formData = new FormData();
+
     if (hotel) {
       formData.append("hotelId", hotel._id);
     }
+
     formData.append("name", formDataJson.name);
     formData.append("city", formDataJson.city);
     formData.append("country", formDataJson.country);
     formData.append("description", formDataJson.description);
+
     formDataJson.type.forEach((t, idx) => {
       formData.append(`type[${idx}]`, t);
     });
+
     formData.append("pricePerNight", formDataJson.pricePerNight.toString());
     formData.append("starRating", formDataJson.starRating.toString());
     formData.append("adultCount", formDataJson.adultCount.toString());
@@ -102,14 +101,12 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
       formData.append(`facilities[${index}]`, facility);
     });
 
-    // Add contact information
     if (formDataJson.contact) {
       formData.append("contact.phone", formDataJson.contact.phone || "");
       formData.append("contact.email", formDataJson.contact.email || "");
       formData.append("contact.website", formDataJson.contact.website || "");
     }
 
-    // Add policies
     if (formDataJson.policies) {
       formData.append(
         "policies.checkInTime",
@@ -133,17 +130,13 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
       );
     }
 
-    if (formDataJson.imageUrls) {
-      formDataJson.imageUrls.forEach((url, index) => {
-        formData.append(`imageUrls[${index}]`, url);
-      });
-    }
+    formDataJson.imageUrls.forEach((url, index) => {
+      formData.append(`imageUrls[${index}]`, url);
+    });
 
-    if (formDataJson.imageFiles && formDataJson.imageFiles.length > 0) {
-      Array.from(formDataJson.imageFiles).forEach((imageFile) => {
-        formData.append(`imageFiles`, imageFile);
-      });
-    }
+    newImageFiles.forEach((file) => {
+      formData.append("imageFiles", file);
+    });
 
     onSave(formData);
   });
@@ -157,12 +150,17 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
         <GuestsSection />
         <ContactSection />
         <PoliciesSection />
-        <ImagesSection />
+
+        <ImagesSection
+          newImageFiles={newImageFiles}
+          setNewImageFiles={setNewImageFiles}
+        />
+
         <span className="flex justify-end">
           <button
             disabled={isLoading}
             type="submit"
-            className="bg-blue-600 text-white  px-6 py-2 rounded-lg font-semibold hover:bg-blue-500 text-xl disabled:bg-gray-500"
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-500 text-xl disabled:bg-gray-500"
           >
             {isLoading ? "Saving..." : "Save"}
           </button>

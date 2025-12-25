@@ -14,14 +14,21 @@ import {
   Coffee,
   Plane,
   Building,
+  Heart,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { useMutation, useQuery } from "react-query";
+import { queryClient } from "../main";
+import useAppContext from "../hooks/useAppContext";
+import { addFavorite, removeFavorite, fetchFavorites } from "../api-client";
 
 type Props = {
   hotel: HotelType;
 };
 
 const SearchResultsCard = ({ hotel }: Props) => {
+  const { showToast, isLoggedIn } = useAppContext();
+
   const getFacilityIcon = (facility: string) => {
     const iconMap: { [key: string]: any } = {
       "Free WiFi": Wifi,
@@ -37,6 +44,77 @@ const SearchResultsCard = ({ hotel }: Props) => {
     return iconMap[facility] || Building2;
   };
 
+  const { data: favorites } = useQuery("favorites", fetchFavorites, {
+    retry: false,
+    enabled: !!isLoggedIn,
+  });
+
+  const isFavorite = favorites?.some((fav) => fav.hotelId === hotel._id);
+
+  const addMutation = useMutation(addFavorite, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favorites");
+    },
+    onError: (error: any) => {
+      const status = error?.response?.status;
+      if (status === 401) {
+        showToast({
+          title: "Unauthorized",
+          description: "Please sign in to add hotels to your favorites.",
+          type: "ERROR",
+        });
+        return;
+      }
+
+      showToast({
+        title: "Failed to add favorite",
+        description: error?.message || "Something went wrong. Please try again.",
+        type: "ERROR",
+      });
+    },
+  });
+
+  const removeMutation = useMutation(removeFavorite, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("favorites");
+    },
+    onError: (error: any) => {
+      const status = error?.response?.status;
+      if (status === 401) {
+        showToast({
+          title: "Unauthorized",
+          description: "Please sign in to manage your favorites.",
+          type: "ERROR",
+        });
+        return;
+      }
+
+      showToast({
+        title: "Failed to remove favorite",
+        description: error?.message || "Something went wrong. Please try again.",
+        type: "ERROR",
+      });
+    },
+  });
+
+  const handleFavoriteClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!isLoggedIn) {
+      showToast({
+        title: "Unauthorized",
+        description: "Please sign in to add hotels to your favorites.",
+        type: "ERROR",
+      });
+
+      return;
+    }
+
+    if (isFavorite) removeMutation.mutate(hotel._id);
+    else addMutation.mutate(hotel._id);
+  };
+
   return (
     <div className="group bg-white rounded-2xl shadow-soft hover:shadow-large transition-all duration-300 border border-gray-100 overflow-hidden h-auto xl:h-[500px] flex">
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] gap-0 w-full h-full">
@@ -45,6 +123,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
           <img
             src={hotel.imageUrls[0]}
             className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            alt={hotel.name}
           />
 
           {/* Overlay Badges */}
@@ -59,14 +138,28 @@ const SearchResultsCard = ({ hotel }: Props) => {
             )}
           </div>
 
-          {/* Star Rating Badge */}
-          <div className="absolute top-4 right-4">
+          {/* Top-right controls (rating + heart) */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2 items-end">
+            {/* Star Rating Badge */}
             <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">
               <AiFillStar className="w-4 h-4 text-yellow-500" />
               <span className="text-sm font-semibold text-gray-800">
                 {hotel.starRating}
               </span>
             </div>
+
+            {/* Favorite Heart */}
+            <button
+              onClick={handleFavoriteClick}
+              className="bg-white/90 backdrop-blur-sm p-2 rounded-full hover:scale-110 transition"
+              aria-label={isFavorite ? "Remove from favorites" : "Add to favorites"}
+            >
+              <Heart
+                className={`w-5 h-5 ${
+                  isFavorite ? "fill-red-500 text-red-500" : "text-gray-600"
+                }`}
+              />
+            </button>
           </div>
         </div>
 
@@ -82,6 +175,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
                       <AiFillStar key={i} className="w-4 h-4 text-yellow-400" />
                     ))}
                   </span>
+
                   <div className="flex flex-wrap gap-1">
                     {Array.isArray(hotel.type) ? (
                       hotel.type.slice(0, 4).map((type) => (

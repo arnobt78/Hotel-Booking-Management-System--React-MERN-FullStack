@@ -26,8 +26,6 @@ const SearchBar = () => {
   const [isInitialMount, setIsInitialMount] = useState(true);
 
   // Fetch hotel places on mount
-  // You can replace this fetch with context if you already have hotel data
-
   useEffect(() => {
     // Prevent multiple API calls - use a ref to track if we've already fetched
     if (isLoadingPlaces || hasFetchedRef.current) return;
@@ -52,9 +50,7 @@ const SearchBar = () => {
           }
         }
 
-        const apiBaseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
-        const response = await fetch(`${apiBaseUrl}/api/hotels`);
+        const response = await fetch("/api/hotels");
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -87,7 +83,7 @@ const SearchBar = () => {
     };
 
     fetchPlaces();
-  }, []); // Remove all dependencies to run only once on mount
+  }, []); 
 
   // Clear dropdown state when component mounts (for search page)
   useEffect(() => {
@@ -132,6 +128,10 @@ const SearchBar = () => {
 
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault();
+    if (checkOut <= checkIn) {
+      alert("Check-out date must be after check-in date.");
+      return;
+    }
 
     // Allow empty destination to show all hotels
     // Only proceed if destination is not empty
@@ -151,16 +151,6 @@ const SearchBar = () => {
 
       navigate("/search");
 
-      // Don't clear search values immediately - let the search page use them
-      // Only clear the local form state
-      setTimeout(() => {
-        setDestination("");
-        setCheckIn(minDate);
-        setCheckOut(minDate);
-        setAdultCount(1);
-        setChildCount(0);
-        // Remove this line: search.clearSearchValues();
-      }, 100);
       return;
     }
 
@@ -178,16 +168,6 @@ const SearchBar = () => {
 
     navigate("/search");
 
-    // Don't clear search values immediately - let the search page use them
-    // Only clear the local form state
-    setTimeout(() => {
-      setDestination("");
-      setCheckIn(minDate);
-      setCheckOut(minDate);
-      setAdultCount(1);
-      setChildCount(0);
-      // Remove this line: search.clearSearchValues();
-    }, 100);
   };
 
   const handleClear = () => {
@@ -262,7 +242,15 @@ const SearchBar = () => {
           <div className="sm:col-span-1">
             <DatePicker
               selected={checkIn}
-              onChange={(date) => setCheckIn(date as Date)}
+              onChange={(date) => {
+                  const newCheckIn = date as Date;
+                  setCheckIn(newCheckIn);
+                  if (!checkOut || checkOut <= newCheckIn) {
+                    const nextDay = new Date(newCheckIn);
+                    nextDay.setDate(nextDay.getDate() + 1);
+                    setCheckOut(nextDay);
+                  }
+                }}
               selectsStart
               startDate={checkIn}
               endDate={checkOut}
@@ -277,10 +265,10 @@ const SearchBar = () => {
             <DatePicker
               selected={checkOut}
               onChange={(date) => setCheckOut(date as Date)}
-              selectsStart
+              selectsEnd
               startDate={checkIn}
               endDate={checkOut}
-              minDate={minDate}
+              minDate={checkIn}
               maxDate={maxDate}
               placeholderText="Check-out Date"
               className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
