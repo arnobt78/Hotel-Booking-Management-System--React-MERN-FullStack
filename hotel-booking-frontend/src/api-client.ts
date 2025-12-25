@@ -10,12 +10,8 @@ import {
   BookingType,
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
-import { queryClient } from "./main";
 
-export const fetchCurrentUser = async (): Promise<UserType> => {
-  const response = await axiosInstance.get("/api/users/me",{ withCredentials: true });
-  return response.data;
-};
+// --- AUTH I USER SEKCIJA ---
 
 export const register = async (formData: RegisterFormData) => {
   const response = await axiosInstance.post("/api/users/register", formData);
@@ -24,79 +20,33 @@ export const register = async (formData: RegisterFormData) => {
 
 export const signIn = async (formData: SignInFormData) => {
   const response = await axiosInstance.post("/api/auth/login", formData);
-
-  // Store JWT token from response body in localStorage
-  const token = response.data?.token;
-  if (token) {
-    localStorage.setItem("session_id", token);
-    console.log("JWT token stored in localStorage for incognito compatibility");
-  }
-
-  // Store user info for incognito mode fallback
+  
+  // Ako ti user_id treba za neku logiku koja nije vezana za auth (npr. analitika)
   if (response.data?.userId) {
     localStorage.setItem("user_id", response.data.userId);
-    console.log("User ID stored for incognito mode fallback");
   }
-
-  // Force validate token after successful login to update React Query cache
-  try {
-    const validationResult = await validateToken();
-    console.log("Token validation after login:", validationResult);
-
-    // Invalidate and refetch the validateToken query to update the UI
-    queryClient.invalidateQueries("validateToken");
-
-    // Force a refetch to ensure the UI updates
-    await queryClient.refetchQueries("validateToken");
-  } catch (error) {
-    console.log("Token validation failed after login, but continuing...");
-
-    // Even if validation fails, if we have a token stored, consider it a success for incognito mode
-    if (localStorage.getItem("session_id")) {
-      console.log("Incognito mode detected - using stored token as fallback");
-    }
-  }
-
+  
   return response.data;
 };
 
 export const validateToken = async () => {
-  try {
-    const response = await axiosInstance.get("/api/auth/validate-token");
-    return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      // Not logged in, throw error so React Query knows it failed
-      throw new Error("Token invalid");
-    }
-    // For any other error (network, etc.), also throw
-    throw new Error("Token validation failed");
-  }
+  // Axios interceptor će ovdje automatski uraditi refresh ako je auth_token istekao
+  const response = await axiosInstance.get("/api/auth/validate-token");
+  return response.data;
 };
 
 export const signOut = async () => {
   const response = await axiosInstance.post("/api/auth/logout");
-
-  // Clear localStorage (JWT tokens)
-  localStorage.removeItem("session_id");
   localStorage.removeItem("user_id");
-
   return response.data;
 };
 
-// Development utility to clear all browser storage
-export const clearAllStorage = () => {
-  // Clear localStorage
-  localStorage.clear();
-  // Clear sessionStorage
-  sessionStorage.clear();
-  // Clear cookies (by setting them to expire in the past)
-  document.cookie.split(";").forEach((c) => {
-    document.cookie = c
-      .replace(/^ +/, "")
-      .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
-  });
+export const fetchCurrentUser = async (): Promise<UserType> => {
+  const response = await axiosInstance.get("/api/users/me");
+  return response.data;
 };
+
+// --- MOJI HOTELI (ADMIN/HOST) ---
 
 export const addMyHotel = async (hotelFormData: FormData) => {
   const response = await axiosInstance.post("/api/my-hotels", hotelFormData, {
@@ -131,6 +81,8 @@ export const updateMyHotelById = async (hotelFormData: FormData) => {
   return response.data;
 };
 
+// --- PRETRAGA I JAVNI HOTELI ---
+
 export type SearchParams = {
   destination?: string;
   checkIn?: string;
@@ -150,8 +102,7 @@ export const searchHotels = async (
 ): Promise<HotelSearchResponse> => {
   const queryParams = new URLSearchParams();
 
-  // Only add destination if it's not empty
-  if (searchParams.destination && searchParams.destination.trim() !== "") {
+  if (searchParams.destination?.trim()) {
     queryParams.append("destination", searchParams.destination.trim());
   }
 
@@ -163,10 +114,7 @@ export const searchHotels = async (
   queryParams.append("maxPrice", searchParams.maxPrice || "");
   queryParams.append("sortOption", searchParams.sortOption || "");
 
-  searchParams.facilities?.forEach((facility) =>
-    queryParams.append("facilities", facility)
-  );
-
+  searchParams.facilities?.forEach((facility) => queryParams.append("facilities", facility));
   searchParams.types?.forEach((type) => queryParams.append("types", type));
   searchParams.stars?.forEach((star) => queryParams.append("stars", star));
 
@@ -183,6 +131,8 @@ export const fetchHotelById = async (hotelId: string): Promise<HotelType> => {
   const response = await axiosInstance.get(`/api/hotels/${hotelId}`);
   return response.data;
 };
+
+// --- REZERVACIJE I PLAĆANJE ---
 
 export const createPaymentIntent = async (
   hotelId: string,
@@ -208,74 +158,21 @@ export const fetchMyBookings = async (): Promise<HotelWithBookingsType[]> => {
   return response.data;
 };
 
-export const fetchHotelBookings = async (
-  hotelId: string
-): Promise<BookingType[]> => {
+export const fetchHotelBookings = async (hotelId: string): Promise<BookingType[]> => {
   const response = await axiosInstance.get(`/api/bookings/hotel/${hotelId}`);
   return response.data;
 };
 
-// Business Insights API functions
-export const fetchBusinessInsightsDashboard = async () => {
-  const response = await axiosInstance.get("/api/business-insights/dashboard");
-  return response.data;
-};
-
-export const fetchBusinessInsightsForecast = async () => {
-  const response = await axiosInstance.get("/api/business-insights/forecast");
-  return response.data;
-};
-
-export const fetchBusinessInsightsPerformance = async () => {
-  const response = await axiosInstance.get(
-    "/api/business-insights/performance"
-  );
-  return response.data;
-};
+// --- RECENZIJE I FAVORITI ---
 
 export const fetchReviewsByHotelId = async (hotelId: string) => {
   try {
-    const response = await axiosInstance.get(`/api/reviews/${hotelId}`, {
-      withCredentials: true,
-    });
+    const response = await axiosInstance.get(`/api/reviews/${hotelId}`);
     return response.data;
   } catch (error: any) {
     if (error.response?.status === 404) return [];
     throw new Error("Failed to fetch reviews");
   }
-};
-
-// Favorites API
-export const fetchFavorites = async (): Promise<{ hotelId: string }[]> => {
-  const response = await axiosInstance.get("/api/favorites", {
-    withCredentials: true,
-  });
-  return response.data;
-};
-
-export const addFavorite = async (hotelId: string) => {
-  const response = await axiosInstance.post(
-    `/api/favorites/${hotelId}`,
-    {},
-    { withCredentials: true }
-  );
-  return response.data;
-};
-
-export const removeFavorite = async (hotelId: string) => {
-  const response = await axiosInstance.delete(
-    `/api/favorites/${hotelId}`,
-    { withCredentials: true }
-  );
-  return response.data;
-};
-
-// Admin API
-export const fetchAdminDashboard = async () => {
-  const response = await axiosInstance.get("/api/admin/dashboard", {
-    withCredentials: true,
-  });
-  return response.data;
 };
 
 export type CreateReviewPayload = {
@@ -291,8 +188,49 @@ export type CreateReviewPayload = {
 };
 
 export const createReview = async (hotelId: string, payload: CreateReviewPayload) => {
-  const response = await axiosInstance.post(`/api/reviews/${hotelId}`, payload, {
-    withCredentials: true,
-  });
+  const response = await axiosInstance.post(`/api/reviews/${hotelId}`, payload);
   return response.data;
+};
+
+export const fetchFavorites = async (): Promise<{ hotelId: string }[]> => {
+  const response = await axiosInstance.get("/api/favorites");
+  return response.data;
+};
+
+export const addFavorite = async (hotelId: string) => {
+  const response = await axiosInstance.post(`/api/favorites/${hotelId}`, {});
+  return response.data;
+};
+
+export const removeFavorite = async (hotelId: string) => {
+  const response = await axiosInstance.delete(`/api/favorites/${hotelId}`);
+  return response.data;
+};
+
+// --- ADMIN I INSIGHTS ---
+
+export const fetchAdminDashboard = async () => {
+  const response = await axiosInstance.get("/api/admin/dashboard");
+  return response.data;
+};
+
+export const fetchBusinessInsightsDashboard = async () => {
+  const response = await axiosInstance.get("/api/business-insights/dashboard");
+  return response.data;
+};
+
+export const fetchBusinessInsightsForecast = async () => {
+  const response = await axiosInstance.get("/api/business-insights/forecast");
+  return response.data;
+};
+
+export const fetchBusinessInsightsPerformance = async () => {
+  const response = await axiosInstance.get("/api/business-insights/performance");
+  return response.data;
+};
+
+// Pomocna funkcija za čišćenje (samo za dev)
+export const clearAllStorage = () => {
+  localStorage.clear();
+  sessionStorage.clear();
 };
