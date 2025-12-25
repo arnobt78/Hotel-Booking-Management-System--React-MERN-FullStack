@@ -38,65 +38,36 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
 
   const { toast } = useToast();
 
-  const checkStoredAuth = () => {
-    const localToken = localStorage.getItem("session_id");
-    const userId = localStorage.getItem("user_id");
-    const hasToken = !!localToken;
-    const hasUserId = !!userId;
+  // One-time cleanup: remove legacy localStorage token if it existed in older versions
+  useEffect(() => {
+    localStorage.removeItem("session_id");
+  }, []);
 
-    if (hasToken && hasUserId) {
-      console.log("JWT authentication detected - token and user ID found");
+  const {
+    isError,
+    isLoading,
+    data: validateData,
+    error,
+  } = useQuery("validateToken", apiClient.validateToken, {
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 5 * 60 * 1000,
+    enabled: true,
+  });
+
+  // Logged in ONLY if server validates auth_token cookie
+  const isLoggedIn = !isLoading && !isError && !!validateData;
+
+  useEffect(() => {
+    const status = (error as any)?.response?.status;
+    if (status === 401) {
+      localStorage.removeItem("user_id");
     }
-
-    return hasToken;
-  };
-
-  const { isError, isLoading, data } = useQuery(
-    "validateToken",
-    apiClient.validateToken,
-    {
-      retry: false,
-      refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
-      enabled: true,
-      onError: (error: any) => {
-        const storedToken = localStorage.getItem("session_id");
-        const storedUserId = localStorage.getItem("user_id");
-
-        if (storedToken && error.response?.status === 401) {
-          console.log(
-            "JWT token found but validation failed - possible token expiration"
-          );
-          if (storedUserId) {
-            console.log("JWT session confirmed - using localStorage fallback");
-          }
-        }
-      },
-    }
-  );
-
-  const isLoggedIn =
-    (!isLoading && !isError && !!data) || (checkStoredAuth() && isError);
-
-  const justLoggedIn = checkStoredAuth() && !isLoading && !data && !isError;
-
-  const isJWTFallback = () => {
-    const hasStoredToken = checkStoredAuth();
-    const hasUserId = !!localStorage.getItem("user_id");
-    const isFallback = hasStoredToken && isError && !data && hasUserId;
-
-    if (isFallback) {
-      console.log("JWT fallback mode detected - using localStorage authentication");
-    }
-
-    return isFallback;
-  };
-
-  const finalIsLoggedIn = isLoggedIn || justLoggedIn || isJWTFallback();
+  }, [error]);
 
   useEffect(() => {
     const loadUser = async () => {
-      if (!finalIsLoggedIn) {
+      if (!isLoggedIn) {
         setUser(null);
         return;
       }
@@ -111,7 +82,7 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
     };
 
     loadUser();
-  }, [finalIsLoggedIn]);
+  }, [isLoggedIn]);
 
   const showToast = (toastMessage: ToastMessage) => {
     const variant =
@@ -138,15 +109,15 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
   const value = useMemo(
     () => ({
       showToast,
-      isLoggedIn: finalIsLoggedIn,
-      user, 
+      isLoggedIn,
+      user,
       stripePromise,
       showGlobalLoading,
       hideGlobalLoading,
       isGlobalLoading,
       globalLoadingMessage,
     }),
-    [finalIsLoggedIn, user, isGlobalLoading, globalLoadingMessage]
+    [isLoggedIn, user, isGlobalLoading, globalLoadingMessage]
   );
 
   return (

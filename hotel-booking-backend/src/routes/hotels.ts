@@ -323,28 +323,21 @@ router.post(
       .isNumeric()
       .withMessage("totalCost must be a number"),
 
-    body("startDate")
-      .notEmpty()
-      .withMessage("startDate is required")
-      .isISO8601()
-      .withMessage("startDate must be a valid ISO date"),
+    body("checkIn")
+      .notEmpty().withMessage("checkIn is required")
+      .isISO8601().withMessage("checkIn must be a valid ISO date"),
 
-    body("endDate")
-      .notEmpty()
-      .withMessage("endDate is required")
-      .isISO8601()
-      .withMessage("endDate must be a valid ISO date"),
+    body("checkOut")
+      .notEmpty().withMessage("checkOut is required")
+      .isISO8601().withMessage("checkOut must be a valid ISO date"),
 
-    // bar 1 noćenje (endDate mora biti nakon startDate)
     body().custom((_, { req }) => {
-      const start = new Date(req.body.startDate);
-      const end = new Date(req.body.endDate);
+      const start = new Date(req.body.checkIn);
+      const end = new Date(req.body.checkOut);
 
       const nights = diffNights(start, end);
       if (nights < 1) {
-        throw new Error(
-          "Booking must be at least 1 night (endDate must be after startDate)"
-        );
+        throw new Error("Booking must be at least 1 night (checkOut must be after checkIn)");
       }
 
       if (req.body.numberOfNights && Number(req.body.numberOfNights) !== nights) {
@@ -353,6 +346,7 @@ router.post(
 
       return true;
     }),
+
   ],
   async (req: Request, res: Response) => {
     const errors = validationResult(req);
