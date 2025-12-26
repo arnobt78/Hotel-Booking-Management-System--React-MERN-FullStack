@@ -21,8 +21,8 @@ import helmet from "helmet";
 import morgan from "morgan";
 import compression from "compression";
 import rateLimit from "express-rate-limit";
+import type { ErrorRequestHandler, RequestHandler } from "express";
 
-// Environment Variables Validation
 const requiredEnvVars = [
   "MONGODB_CONNECTION_STRING",
   "JWT_SECRET_KEY",
@@ -84,74 +84,42 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "https://98.86.196.119.nip.io",
-  "http://localhost:5174",
-  "http://localhost:5173",
+  "http://localhost:5174"
 ].filter((origin): origin is string => Boolean(origin));
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+const corsOptions: cors.CorsOptions = {
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
 
-      // Allow all Netlify preview URLs
-      // Izbaci netlify
-      if (origin.includes("netlify.app")) {
-        return callback(null, true);
-      }
+    if (allowedOrigins.includes(origin)) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+    if (process.env.NODE_ENV === "development") {
+      console.log("CORS blocked origin:", origin);
+    }
 
-      // Log blocked origins in development
-      if (process.env.NODE_ENV === "development") {
-        console.log("CORS blocked origin:", origin);
-      }
+    return callback(null, false);
+  },
+  credentials: true,
+  optionsSuccessStatus: 204,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
+};
 
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    optionsSuccessStatus: 204,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cookie",
-      "X-Requested-With",
-    ],
-  })
-);
-// Explicit preflight handler for all routes
-app.options(
-  "*",
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
-      // Allow all Netlify preview URLs
-      if (origin.includes("netlify.app")) {
-        return callback(null, true);
-      }
+const corsBlocker: RequestHandler = (req, res, next) => {
+  const origin = req.headers.origin;
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
+  if (!origin) return next();
 
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    optionsSuccessStatus: 204,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cookie",
-      "X-Requested-With",
-    ],
-  })
-);
+  if (allowedOrigins.includes(origin)) return next();
+
+  return res.status(403).json({ message: "CORS: origin not allowed" });
+};
+
+app.use(corsBlocker);
+
 
 app.use(cookieParser());
 app.use(express.json());
@@ -160,12 +128,11 @@ app.use(express.urlencoded({ extended: true }));
 // Security middleware
 app.use(helmet());
 
-// Trust proxy for production (fixes rate limiting issues)
 app.set("trust proxy", 1);
 
-// Rate limiting - more lenient for payment endpoints
+// Rate limiting 
 const generalLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000, 
   max: 200, // Increased limit for general requests
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
@@ -174,8 +141,8 @@ const generalLimiter = rateLimit({
 
 // Special limiter for payment endpoints
 const paymentLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Higher limit for payment requests
+  windowMs: 15 * 60 * 1000, 
+  max: 50, 
   message: "Too many payment requests, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
@@ -194,7 +161,6 @@ app.use(compression());
 app.use(morgan("combined"));
 
 app.use((req, res, next) => {
-  // Ensure Vary header for CORS
   res.header("Vary", "Origin");
   next();
 });
@@ -222,7 +188,19 @@ app.use(
   })
 );
 
-// Dynamic Port Configuration (for Render and local development)
+const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
+  
+  const status = typeof err?.status === "number" ? err.status : 500;
+  const message = err?.message || "Internal server error";
+
+  res.status(status).json({
+    message,
+    ...(process.env.NODE_ENV === "development" ? { stack: err?.stack } : {}),
+  });
+};
+
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 7002;
 
 const server = app.listen(PORT, () => {
@@ -234,7 +212,6 @@ const server = app.listen(PORT, () => {
   console.log("🚀 ============================================");
 });
 
-// Graceful Shutdown Handler
 const gracefulShutdown = (signal: string) => {
   console.log(`\n⚠️  ${signal} received. Starting graceful shutdown...`);
 
@@ -252,24 +229,20 @@ const gracefulShutdown = (signal: string) => {
     }
   });
 
-  // Force shutdown after 30 seconds
   setTimeout(() => {
     console.error("⚠️  Forced shutdown after timeout");
     process.exit(1);
   }, 30000);
 };
 
-// Handle shutdown signals
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
 
-// Handle uncaught exceptions
 process.on("uncaughtException", (error) => {
   console.error("❌ Uncaught Exception:", error);
   gracefulShutdown("UNCAUGHT_EXCEPTION");
 });
 
-// Handle unhandled promise rejections
 process.on("unhandledRejection", (reason, promise) => {
   console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
   gracefulShutdown("UNHANDLED_REJECTION");
