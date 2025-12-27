@@ -43,8 +43,6 @@ axiosInstance.interceptors.response.use(
         // Ako refresh prođe, ponavljamo originalni zahtjev koji je prvobitno pao
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        // Ako i refresh padne (npr. i refresh_token je istekao), izloguj korisnika
-        console.error("Session expired, please login again.");
         return Promise.reject(refreshError);
       }
     }

@@ -117,7 +117,6 @@ router.get("/search", async (req: Request, res: Response) => {
 
     res.json(response);
   } catch (error) {
-    console.log("error", error);
     res.status(500).json({ message: "Something went wrong" });
   }
 });
@@ -139,7 +138,6 @@ router.get("/", async (req: Request, res: Response) => {
     const hotels = await Hotel.find().sort("-lastUpdated");
     res.json(hotels);
   } catch (error) {
-    console.log("error", error);
     res.status(500).json({ message: "Error fetching hotels" });
   }
 });
@@ -180,7 +178,6 @@ router.get(
       const hotel = await Hotel.findById(id);
       res.json(hotel);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Error fetching hotel" });
     }
   }
@@ -269,7 +266,6 @@ router.post(
         totalCost,
       });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Something went wrong" });
     }
   }
@@ -406,7 +402,6 @@ router.post(
 
       res.status(200).send();
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "something went wrong" });
     }
   }

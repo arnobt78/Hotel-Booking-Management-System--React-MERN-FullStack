@@ -76,7 +76,6 @@ export const AppContextProvider = ({ children }: { children: React.ReactNode }) 
         const me = await apiClient.fetchCurrentUser();
         setUser(me);
       } catch (e) {
-        console.log("Failed to fetch current user:", e);
         setUser(null);
       }
     };

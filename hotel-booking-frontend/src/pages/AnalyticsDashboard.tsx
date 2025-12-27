@@ -137,22 +137,16 @@ const AnalyticsDashboard = () => {
     }
   );
 
-  // Debug logging
-  console.log("Frontend Business Insights Data:", analyticsData);
-
   const { data: forecastData } = useQueryWithLoading<ForecastData>(
     "business-insights-forecast",
     fetchBusinessInsightsForecast,
     {
-      refetchInterval: false, // Disable auto-refresh to avoid blocking
+      refetchInterval: false,
       retry: 3,
       retryDelay: 1000,
       loadingMessage: "Loading forecast data...",
     }
   );
-
-  // Debug logging
-  console.log("Frontend Forecast Data:", forecastData);
 
   const { data: performanceData } = useQueryWithLoading<PerformanceData>(
     "business-insights-performance",

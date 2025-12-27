@@ -277,14 +277,6 @@ router.get("/dashboard", verifyToken, async (req: Request, res: Response) => {
       lastUpdated: now.toISOString(),
     };
 
-    // Debug logging
-    console.log("Business Insights Data:", {
-      overview: businessInsightsData.overview,
-      popularDestinationsCount: popularDestinations.length,
-      dailyBookingsCount: dailyBookings.length,
-      hotelPerformanceCount: hotelPerformance.length,
-    });
-
     res.status(200).json(businessInsightsData);
   } catch (error) {
     res.status(500).json({
@@ -467,15 +459,6 @@ router.get("/forecast", verifyToken, async (req: Request, res: Response) => {
       lastUpdated: now.toISOString(),
     };
 
-    // Debug logging
-    console.log("Forecast Data:", {
-      weeklyDataCount: weeklyData.length,
-      forecastsCount: forecasts.length,
-      seasonalGrowth,
-      trends: forecastData.trends,
-      sampleForecast: forecasts[0],
-    });
-
     res.status(200).json(forecastData);
   } catch (error) {
     res.status(500).json({
@@ -523,28 +506,6 @@ router.get("/performance", verifyToken, async (req: Request, res: Response) => {
       return bookingDate >= weekAgo;
     }).length;
 
-    // Debug booking calculations
-    console.log("Booking Calculations:", {
-      totalBookings,
-      todayBookings,
-      thisWeekBookings,
-      today: today.toISOString(),
-      sampleBooking: allBookings[0]
-        ? {
-            createdAt: new Date(allBookings[0].createdAt).toISOString(),
-            checkIn: new Date(allBookings[0].checkIn).toISOString(),
-            bookingDateString: new Date(
-              allBookings[0].createdAt
-            ).toDateString(),
-            todayDateString: today.toDateString(),
-            weekAgo: new Date(
-              today.getTime() - 7 * 24 * 60 * 60 * 1000
-            ).toISOString(),
-          }
-        : null,
-    });
-
-    // Response time simulation (in real app, you'd use actual metrics)
     const avgResponseTime = Math.random() * 100 + 50; // 50-150ms
 
     const performanceData = {
@@ -578,17 +539,6 @@ router.get("/performance", verifyToken, async (req: Request, res: Response) => {
       },
       lastUpdated: new Date().toISOString(),
     };
-
-    // Debug logging
-    console.log("Performance Data:", {
-      system: {
-        memory: performanceData.system.memory,
-        uptime: performanceData.system.uptime,
-        cpu: performanceData.system.cpu,
-      },
-      database: performanceData.database,
-      application: performanceData.application,
-    });
 
     res.status(200).json(performanceData);
   } catch (error) {

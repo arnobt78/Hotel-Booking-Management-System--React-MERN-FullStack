@@ -209,7 +209,6 @@ router.post(
 
       res.status(201).send(hotel);
     } catch (e) {
-      console.log(e);
       res.status(500).json({ message: "Something went wrong" });
     }
   }
@@ -463,7 +462,6 @@ router.put(
 
       return res.status(200).json(updatedHotel);
     } catch (error: any) {
-      console.error("Error updating hotel:", error);
       res.status(500).json({
         message: "Something went wrong",
         error: error.message || "Unknown error",

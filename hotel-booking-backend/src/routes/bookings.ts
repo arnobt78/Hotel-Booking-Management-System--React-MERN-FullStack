@@ -41,12 +41,6 @@ router.get(
   requireRole("admin"),
   async (req: any, res: Response) => {
     try {
-      console.log("=== DEBUG: Incoming Request ===");
-      console.log("Headers:", req.headers);
-      console.log("Authorization header:", req.headers.authorization);
-      console.log("User ID from verifyToken:", req.userId);
-      console.log("User role from verifyToken:", req.userRole);
-      console.log("RequireRole expecting: admin");
 
       const bookings = await Booking.find()
         .sort({ createdAt: -1 })
@@ -54,7 +48,6 @@ router.get(
 
       res.status(200).json(bookings);
     } catch (error) {
-      console.log("DEBUG ERROR:", error);
       res.status(500).json({ message: "Unable to fetch bookings" });
     }
   }
@@ -115,7 +108,6 @@ router.get(
 
       res.status(200).json(bookings);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Unable to fetch hotel bookings" });
     }
   }
@@ -166,7 +158,6 @@ router.get(
 
       res.status(200).json(booking);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Unable to fetch booking" });
     }
   }
@@ -254,7 +245,6 @@ router.patch(
 
       res.status(200).json(booking);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Unable to update booking" });
     }
   }
@@ -337,7 +327,6 @@ router.patch(
 
       res.status(200).json(booking);
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Unable to update payment status" });
     }
   }
@@ -402,7 +391,6 @@ router.delete(
 
       res.status(200).json({ message: "Booking deleted successfully" });
     } catch (error) {
-      console.log(error);
       res.status(500).json({ message: "Unable to delete booking" });
     }
   }

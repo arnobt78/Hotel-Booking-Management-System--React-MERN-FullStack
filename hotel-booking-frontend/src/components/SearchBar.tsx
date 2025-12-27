@@ -75,7 +75,6 @@ const SearchBar = () => {
 
         setPlaces(uniquePlaces);
       } catch (error) {
-        console.error("Error fetching hotels:", error);
         setPlaces([]);
       } finally {
         setIsLoadingPlaces(false);

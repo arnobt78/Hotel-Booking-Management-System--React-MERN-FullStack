@@ -8,6 +8,7 @@ import {
   Users,
 } from "lucide-react";
 import useSearchContext from "../hooks/useSearchContext";
+import axiosInstance from "../lib/api-client";
 
 interface AdvancedSearchProps {
   onSearch: (searchData: any) => void;
@@ -83,14 +84,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data: { city?: string; place?: string; name?: string }[] =
-          await response.json();
+        const { data } = await axiosInstance.get("/api/hotels");
+
         const uniquePlaces: string[] = Array.from(
           new Set(
             data
-              .map((hotel) => hotel.city || hotel.place || hotel.name)
+              .map((hotel: { city: any; place: any; name: any; }) => hotel.city || hotel.place || hotel.name)
               .filter(
-                (place): place is string =>
+                (place: string | any[]): place is string =>
                   typeof place === "string" && place.length > 0
               )
           )
@@ -102,7 +103,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
         setPlaces(uniquePlaces);
       } catch (error) {
-        console.error("Error fetching hotels:", error);
         setPlaces([]);
       } finally {
         setIsLoadingPlaces(false);

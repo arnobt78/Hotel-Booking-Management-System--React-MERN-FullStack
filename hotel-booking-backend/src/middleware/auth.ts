@@ -30,7 +30,6 @@ const verifyToken = (req: Request, res: Response, next: NextFunction) => {
 
     next();
   } catch (error) {
-    console.error("Token verification failed:", error); 
     res.clearCookie("auth_token", { path: "/" });
     
     return res.status(401).json({ message: "Unauthorized: Invalid or expired token" });

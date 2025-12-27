@@ -3,20 +3,15 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
-import { authLimiter } from "../middleware/rateLimiter"; // Pretpostavlja da je ovo kreirano
+import { authLimiter } from "../middleware/rateLimiter";
 
 const router = express.Router();
 
-// Pomoćna funkcija za kreiranje Access i Refresh Tokena
 const createTokens = (userId: string, userRole: string) => {
-    // SIGURNOSNA PROVJERA: Da li su ključevi prisutni?
     if (!process.env.JWT_SECRET_KEY || !process.env.REFRESH_SECRET_KEY) {
-        console.error("CRITICAL ERROR: JWT or REFRESH secret key is missing!");
-        // Bacanje izuzetka koji će uhvatiti catch blok u ruti
         throw new Error("Server configuration error: Token keys missing.");
     }
     
-    // Kreiranje Access Tokena (kratkotrajni: 15m)
     const accessToken = jwt.sign(
         { userId, userRole },
         process.env.JWT_SECRET_KEY as string,
@@ -25,7 +20,6 @@ const createTokens = (userId: string, userRole: string) => {
         }
     );
 
-    // Kreiranje Refresh Tokena (dugotrajni: 7d)
     const refreshToken = jwt.sign(
         { userId },
         process.env.REFRESH_SECRET_KEY as string,
@@ -40,7 +34,7 @@ const createTokens = (userId: string, userRole: string) => {
 
 router.post(
     "/register",
-    authLimiter, // Primjena Rate Limitinga
+    authLimiter, 
     [
         check("firstName", "First Name is required").isString(),
         check("lastName", "Last Name is required").isString(),
@@ -61,17 +55,14 @@ router.post(
             });
 
             if (user) {
-                // Koristimo 400 da signaliziramo da je zahtjev nevažeći
                 return res.status(400).json({ message: "User already exists" });
             }
 
             user = new User(req.body);
             await user.save();
 
-            // KREIRANJE I POSTAVLJANJE TOKENA
             const { accessToken, refreshToken } = createTokens(user.id, user.role);
 
-            // 1. Postavljanje Access Tokena (auth_token)
             res.cookie("auth_token", accessToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
@@ -80,7 +71,6 @@ router.post(
                 path: "/",
             });
 
-            // 2. Postavljanje Refresh Tokena (refresh_token)
             res.cookie("refresh_token", refreshToken, {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
@@ -91,8 +81,6 @@ router.post(
 
             return res.status(200).send({ message: "User registered OK", userId: user.id });
         } catch (error) {
-            console.error("Error during user registration:", error);
-            // Vraćamo generički 500 error klijentu
             res.status(500).send({ message: "Something went wrong on the server" });
         }
     }
@@ -100,19 +88,15 @@ router.post(
 
 
 router.get("/me", verifyToken, async (req: Request, res: Response) => {
-    // req.userId je dostupan zahvaljujući verifyToken middlewareu
     const userId = req.userId;
 
     try {
-        // Selektujemo sve osim lozinke (-password)
         const user = await User.findById(userId).select("-password");
         if (!user) {
-            // Ako korisnik ne postoji, vraćamo 404
             return res.status(404).json({ message: "User not found" });
         }
         res.json(user);
     } catch (error) {
-        console.error("Error fetching user data:", error);
         res.status(500).json({ message: "Something went wrong on the server" });
     }
 });

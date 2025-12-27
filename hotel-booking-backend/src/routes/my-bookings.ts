@@ -101,7 +101,6 @@ router.get("/", verifyToken, async (req: Request, res: Response) => {
     const validResults = results.filter((result) => result !== null);
     res.status(200).send(validResults);
   } catch (error) {
-    console.log(error);
     res.status(500).json({ message: "Unable to fetch bookings" });
   }
 });

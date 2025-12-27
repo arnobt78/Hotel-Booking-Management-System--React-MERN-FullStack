@@ -29,7 +29,7 @@ const Header = () => {
                 <Building2 className="w-6 h-6 text-primary-600" />
               </div>
               <span className="text-2xl font-bold text-white tracking-tight group-hover:text-primary-100 transition-colors">
-                MernHolidays
+                BookInn
               </span>
             </button>
 

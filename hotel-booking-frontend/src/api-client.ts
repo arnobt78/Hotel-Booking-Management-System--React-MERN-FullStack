@@ -21,16 +21,10 @@ export const register = async (formData: RegisterFormData) => {
 export const signIn = async (formData: SignInFormData) => {
   const response = await axiosInstance.post("/api/auth/login", formData);
   
-  // Ako ti user_id treba za neku logiku koja nije vezana za auth (npr. analitika)
-  if (response.data?.userId) {
-    localStorage.setItem("user_id", response.data.userId);
-  }
-  
   return response.data;
 };
 
 export const validateToken = async () => {
-  // Axios interceptor će ovdje automatski uraditi refresh ako je auth_token istekao
   const response = await axiosInstance.get("/api/auth/validate-token");
   return response.data;
 };

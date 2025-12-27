@@ -84,7 +84,8 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   "https://98.86.196.119.nip.io",
-  "http://localhost:5174"
+  "http://localhost:5174",
+  "http://localhost:7002"
 ].filter((origin): origin is string => Boolean(origin));
 
 const corsOptions: cors.CorsOptions = {

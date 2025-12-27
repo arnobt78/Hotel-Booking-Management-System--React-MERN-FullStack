@@ -21,7 +21,7 @@ const Footer = () => {
               <div className="bg-white p-2 rounded-lg">
                 <Building2 className="w-6 h-6 text-primary-600" />
               </div>
-              <span className="text-2xl font-bold">MernHolidays</span>
+              <span className="text-2xl font-bold">BookInn</span>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Discover amazing hotels, resorts, and accommodations worldwide.
@@ -152,11 +152,11 @@ const Footer = () => {
             <h3 className="text-lg font-semibold">Contact Us</h3>
             <div className="space-y-3">
               <a
-                href="mailto:support@mernholidays.com"
+                href="mailto:support@bookinn.com"
                 className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
               >
                 <Mail className="w-5 h-5 text-primary-300" />
-                <span>support@mernholidays.com</span>
+                <span>support@bookinn.com</span>
               </a>
 
               <a
@@ -180,7 +180,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-primary-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-300 text-sm">
-            © 2025 MernHolidays. All rights reserved.
+            © 2025 BookInn. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <Link
