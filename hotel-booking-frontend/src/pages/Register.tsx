@@ -66,12 +66,23 @@ const Register = () => {
       const status = error?.response?.status;
       const data = error?.response?.data;
 
-      if (status === 409 && (data?.field === "email" || data?.message?.toLowerCase?.().includes("email"))) {
-        setError("email", { type: "manual", message: data?.message || "Email is already in use" });
+      const msg =
+        data?.message ||
+        (Array.isArray(data?.errors) ? data.errors[0]?.msg : null) ||
+        error?.message ||
+        "Something went wrong";
+
+      const emailTaken =
+        status === 409 ||
+        data?.field === "email" ||
+        (typeof msg === "string" && msg.toLowerCase().includes("email"));
+
+      if (emailTaken) {
+        setError("email", { type: "manual", message: msg });
 
         showToast({
           title: "Registration Failed",
-          description: data?.message || "Email is already in use",
+          description: msg,
           type: "ERROR",
         });
         return;
@@ -79,10 +90,11 @@ const Register = () => {
 
       showToast({
         title: "Registration Failed",
-        description: error?.message || "Something went wrong",
+        description: msg,
         type: "ERROR",
       });
     },
+
     loadingMessage: "Creating your account...",
   });
 
