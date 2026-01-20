@@ -22,6 +22,7 @@ import Home from "./pages/Home";
 import ApiDocs from "./pages/ApiDocs";
 import ApiStatus from "./pages/ApiStatus";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import ErrorBoundary from "./components/ErrorBoundary";
 
 const App = () => {
   const { isLoggedIn } = useAppContext();
@@ -142,6 +143,16 @@ const App = () => {
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Toaster />
+      <ErrorBoundary> {/* Wrap the entire Router */}
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          {/* ... existing routes */}
+        </Routes>
+        <Toaster />
+      </Router>
+    </ErrorBoundary>
+
     </Router>
   );
 };
