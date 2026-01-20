@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import "dotenv/config";
 import mongoose from "mongoose";
@@ -87,26 +87,36 @@ app.use(helmet());
 // Trust proxy for production (fixes rate limiting issues)
 app.set("trust proxy", 1);
 
-// Rate limiting - more lenient for payment endpoints
+// Rate limiting configurations
 const generalLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 200, // Increased limit for general requests
+  max: 200, 
   message: "Too many requests from this IP, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
-// Special limiter for payment endpoints
 const paymentLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 50, // Higher limit for payment requests
+  max: 50, 
   message: "Too many payment requests, please try again later.",
   standardHeaders: true,
   legacyHeaders: false,
 });
 
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 10, // Limit each IP to 10 register/login requests per window
+  message: "Too many authentication attempts, please try again after 15 minutes",
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// Apply limiters
 app.use("/api/", generalLimiter);
 app.use("/api/hotels/*/bookings/payment-intent", paymentLimiter);
+app.use("/api/auth/login", authLimiter);
+app.use("/api/auth/register", authLimiter);
 
 // Compression middleware
 app.use(compression());
@@ -121,75 +131,27 @@ const allowedOrigins = [
   "https://mern-booking-hotel.netlify.app",
   "https://mern-booking-hotel.netlify.app/",
 ].filter((origin): origin is string => Boolean(origin));
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
-
-      // Allow all Netlify preview URLs
-      if (origin.includes("netlify.app")) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      // Log blocked origins in development
-      if (process.env.NODE_ENV === "development") {
-        console.log("CORS blocked origin:", origin);
-      }
-
+      if (origin.includes("netlify.app")) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     optionsSuccessStatus: 204,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cookie",
-      "X-Requested-With",
-    ],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie", "X-Requested-With"],
   })
 );
-// Explicit preflight handler for all routes
-app.options(
-  "*",
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
 
-      // Allow all Netlify preview URLs
-      if (origin.includes("netlify.app")) {
-        return callback(null, true);
-      }
-
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-
-      return callback(new Error("Not allowed by CORS"));
-    },
-    credentials: true,
-    optionsSuccessStatus: 204,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: [
-      "Content-Type",
-      "Authorization",
-      "Cookie",
-      "X-Requested-With",
-    ],
-  })
-);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use((req, res, next) => {
-  // Ensure Vary header for CORS
   res.header("Vary", "Origin");
   next();
 });
@@ -198,6 +160,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("<h1>Hotel Booking Backend API is running 🚀</h1>");
 });
 
+// Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/my-hotels", myHotelRoutes);
@@ -217,7 +180,17 @@ app.use(
   })
 );
 
-// Dynamic Port Configuration (for Render and local development)
+// Global Error Handling Middleware (Must be defined after all routes)
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  const statusCode = err.statusCode || 500;
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+  });
+});
+
+// Dynamic Port Configuration
 const PORT = process.env.PORT || 7002;
 
 const server = app.listen(PORT, () => {
@@ -232,10 +205,8 @@ const server = app.listen(PORT, () => {
 // Graceful Shutdown Handler
 const gracefulShutdown = (signal: string) => {
   console.log(`\n⚠️  ${signal} received. Starting graceful shutdown...`);
-
   server.close(async () => {
     console.log("🔒 HTTP server closed");
-
     try {
       await mongoose.connection.close();
       console.log("🔒 MongoDB connection closed");
@@ -247,24 +218,18 @@ const gracefulShutdown = (signal: string) => {
     }
   });
 
-  // Force shutdown after 30 seconds
   setTimeout(() => {
     console.error("⚠️  Forced shutdown after timeout");
     process.exit(1);
   }, 30000);
 };
 
-// Handle shutdown signals
 process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 process.on("SIGINT", () => gracefulShutdown("SIGINT"));
-
-// Handle uncaught exceptions
 process.on("uncaughtException", (error) => {
   console.error("❌ Uncaught Exception:", error);
   gracefulShutdown("UNCAUGHT_EXCEPTION");
 });
-
-// Handle unhandled promise rejections
 process.on("unhandledRejection", (reason, promise) => {
   console.error("❌ Unhandled Rejection at:", promise, "reason:", reason);
   gracefulShutdown("UNHANDLED_REJECTION");
