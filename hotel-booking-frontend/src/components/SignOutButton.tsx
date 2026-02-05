@@ -8,9 +8,17 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+
+const getAvatarUrl = () => {
+  const email = localStorage.getItem("user_email");
+  const name = localStorage.getItem("user_name");
+  const identifier = email || name || "user";
+  return `https://robohash.org/${encodeURIComponent(identifier)}.png?size=80x80`;
+};
 
 const SignOutButton = () => {
   const queryClient = useQueryClient();
@@ -80,16 +88,34 @@ const SignOutButton = () => {
     clearAuthMutation.mutate(undefined);
   };
 
+  const userEmail = localStorage.getItem("user_email");
+  const userName = localStorage.getItem("user_name");
+  const displayName = userName || userEmail || "User";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center bg-white text-primary-600 px-6 py-2 rounded-lg font-semibold hover:bg-primary-50 hover:shadow-medium transition-all duration-200 group">
-          <LogOut className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-          Sign Out
-          <ChevronDown className="w-4 h-4 ml-1 group-hover:scale-110 transition-transform" />
+        <button className="flex items-center gap-2 rounded-full p-0.5 ring-2 ring-white/30 hover:ring-white/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
+          <img
+            src={getAvatarUrl()}
+            alt={displayName}
+            className="h-9 w-9 rounded-full object-cover"
+            referrerPolicy="no-referrer"
+            onError={(e) => {
+              e.currentTarget.src = `https://robohash.org/user.png?size=80x80`;
+            }}
+          />
+          <ChevronDown className="w-4 h-4 text-white/90" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-white" align="end">
+        <DropdownMenuLabel>
+          <p className="font-medium text-gray-900">{displayName}</p>
+          {userEmail && (
+            <p className="text-xs text-gray-500 truncate">{userEmail}</p>
+          )}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-primary-600">
           <LogOut className="w-4 h-4 mr-2" />
           Sign Out

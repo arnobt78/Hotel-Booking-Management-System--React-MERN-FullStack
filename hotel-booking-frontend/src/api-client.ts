@@ -32,10 +32,16 @@ export const signIn = async (formData: SignInFormData) => {
     console.log("JWT token stored in localStorage for incognito compatibility");
   }
 
-  // Store user info for incognito mode fallback
+  // Store user info for incognito mode fallback and profile avatar
   if (response.data?.userId) {
     localStorage.setItem("user_id", response.data.userId);
     console.log("User ID stored for incognito mode fallback");
+  }
+  if (response.data?.user) {
+    const { email, firstName, lastName } = response.data.user;
+    if (email) localStorage.setItem("user_email", email);
+    const name = [firstName, lastName].filter(Boolean).join(" ") || email;
+    if (name) localStorage.setItem("user_name", name);
   }
 
   // Force validate token after successful login to update React Query cache
@@ -77,9 +83,11 @@ export const validateToken = async () => {
 export const signOut = async () => {
   const response = await axiosInstance.post("/api/auth/logout");
 
-  // Clear localStorage (JWT tokens)
+  // Clear localStorage (JWT tokens and user info)
   localStorage.removeItem("session_id");
   localStorage.removeItem("user_id");
+  localStorage.removeItem("user_email");
+  localStorage.removeItem("user_name");
 
   return response.data;
 };
