@@ -239,7 +239,7 @@ export const fetchBusinessInsightsForecast = async () => {
 
 export const fetchBusinessInsightsPerformance = async () => {
   const response = await axiosInstance.get(
-    "/api/business-insights/performance"
+    "/api/business-insights/system-stats"
   );
   return response.data;
 };

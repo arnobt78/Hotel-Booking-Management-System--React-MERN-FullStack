@@ -10,7 +10,7 @@ interface Props {
 
 const Layout = ({ children }: Props) => {
   const location = useLocation();
-  // const isAnalyticsPage = location.pathname === "/analytics";
+  // const isBusinessInsightsPage = location.pathname === "/business-insights";
   // const isSearchPage = location.pathname === "/search";
   const isHomePage = location.pathname === "/";
 

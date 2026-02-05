@@ -326,7 +326,7 @@ Modal for viewing detailed booking information.
 | `/my-hotels`           | `MyHotels.tsx`           | Hotel management for owners      | ✅            |
 | `/add-hotel`           | `AddHotel.tsx`           | Add new hotel listing            | ✅            |
 | `/edit-hotel/:hotelId` | `EditHotel.tsx`          | Edit existing hotel              | ✅            |
-| `/analytics`           | `AnalyticsDashboard.tsx` | Business insights dashboard      | ✅            |
+| `/business-insights`   | `AnalyticsDashboard.tsx` | Business insights dashboard      | ✅            |
 
 ### **Utility Pages**
 

@@ -50,13 +50,13 @@ const Header = () => {
             <nav className="hidden md:flex items-center space-x-1">
               {isLoggedIn ? (
                 <>
-                  {/* Analytics Dashboard Link */}
+                  {/* Business Insights Link */}
                   <Link
                     className="flex items-center text-white/90 hover:text-white px-4 py-2 rounded-lg font-medium hover:bg-white/10 transition-all duration-200 group"
-                    to="/analytics"
+                    to="/business-insights"
                   >
                     <BarChart3 className="w-4 h-4 mr-2 group-hover:scale-110 transition-transform" />
-                    Analytics
+                    Business Insights
                   </Link>
 
                   {/* <div className="w-px h-6 bg-white/20 mx-2"></div> */}

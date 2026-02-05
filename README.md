@@ -665,31 +665,30 @@ Get user's booking history.
 
 Get all bookings for a specific hotel.
 
-### Analytics Endpoints
+### Business Insights Endpoints
 
-#### GET /api/analytics/dashboard
+#### GET /api/business-insights/dashboard
 
-Get comprehensive analytics data.
+Get comprehensive business insights data.
 
 ```typescript
-interface AnalyticsData {
+interface BusinessInsightsData {
   totalRevenue: number;
   totalBookings: number;
-  averageRating: number;
-  occupancyRate: number;
-  revenueTrends: RevenueData[];
-  bookingTrends: BookingData[];
-  topHotels: HotelAnalytics[];
+  overview: OverviewData;
+  popularDestinations: DestinationData[];
+  dailyBookings: BookingData[];
+  hotelPerformance: HotelData[];
 }
 ```
 
-#### GET /api/analytics/forecast
+#### GET /api/business-insights/forecast
 
-Get predictive analytics data.
+Get predictive forecasting data.
 
-#### GET /api/analytics/performance
+#### GET /api/business-insights/system-stats
 
-Get performance metrics.
+Get system statistics (memory, CPU, uptime, bookings).
 
 ### Health Check Endpoints
 

@@ -125,8 +125,8 @@ const ApiDocs = () => {
         },
         {
           method: "GET",
-          path: "/api/business-insights/performance",
-          description: "Performance metrics",
+          path: "/api/business-insights/system-stats",
+          description: "System statistics",
         },
       ],
     },

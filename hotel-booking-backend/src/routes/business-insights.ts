@@ -487,16 +487,16 @@ router.get("/forecast", verifyToken, async (req: Request, res: Response) => {
 
 /**
  * @swagger
- * /api/business-insights/performance:
+ * /api/business-insights/system-stats:
  *   get:
- *     summary: Get performance metrics
- *     description: Returns detailed performance metrics for the application
+ *     summary: Get system statistics
+ *     description: Returns system and application statistics (memory, CPU, uptime, bookings)
  *     tags: [Business Insights]
  *     responses:
  *       200:
- *         description: Performance metrics
+ *         description: System statistics
  */
-router.get("/performance", verifyToken, async (req: Request, res: Response) => {
+router.get("/system-stats", verifyToken, async (req: Request, res: Response) => {
   try {
     const memUsage = process.memoryUsage();
     const cpuUsage = process.cpuUsage();
