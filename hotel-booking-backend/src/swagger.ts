@@ -1,3 +1,4 @@
+import path from "path";
 import swaggerJsdoc from "swagger-jsdoc";
 
 const port = process.env.PORT || 5000;
@@ -41,7 +42,11 @@ const options = {
       },
     ],
   },
-  apis: ["./src/routes/*.ts"], // Path to the API routes
+  // Support both .ts (dev) and .js (production build) - path relative to this file
+  apis: [
+    path.join(__dirname, "routes", "*.ts"),
+    path.join(__dirname, "routes", "*.js"),
+  ],
 };
 
 export const specs = swaggerJsdoc(options);
