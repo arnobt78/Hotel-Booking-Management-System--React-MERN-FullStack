@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
-import * as apiClient from "../api-client";
 import useAppContext from "../hooks/useAppContext";
 import { Loader2 } from "lucide-react";
 
