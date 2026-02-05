@@ -255,6 +255,25 @@ const SignIn = () => {
                 )}
               </div>
 
+              {/* Submit Button */}
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 px-4 rounded-md text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+              >
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    Signing in...
+                  </div>
+                ) : (
+                  <div className="flex items-center">
+                    <LogIn className="w-5 h-5 mr-2" />
+                    Sign In
+                  </div>
+                )}
+              </Button>
+
               {/* Divider */}
               <div className="relative my-6">
                 <Separator className="bg-gray-300" />
@@ -296,25 +315,6 @@ const SignIn = () => {
                   />
                 </svg>
                 Continue with Google
-              </Button>
-
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 rounded-md text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Signing in...
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <LogIn className="w-5 h-5 mr-2" />
-                    Sign In
-                  </div>
-                )}
               </Button>
 
               {/* Registration Link */}
