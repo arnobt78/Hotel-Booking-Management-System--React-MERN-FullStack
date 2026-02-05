@@ -2,12 +2,13 @@
 
 A modern, responsive frontend application for the Hotel Booking Management System. Built with React 18, TypeScript, Vite, and Tailwind CSS, featuring advanced search, booking management, and seamless user experience across all devices.
 
-- **Live Demo:** [https://mern-booking-hotel.netlify.app/](https://mern-booking-hotel.netlify.app/)
-- **Backend API:** [https://mern-hotel-booking-68ej.onrender.com](https://mern-hotel-booking-68ej.onrender.com)
+- **Frontend-Live-Demo:** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
+- **Backend-Live-Demo:** [https://hotel-booking-backend.duckdns.org](https://hotel-booking-backend.duckdns.org)
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)
 ![React](https://img.shields.io/badge/React-18.2.0-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0.2-blue?style=for-the-badge&logo=typescript)
-![Vite](https://img.shields.io/badge/Vite-4.4.0-purple?style=for-the-badge&logo=vite)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.5-38B2AC?style=for-the-badge&logo=tailwind-css)
 
 ---
@@ -489,7 +490,7 @@ const bookingMutation = useMutation({
 ```typescript
 // Centralized API client
 export const searchHotels = async (
-  searchParams: SearchParams
+  searchParams: SearchParams,
 ): Promise<HotelSearchResponse> => {
   const queryParams = new URLSearchParams();
 
@@ -498,7 +499,7 @@ export const searchHotels = async (
   });
 
   const response = await fetch(
-    `${API_BASE_URL}/api/hotels/search?${queryParams}`
+    `${API_BASE_URL}/api/hotels/search?${queryParams}`,
   );
 
   if (!response.ok) {
@@ -544,7 +545,7 @@ const createPaymentIntent = async (hotelId: string, numberOfNights: string) => {
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ numberOfNights }),
-    }
+    },
   );
 
   if (!response.ok) {
@@ -596,7 +597,6 @@ const createPaymentIntent = async (hotelId: string, numberOfNights: string) => {
 ### **Netlify Deployment**
 
 1. **Connect Repository**
-
    - Link your GitHub repository to Netlify
    - Enable automatic deployments
 
@@ -608,7 +608,6 @@ const createPaymentIntent = async (hotelId: string, numberOfNights: string) => {
    ```
 
 3. **Environment Variables**
-
    - Set `VITE_API_BASE_URL` to your production backend URL
    - Configure `VITE_STRIPE_PUBLISHABLE_KEY` for payments
 
@@ -813,8 +812,10 @@ This frontend is designed to be **user-friendly**, **developer-friendly**, and *
 
 **Get Started Today!** 🚀
 
-If you have questions or want to contribute, reach out via GitHub or my portfolio at [https://arnob-mahmud.vercel.app/](https://arnob-mahmud.vercel.app/).
+This is an **open-source project** - feel free to use, enhance, and extend this project further!
 
-**Enjoy building amazing user experiences!** 😊
+If you have any questions or want to share your work, reach out via GitHub or my portfolio at [https://www.arnobmahmud.com/](https://www.arnobmahmud.com/).
 
----
+**Enjoy building and learning!** 🚀
+
+Thank you! 😊

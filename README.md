@@ -1,5 +1,16 @@
 # Hotel Booking Management System - React, Express.js FullStack MERN Project (including Business-Insights Dashboard)
 
+A comprehensive, production-ready hotel booking platform built with the MERN stack (MongoDB, Express.js, React, Node.js) featuring advanced search, booking management, analytics dashboard, and payment integration.
+
+- **Frontend-Live-Demo:** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
+- **Backend-Live-Demo:** [https://hotel-booking-backend.duckdns.org](https://hotel-booking-backend.duckdns.org)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)
+![React](https://img.shields.io/badge/React-18.2.0-blue?style=for-the-badge&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0.2-blue?style=for-the-badge&logo=typescript)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.5-38B2AC?style=for-the-badge&logo=tailwind-css)
+
 ![Screenshot 2025-09-04 at 12 02 23](https://github.com/user-attachments/assets/7b87581f-8a1a-4de4-99c3-ba5fab14f20d)
 ![Screenshot 2025-09-04 at 12 03 00](https://github.com/user-attachments/assets/76e284bb-4324-4798-8e87-0079aab65a57)
 ![Screenshot 2025-09-04 at 12 03 48](https://github.com/user-attachments/assets/c35d0786-f80d-493e-815c-7a594253183c)
@@ -18,20 +29,6 @@
 ![Screenshot 2025-09-04 at 12 10 33](https://github.com/user-attachments/assets/539c4d39-ca89-4383-9abd-1fa3dc184e50)
 ![Screenshot 2025-09-04 at 12 10 51](https://github.com/user-attachments/assets/22ea115f-3383-4dcb-9540-448d4639383f)
 ![Screenshot 2025-09-04 at 12 11 04](https://github.com/user-attachments/assets/20c8c57e-c224-4abe-b64d-1c0eb3fbcc91)
-
----
-
-A comprehensive, production-ready hotel booking platform built with the MERN stack (MongoDB, Express.js, React, Node.js) featuring advanced search, booking management, analytics dashboard, and payment integration.
-
-- **Frontend-Live-Demo:** [https://mern-booking-hotel.netlify.app/](https://mern-booking-hotel.netlify.app/)
-- **Backend-Live-Demo:** [https://mern-hotel-booking-68ej.onrender.com](https://mern-hotel-booking-68ej.onrender.com)
-
-![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)
-![React](https://img.shields.io/badge/React-18.2.0-blue?style=for-the-badge&logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0.2-blue?style=for-the-badge&logo=typescript)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.5-38B2AC?style=for-the-badge&logo=tailwind-css)
-
----
 
 ## 🎯 Project Overview
 
@@ -120,7 +117,7 @@ This project serves as a **comprehensive hotel booking ecosystem** that bridges 
 
 #### **Backend Architecture:**
 
-```
+```bash
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Express.js    │    │   MongoDB      │    │   JWT Auth      │
 │   (API Server)  │◄──►│   (Database)   │◄──►│   (Security)    │
@@ -889,7 +886,7 @@ The application uses JWT tokens for secure authentication:
 const token = jwt.sign(
   { userId: user._id, email: user.email, role: user.role },
   process.env.JWT_SECRET!,
-  { expiresIn: process.env.JWT_EXPIRES_IN }
+  { expiresIn: process.env.JWT_EXPIRES_IN },
 );
 
 // Token verification middleware
@@ -1142,13 +1139,12 @@ cd hotel-booking-backend
 npm run build
 ```
 
-2. **Environment variables setup:**
-
+1. **Environment variables setup:**
    - Set all required environment variables in your hosting platform
    - Ensure MongoDB connection string is production-ready
    - Configure CORS for production domain
 
-3. **Deploy to Render:**
+2. **Deploy to Render:**
 
 ```bash
 # Connect your GitHub repository
@@ -1164,14 +1160,14 @@ cd hotel-booking-frontend
 npm run build
 ```
 
-2. **Deploy to Netlify:**
+1. **Deploy to Netlify:**
 
 ```bash
 # Connect your GitHub repository
 # Netlify will auto-deploy on push to main branch
 ```
 
-3. **Environment variables:**
+1. **Environment variables:**
    - Set `VITE_API_BASE_URL` to your production backend URL
    - Configure Stripe keys for production
 
@@ -1198,19 +1194,19 @@ We welcome contributions! Please follow these steps:
 git checkout -b feature/amazing-feature
 ```
 
-3. **Make your changes and commit:**
+1. **Make your changes and commit:**
 
 ```bash
 git commit -m 'Add amazing feature'
 ```
 
-4. **Push to your branch:**
+1. **Push to your branch:**
 
 ```bash
 git push origin feature/amazing-feature
 ```
 
-5. **Open a Pull Request**
+1. **Open a Pull Request**
 
 ### Contribution Guidelines
 
@@ -1285,9 +1281,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🎉 Happy Coding! 🎉
 
-Feel free to use this project repository and extend this project further!
+This is an **open-source project** - feel free to use, enhance, and extend this project further!
 
-If you have any questions or want to share your work, reach out via GitHub or my portfolio at [https://arnob-mahmud.vercel.app/](https://arnob-mahmud.vercel.app/).
+If you have any questions or want to share your work, reach out via GitHub or my portfolio at [https://www.arnobmahmud.com/](https://www.arnobmahmud.com/).
 
 **Enjoy building and learning!** 🚀
 

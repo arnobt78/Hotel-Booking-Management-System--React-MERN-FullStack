@@ -2,13 +2,14 @@
 
 A production-ready, scalable backend API for the Hotel Booking Management System. Built with Node.js, Express.js, TypeScript, and MongoDB, featuring secure authentication, real-time booking management, and third-party integrations.
 
-- **Live API:** [https://mern-hotel-booking-68ej.onrender.com](https://mern-hotel-booking-68ej.onrender.com)
-- **API Documentation:** [https://mern-hotel-booking-68ej.onrender.com/api-docs](https://mern-hotel-booking-68ej.onrender.com/api-docs)
+- **Frontend-Live-Demo:** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
+- **Backend-Live-Demo:** [https://hotel-booking-backend.duckdns.org](https://hotel-booking-backend.duckdns.org)
 
-![Node.js](https://img.shields.io/badge/Node.js-18.0.0-green?style=for-the-badge&logo=node.js)
-![Express](https://img.shields.io/badge/Express-4.18.2-black?style=for-the-badge&logo=express)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)
+![React](https://img.shields.io/badge/React-18.2.0-blue?style=for-the-badge&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0.2-blue?style=for-the-badge&logo=typescript)
-![MongoDB](https://img.shields.io/badge/MongoDB-6.0.0-green?style=for-the-badge&logo=mongodb)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.3.5-38B2AC?style=for-the-badge&logo=tailwind-css)
 
 ---
 
@@ -395,7 +396,7 @@ app.use(
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
-  })
+  }),
 );
 ```
 
@@ -525,7 +526,6 @@ export const getAnalyticsDashboard = async (req: Request, res: Response) => {
 ### **Render Deployment**
 
 1. **Connect Repository**
-
    - Link your GitHub repository to Render
    - Set root directory: `hotel-booking-backend`
 
@@ -537,7 +537,6 @@ export const getAnalyticsDashboard = async (req: Request, res: Response) => {
    ```
 
 3. **Environment Variables**
-
    - Set all required environment variables in Render dashboard
    - Ensure `NODE_ENV=production`
 
@@ -635,7 +634,7 @@ const searchHotels = async (searchParams: SearchParams) => {
   });
 
   const response = await fetch(
-    `${API_BASE_URL}/api/hotels/search?${queryParams}`
+    `${API_BASE_URL}/api/hotels/search?${queryParams}`,
   );
 
   if (!response.ok) {
@@ -707,8 +706,10 @@ This backend is designed to be **production-ready**, **developer-friendly**, and
 
 **Get Started Today!** 🚀
 
-If you have questions or want to contribute, reach out via GitHub or my portfolio at [https://arnob-mahmud.vercel.app/](https://arnob-mahmud.vercel.app/).
+This is an **open-source project** - feel free to use, enhance, and extend this project further!
 
-**Enjoy building amazing applications!** 😊
+If you have any questions or want to share your work, reach out via GitHub or my portfolio at [https://www.arnobmahmud.com/](https://www.arnobmahmud.com/).
 
----
+**Enjoy building and learning!** 🚀
+
+Thank you! 😊
