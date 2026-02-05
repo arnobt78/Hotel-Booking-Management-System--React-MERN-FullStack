@@ -120,6 +120,8 @@ const allowedOrigins = [
   "http://localhost:5173",
   "https://mern-booking-hotel.netlify.app",
   "https://mern-booking-hotel.netlify.app/",
+  "https://hotel-mern-booking.vercel.app",
+  "https://hotel-mern-booking.vercel.app/",
 ].filter((origin): origin is string => Boolean(origin));
 app.use(
   cors({
@@ -127,8 +129,8 @@ app.use(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
-      // Allow all Netlify preview URLs
-      if (origin.includes("netlify.app")) {
+      // Allow all Netlify and Vercel preview URLs
+      if (origin.includes("netlify.app") || origin.includes("vercel.app")) {
         return callback(null, true);
       }
 
@@ -162,8 +164,8 @@ app.options(
       // Allow requests with no origin (like mobile apps or curl requests)
       if (!origin) return callback(null, true);
 
-      // Allow all Netlify preview URLs
-      if (origin.includes("netlify.app")) {
+      // Allow all Netlify and Vercel preview URLs
+      if (origin.includes("netlify.app") || origin.includes("vercel.app")) {
         return callback(null, true);
       }
 

@@ -7,8 +7,11 @@ const getBaseURL = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
-  // Fallback URLs
-  if (window.location.hostname === "mern-booking-hotel.netlify.app") {
+  // Fallback URLs (production domains)
+  if (
+    window.location.hostname === "mern-booking-hotel.netlify.app" ||
+    window.location.hostname.includes("vercel.app")
+  ) {
     return "https://hotel-booking-backend.duckdns.org";
   }
 
