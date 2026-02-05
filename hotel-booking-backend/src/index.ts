@@ -41,6 +41,9 @@ if (missingEnvVars.length > 0) {
 console.log("✅ All required environment variables are present");
 console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
 console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || "Not set"}`);
+console.log(
+  `🔗 Backend URL: ${process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`}`
+);
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
@@ -222,12 +225,16 @@ app.use(
 // Dynamic Port Configuration (for Render and local development)
 const PORT = process.env.PORT || 5000;
 
+const backendBaseUrl =
+  process.env.BACKEND_URL?.replace(/\/$/, "") || `http://localhost:${PORT}`;
+
 const server = app.listen(PORT, () => {
   console.log("🚀 ============================================");
   console.log(`✅ Server running on port ${PORT}`);
   console.log(`🌐 Local: http://localhost:${PORT}`);
-  console.log(`📚 API Docs: http://localhost:${PORT}/api-docs`);
-  console.log(`💚 Health Check: http://localhost:${PORT}/api/health`);
+  console.log(`🔗 Public: ${backendBaseUrl}`);
+  console.log(`📚 API Docs: ${backendBaseUrl}/api-docs`);
+  console.log(`💚 Health Check: ${backendBaseUrl}/api/health`);
   console.log("🚀 ============================================");
 });
 

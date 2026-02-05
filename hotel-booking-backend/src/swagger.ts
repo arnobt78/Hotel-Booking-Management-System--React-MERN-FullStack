@@ -1,5 +1,17 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
+const port = process.env.PORT || 5000;
+const backendUrl =
+  process.env.BACKEND_URL?.replace(/\/$/, "") || `http://localhost:${port}`;
+
+const servers = [{ url: backendUrl, description: "API Server" }];
+if (process.env.BACKEND_URL) {
+  servers.push({
+    url: `http://localhost:${port}`,
+    description: "Local development",
+  });
+}
+
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -13,16 +25,7 @@ const options = {
         email: "support@mernholidays.com",
       },
     },
-    servers: [
-      {
-        url: "http://localhost:7002",
-        description: "Development server",
-      },
-      {
-        url: "https://your-production-domain.com",
-        description: "Production server",
-      },
-    ],
+    servers,
     components: {
       securitySchemes: {
         cookieAuth: {
