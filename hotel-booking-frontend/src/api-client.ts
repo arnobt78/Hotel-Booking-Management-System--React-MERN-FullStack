@@ -1,4 +1,4 @@
-import axiosInstance from "./lib/api-client";
+import axiosInstance, { getApiBaseUrl } from "./lib/api-client";
 import { RegisterFormData } from "./pages/Register";
 import { SignInFormData } from "./pages/SignIn";
 import {
@@ -11,6 +11,8 @@ import {
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import { queryClient } from "./main";
+
+export { getApiBaseUrl };
 
 export const fetchCurrentUser = async (): Promise<UserType> => {
   const response = await axiosInstance.get("/api/users/me");
@@ -88,6 +90,7 @@ export const signOut = async () => {
   localStorage.removeItem("user_id");
   localStorage.removeItem("user_email");
   localStorage.removeItem("user_name");
+  localStorage.removeItem("user_image");
 
   return response.data;
 };

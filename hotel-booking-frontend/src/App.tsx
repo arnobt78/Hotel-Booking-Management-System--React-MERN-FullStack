@@ -22,6 +22,7 @@ import Home from "./pages/Home";
 import ApiDocs from "./pages/ApiDocs";
 import ApiStatus from "./pages/ApiStatus";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
+import AuthCallback from "./pages/AuthCallback";
 
 const App = () => {
   const { isLoggedIn } = useAppContext();
@@ -91,6 +92,14 @@ const App = () => {
             <AuthLayout>
               <SignIn />
             </AuthLayout>
+          }
+        />
+        <Route
+          path="/auth/callback"
+          element={
+            <Layout>
+              <AuthCallback />
+            </Layout>
           }
         />
 

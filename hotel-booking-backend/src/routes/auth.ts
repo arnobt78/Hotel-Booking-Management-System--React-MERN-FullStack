@@ -3,9 +3,141 @@ import { check, validationResult } from "express-validator";
 import User from "../models/user";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import verifyToken from "../middleware/auth";
 
 const router = express.Router();
+
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_ID;
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET;
+const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:5174").replace(
+  /\/$/,
+  ""
+);
+const BACKEND_URL = (
+  process.env.BACKEND_URL ||
+  `http://localhost:${process.env.PORT || 5000}`
+).replace(/\/$/, "");
+
+/**
+ * @swagger
+ * /api/auth/google:
+ *   get:
+ *     summary: Initiate Google OAuth
+ *     description: Redirects user to Google sign-in
+ *     tags: [Authentication]
+ */
+router.get("/google", (req: Request, res: Response) => {
+  if (!GOOGLE_CLIENT_ID) {
+    return res.status(500).json({ message: "Google OAuth not configured" });
+  }
+  const state = crypto.randomBytes(32).toString("hex");
+  const redirectUri = `${BACKEND_URL}/api/auth/callback/google`;
+  const scope = "openid email profile";
+  const url = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code&scope=${encodeURIComponent(scope)}&state=${state}&access_type=offline&prompt=consent`;
+  res.redirect(url);
+});
+
+/**
+ * @swagger
+ * /api/auth/callback/google:
+ *   get:
+ *     summary: Google OAuth callback
+ *     description: Handles redirect from Google, creates/logs in user
+ *     tags: [Authentication]
+ */
+router.get("/callback/google", async (req: Request, res: Response) => {
+  const { code, error } = req.query;
+
+  if (error) {
+    return res.redirect(
+      `${FRONTEND_URL}/sign-in?error=${encodeURIComponent(String(error))}`
+    );
+  }
+
+  if (!code || !GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+    return res.redirect(
+      `${FRONTEND_URL}/sign-in?error=oauth_config`
+    );
+  }
+
+  try {
+    const redirectUri = `${BACKEND_URL}/api/auth/callback/google`;
+    const tokenRes = await fetch("https://oauth2.googleapis.com/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        code: String(code),
+        client_id: GOOGLE_CLIENT_ID,
+        client_secret: GOOGLE_CLIENT_SECRET,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+      }),
+    });
+
+    const tokenData = await tokenRes.json();
+    if (tokenData.error) {
+      console.error("Google token error:", tokenData);
+      return res.redirect(
+        `${FRONTEND_URL}/sign-in?error=token_exchange`
+      );
+    }
+
+    const userRes = await fetch(
+      "https://www.googleapis.com/oauth2/v2/userinfo",
+      {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      }
+    );
+    const googleUser = await userRes.json();
+
+    const email = googleUser.email;
+    const name = googleUser.name || "";
+    const [firstName, ...lastParts] = name.split(" ");
+    const lastName = lastParts.join(" ") || firstName;
+    const image = googleUser.picture || undefined;
+
+    let user = await User.findOne({ email });
+    if (!user) {
+      const randomPassword = crypto.randomBytes(32).toString("hex");
+      user = new User({
+        email,
+        firstName: firstName || "User",
+        lastName: lastName || "Google",
+        password: randomPassword,
+        image,
+        emailVerified: true,
+      });
+      await user.save();
+    } else {
+      await User.findByIdAndUpdate(user._id, {
+        image,
+        emailVerified: true,
+      });
+    }
+
+    const token = jwt.sign(
+      { userId: user.id },
+      process.env.JWT_SECRET_KEY as string,
+      { expiresIn: "1d" }
+    );
+
+    const redirectUrl = new URL(`${FRONTEND_URL}/auth/callback`);
+    redirectUrl.searchParams.set("token", token);
+    redirectUrl.searchParams.set("userId", String(user._id));
+    redirectUrl.searchParams.set("email", user.email);
+    redirectUrl.searchParams.set("firstName", user.firstName);
+    redirectUrl.searchParams.set("lastName", user.lastName);
+    if (image) redirectUrl.searchParams.set("image", image);
+
+    res.redirect(redirectUrl.toString());
+  } catch (err) {
+    console.error("Google OAuth error:", err);
+    res.redirect(
+      `${FRONTEND_URL}/sign-in?error=server_error`
+    );
+  }
+});
 
 /**
  * @swagger

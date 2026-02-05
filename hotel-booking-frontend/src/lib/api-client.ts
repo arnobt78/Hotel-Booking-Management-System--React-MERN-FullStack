@@ -23,6 +23,8 @@ const getBaseURL = () => {
   return "https://hotel-booking-backend.duckdns.org";
 };
 
+export const getApiBaseUrl = getBaseURL;
+
 // Extend axios config to include metadata
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   metadata?: { retryCount: number };

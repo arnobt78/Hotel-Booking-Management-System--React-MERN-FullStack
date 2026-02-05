@@ -5,9 +5,10 @@ import { UserType } from "../../../shared/types";
 const userSchema = new mongoose.Schema(
   {
     email: { type: String, required: true, unique: true, index: true },
-    password: { type: String, required: true },
+    password: { type: String, required: true }, // Use random hash for OAuth users
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
+    image: { type: String }, // Profile image URL (from Google OAuth)
     // New fields for better user management
     role: {
       type: String,

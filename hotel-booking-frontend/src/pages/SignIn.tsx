@@ -255,19 +255,23 @@ const SignIn = () => {
                 )}
               </div>
 
+              {/* Divider */}
+              <div className="relative my-6">
+                <Separator className="bg-gray-300" />
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-white text-gray-500">or</span>
+                </div>
+              </div>
+
               {/* Google One-Click Button */}
               <Button
                 type="button"
                 variant="outline"
                 className="w-full py-3 px-4 rounded-md border-2 border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-medium transition-all duration-200 flex items-center justify-center gap-2"
-                onClick={() =>
-                  showToast({
-                    title: "Coming Soon",
-                    description:
-                      "Google sign-in will be available in a future update.",
-                    type: "INFO",
-                  })
-                }
+                onClick={() => {
+                  const baseUrl = apiClient.getApiBaseUrl();
+                  window.location.href = `${baseUrl}/api/auth/google`;
+                }}
               >
                 <svg
                   className="w-5 h-5"
@@ -312,14 +316,6 @@ const SignIn = () => {
                   </div>
                 )}
               </Button>
-
-              {/* Divider */}
-              <div className="relative my-6">
-                <Separator className="bg-gray-300" />
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">or</span>
-                </div>
-              </div>
 
               {/* Registration Link */}
               <div className="text-center">

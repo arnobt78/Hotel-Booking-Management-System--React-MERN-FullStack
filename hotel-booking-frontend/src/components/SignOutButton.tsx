@@ -3,7 +3,7 @@ import { useMutationWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
 import useAppContext from "../hooks/useAppContext";
 import { useNavigate } from "react-router-dom";
-import { LogOut, Trash2, RefreshCw, ChevronDown } from "lucide-react";
+import { LogOut, Trash2, RefreshCw } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,11 +13,14 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
+// Google profile image if exists, otherwise Robohash avatar
 const getAvatarUrl = () => {
+  const image = localStorage.getItem("user_image");
+  if (image) return image; // Google Gmail profile image
   const email = localStorage.getItem("user_email");
   const name = localStorage.getItem("user_name");
   const identifier = email || name || "user";
-  return `https://robohash.org/${encodeURIComponent(identifier)}.png?size=80x80`;
+  return `https://robohash.org/${encodeURIComponent(identifier)}.png?size=80x80&set=set1`;
 };
 
 const SignOutButton = () => {
@@ -95,17 +98,19 @@ const SignOutButton = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="flex items-center gap-2 rounded-full p-0.5 ring-2 ring-white/30 hover:ring-white/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white">
+        <button
+          className="rounded-full p-0.5 ring-2 ring-teal-400/80 hover:ring-teal-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-300"
+          aria-label="Profile menu"
+        >
           <img
             src={getAvatarUrl()}
             alt={displayName}
             className="h-9 w-9 rounded-full object-cover"
             referrerPolicy="no-referrer"
             onError={(e) => {
-              e.currentTarget.src = `https://robohash.org/user.png?size=80x80`;
+              e.currentTarget.src = `https://robohash.org/${encodeURIComponent(displayName)}.png?size=80x80&set=set1`;
             }}
           />
-          <ChevronDown className="w-4 h-4 text-white/90" />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-white" align="end">
