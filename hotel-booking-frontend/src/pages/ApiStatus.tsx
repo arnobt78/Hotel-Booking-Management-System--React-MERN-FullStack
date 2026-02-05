@@ -64,7 +64,7 @@ interface DetailedHealthData {
 const ApiStatus = () => {
   const [isDetailed, setIsDetailed] = useState(false);
   const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:7002";
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
 
   const {
     data: healthData,

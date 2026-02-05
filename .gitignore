@@ -28,3 +28,8 @@ dist-ssr
 .env.e2e
 node_modules
 .cursorignore
+
+# Documentation
+AUTH_UI_IMPLEMENTATION_GUIDE.md
+DROPDOWN_TEST_CREDENTIALS_DOCS.md
+HETZNER_VPS_MIGRATION_GUIDE.md

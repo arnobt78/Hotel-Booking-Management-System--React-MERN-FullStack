@@ -9,15 +9,15 @@ const getBaseURL = () => {
 
   // Fallback URLs
   if (window.location.hostname === "mern-booking-hotel.netlify.app") {
-    return "https://mern-hotel-booking-68ej.onrender.com";
+    return "https://hotel-booking-backend.duckdns.org";
   }
 
   if (window.location.hostname === "localhost") {
-    return "http://localhost:7002";
+    return "http://localhost:5000";
   }
 
-  // Default to production
-  return "https://mern-hotel-booking-68ej.onrender.com";
+  // Default to production (VPS backend)
+  return "https://hotel-booking-backend.duckdns.org";
 };
 
 // Extend axios config to include metadata
