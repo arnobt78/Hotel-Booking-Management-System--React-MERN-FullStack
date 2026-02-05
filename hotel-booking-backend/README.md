@@ -523,10 +523,10 @@ export const getAnalyticsDashboard = async (req: Request, res: Response) => {
 
 ## 🚀 Deployment
 
-### **Render Deployment**
+### **Coolify Deployment (VPS)**
 
 1. **Connect Repository**
-   - Link your GitHub repository to Render
+   - Add your GitHub repository to Coolify
    - Set root directory: `hotel-booking-backend`
 
 2. **Build Configuration**
@@ -537,11 +537,11 @@ export const getAnalyticsDashboard = async (req: Request, res: Response) => {
    ```
 
 3. **Environment Variables**
-   - Set all required environment variables in Render dashboard
+   - Set all required environment variables in Coolify
    - Ensure `NODE_ENV=production`
 
-4. **Auto-Deploy**
-   - Render automatically deploys on push to main branch
+4. **Deploy**
+   - Coolify deploys from your VPS; trigger redeploy after pushing changes
    - Monitor deployment logs for any issues
 
 ### **Production Checklist**
@@ -561,11 +561,11 @@ export const getAnalyticsDashboard = async (req: Request, res: Response) => {
 ### **API Testing**
 
 ```bash
-# Test health endpoint
-curl https://mern-hotel-booking-68ej.onrender.com/api/health
+# Test health endpoint (replace with your backend URL)
+curl https://your-backend-domain.com/api/health
 
 # Test authentication
-curl -X POST https://mern-hotel-booking-68ej.onrender.com/api/auth/login \
+curl -X POST https://your-backend-domain.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"password123"}'
 ```
@@ -577,7 +577,7 @@ curl -X POST https://mern-hotel-booking-68ej.onrender.com/api/auth/login \
 npm install -g artillery
 
 # Run load test
-artillery quick --count 20 --num 10 https://mern-hotel-booking-68ej.onrender.com/api/health
+artillery quick --count 20 --num 10 https://your-backend-domain.com/api/health
 ```
 
 ---
@@ -650,7 +650,7 @@ const searchHotels = async (searchParams: SearchParams) => {
 ```typescript
 // Example: React Native integration
 const apiClient = {
-  baseURL: "https://mern-hotel-booking-68ej.onrender.com/api",
+  baseURL: "https://your-backend-domain.com/api",
 
   async request(endpoint: string, options: RequestInit = {}) {
     const response = await fetch(`${this.baseURL}${endpoint}`, {

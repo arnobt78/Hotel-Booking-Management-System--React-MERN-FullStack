@@ -1130,7 +1130,7 @@ test("should search hotels with filters", async ({ page }) => {
 
 ## 🚀 Deployment
 
-### Backend Deployment (Railway/Heroku)
+### Backend Deployment (Coolify on VPS)
 
 1. **Prepare for deployment:**
 
@@ -1139,17 +1139,14 @@ cd hotel-booking-backend
 npm run build
 ```
 
-1. **Environment variables setup:**
-   - Set all required environment variables in your hosting platform
+2. **Environment variables setup:**
+   - Set all required environment variables in Coolify
    - Ensure MongoDB connection string is production-ready
    - Configure CORS for production domain
 
-2. **Deploy to Render:**
-
-```bash
-# Connect your GitHub repository
-# Render normally doesn't auto-deploy on push to main branch, so everytime you modify anything in backend, you have to redeploy the render server by yourself
-```
+3. **Deploy via Coolify:**
+   - Connect your GitHub repository to Coolify
+   - Redeploy the backend service when you push changes
 
 ### Frontend Deployment (Netlify/Vercel)
 

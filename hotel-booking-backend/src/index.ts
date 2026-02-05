@@ -222,7 +222,7 @@ app.use(
   })
 );
 
-// Dynamic Port Configuration (for Render and local development)
+// Dynamic Port Configuration (for Coolify/VPS and local development)
 const PORT = process.env.PORT || 5000;
 
 const backendBaseUrl =
