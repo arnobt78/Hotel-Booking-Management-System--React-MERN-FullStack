@@ -57,15 +57,15 @@ const UsernameMenu = () => {
           <p className="font-medium">{name || "User"}</p>
           <p className="text-xs text-muted-foreground truncate">{email}</p>
         </div>
-        <Separator className="my-2" />
+        <Separator className="my-2 bg-gray-200" />
         <DropdownMenuItem
           onClick={handleMenuClick}
           asChild
-          className="py-1.5 rounded-md"
+          className="py-1.5 rounded-md cursor-pointer hover:bg-gray-100 focus:bg-gray-100"
         >
           <Link
             to="/add-hotel"
-            className="font-bold hover:text-primary-600 flex items-center gap-2 w-full"
+            className="flex items-center gap-2 w-full font-bold hover:text-primary-600"
           >
             <Plus className="h-4 w-4" />
             Add Hotel
@@ -74,18 +74,18 @@ const UsernameMenu = () => {
         <DropdownMenuItem
           onClick={handleMenuClick}
           asChild
-          className="py-1.5 rounded-md"
+          className="py-1.5 rounded-md cursor-pointer hover:bg-gray-100 focus:bg-gray-100"
         >
           <Link
             to="/my-hotels"
-            className="font-bold hover:text-primary-600 flex items-center gap-2 w-full"
+            className="flex items-center gap-2 w-full font-bold hover:text-primary-600"
           >
             <Building2 className="h-4 w-4" />
             My Hotels
           </Link>
         </DropdownMenuItem>
-        <Separator className="my-2" />
-        <DropdownMenuItem className="py-1.5 rounded-md">
+        <Separator className="my-2 bg-gray-200" />
+        <DropdownMenuItem className="py-1.5 rounded-md cursor-pointer">
           <Button
             onClick={handleLogout}
             className="w-full font-bold bg-primary-600 hover:bg-primary-700 text-white"
