@@ -53,12 +53,16 @@ const UsernameMenu = () => {
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 bg-white p-2">
-        <div className="px-2 py-2">
+        <div className="px-2 py-1">
           <p className="font-medium">{name || "User"}</p>
           <p className="text-xs text-muted-foreground truncate">{email}</p>
         </div>
         <Separator className="my-2" />
-        <DropdownMenuItem onClick={handleMenuClick} asChild className="py-3 rounded-md">
+        <DropdownMenuItem
+          onClick={handleMenuClick}
+          asChild
+          className="py-1.5 rounded-md"
+        >
           <Link
             to="/add-hotel"
             className="font-bold hover:text-primary-600 flex items-center gap-2 w-full"
@@ -67,7 +71,11 @@ const UsernameMenu = () => {
             Add Hotel
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleMenuClick} asChild className="py-3 rounded-md">
+        <DropdownMenuItem
+          onClick={handleMenuClick}
+          asChild
+          className="py-1.5 rounded-md"
+        >
           <Link
             to="/my-hotels"
             className="font-bold hover:text-primary-600 flex items-center gap-2 w-full"
@@ -76,12 +84,11 @@ const UsernameMenu = () => {
             My Hotels
           </Link>
         </DropdownMenuItem>
-        <div className="my-2 py-1 -mx-1 border-t border-border hover:border-primary-300 transition-colors rounded" role="separator" aria-hidden />
-        <DropdownMenuItem className="py-3 rounded-md focus:bg-primary-50">
+        <Separator className="my-2" />
+        <DropdownMenuItem className="py-1.5 rounded-md">
           <Button
             onClick={handleLogout}
-            variant="ghost"
-            className="w-full font-bold text-primary-600 hover:text-primary-700 hover:bg-primary-50 justify-start"
+            className="w-full font-bold bg-primary-600 hover:bg-primary-700 text-white"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Log Out
