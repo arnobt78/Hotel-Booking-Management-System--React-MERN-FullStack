@@ -18,7 +18,12 @@ import {
 } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import BookingLogModal from "../components/BookingLogModal";
 import { useState } from "react";
 import useAppContext from "../hooks/useAppContext";
@@ -38,7 +43,7 @@ const MyHotels = () => {
       onError: () => {},
       loadingMessage: "Loading your hotels...",
       enabled: isLoggedIn,
-    }
+    },
   );
 
   if (!isLoggedIn) {
@@ -74,8 +79,8 @@ const MyHotels = () => {
               </div>
             </div>
             <Link to="/sign-in">
-              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700">
-                <LogIn className="h-4 w-4 mr-2" />
+              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700 mt-4">
+                <LogIn className="h-4 w-4 mr-2 text-white" />
                 Sign In to View My Hotels
               </Button>
             </Link>
@@ -162,7 +167,7 @@ const MyHotels = () => {
               <p className="text-2xl font-bold text-gray-900">
                 {hotelData.reduce(
                   (sum, hotel) => sum + (hotel.totalBookings || 0),
-                  0
+                  0,
                 )}
               </p>
             </div>
@@ -198,7 +203,7 @@ const MyHotels = () => {
                   ? (
                       hotelData.reduce(
                         (sum, hotel) => sum + (hotel.averageRating || 0),
-                        0
+                        0,
                       ) / hotelData.length
                     ).toFixed(1)
                   : "0.0"}

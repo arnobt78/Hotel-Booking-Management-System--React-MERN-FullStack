@@ -3,7 +3,12 @@ import * as apiClient from "../api-client";
 import type { BookingType, HotelWithBookingsType } from "../../../shared/types";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/card";
 import { Link } from "react-router-dom";
 import {
   Calendar,
@@ -30,7 +35,7 @@ const MyBookings = () => {
     {
       loadingMessage: "Loading your bookings...",
       enabled: isLoggedIn,
-    }
+    },
   );
 
   if (!isLoggedIn) {
@@ -52,8 +57,8 @@ const MyBookings = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              To view your bookings, please sign in with your test
-              credentials or your personal account.
+              To view your bookings, please sign in with your test credentials
+              or your personal account.
             </p>
             <div className="flex flex-col gap-2 text-sm mb-4">
               <div className="flex items-center gap-2">
@@ -66,8 +71,8 @@ const MyBookings = () => {
               </div>
             </div>
             <Link to="/sign-in">
-              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700">
-                <LogIn className="h-4 w-4 mr-2" />
+              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700 mt-4">
+                <LogIn className="h-4 w-4 mr-2 text-white" />
                 Sign In to View Bookings
               </Button>
             </Link>
@@ -94,7 +99,7 @@ const MyBookings = () => {
   // Calculate booking statistics
   const totalBookings = hotels.reduce(
     (total, hotel) => total + hotel.bookings.length,
-    0
+    0,
   );
 
   // Count unique hotels by hotel ID
@@ -112,8 +117,8 @@ const MyBookings = () => {
           1,
           Math.ceil(
             (checkOutDate.getTime() - checkInDate.getTime()) /
-              (1000 * 60 * 60 * 24)
-          )
+              (1000 * 60 * 60 * 24),
+          ),
         );
         return hotelTotal + hotel.pricePerNight * nights;
       }, 0)
@@ -247,14 +252,14 @@ const MyBookings = () => {
                     const checkInDate = new Date(booking.checkIn);
                     const checkOutDate = new Date(booking.checkOut);
                     const createdAt = new Date(
-                      booking.createdAt || booking.checkIn
+                      booking.createdAt || booking.checkIn,
                     );
                     const nights = Math.max(
                       1,
                       Math.ceil(
                         (checkOutDate.getTime() - checkInDate.getTime()) /
-                          (1000 * 60 * 60 * 24)
-                      )
+                          (1000 * 60 * 60 * 24),
+                      ),
                     );
                     const totalPrice = hotel.pricePerNight * nights;
 
@@ -268,7 +273,7 @@ const MyBookings = () => {
                           <div className="flex items-center gap-3">
                             <div
                               className={`p-2 rounded-lg ${getStatusColor(
-                                booking.status || "pending"
+                                booking.status || "pending",
                               )}`}
                             >
                               {getStatusIcon(booking.status || "pending")}
@@ -285,7 +290,7 @@ const MyBookings = () => {
                           <div className="flex gap-2">
                             <Badge
                               className={`${getStatusColor(
-                                booking.status || "pending"
+                                booking.status || "pending",
                               )} border`}
                             >
                               {getStatusIcon(booking.status || "pending")}
@@ -295,7 +300,7 @@ const MyBookings = () => {
                             </Badge>
                             <Badge
                               className={`${getPaymentStatusColor(
-                                booking.paymentStatus || "pending"
+                                booking.paymentStatus || "pending",
                               )} border`}
                             >
                               {booking.paymentStatus || "pending"}
