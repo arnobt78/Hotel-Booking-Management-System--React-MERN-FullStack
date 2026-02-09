@@ -52,36 +52,36 @@ const UsernameMenu = () => {
           />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-white">
+      <DropdownMenuContent align="end" className="w-56 bg-white p-2">
         <div className="px-2 py-2">
           <p className="font-medium">{name || "User"}</p>
           <p className="text-xs text-muted-foreground truncate">{email}</p>
         </div>
-        <Separator />
-        <DropdownMenuItem onClick={handleMenuClick} asChild>
+        <Separator className="my-2" />
+        <DropdownMenuItem onClick={handleMenuClick} asChild className="py-3 rounded-md">
           <Link
             to="/add-hotel"
-            className="font-bold hover:text-primary-600 flex items-center gap-2"
+            className="font-bold hover:text-primary-600 flex items-center gap-2 w-full"
           >
             <Plus className="h-4 w-4" />
             Add Hotel
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleMenuClick} asChild>
+        <DropdownMenuItem onClick={handleMenuClick} asChild className="py-3 rounded-md">
           <Link
             to="/my-hotels"
-            className="font-bold hover:text-primary-600 flex items-center gap-2"
+            className="font-bold hover:text-primary-600 flex items-center gap-2 w-full"
           >
             <Building2 className="h-4 w-4" />
             My Hotels
           </Link>
         </DropdownMenuItem>
-        <Separator />
-        <DropdownMenuItem>
+        <div className="my-2 py-1 -mx-1 border-t border-border hover:border-primary-300 transition-colors rounded" role="separator" aria-hidden />
+        <DropdownMenuItem className="py-3 rounded-md focus:bg-primary-50">
           <Button
             onClick={handleLogout}
             variant="ghost"
-            className="w-full font-bold text-primary-600 hover:text-primary-700 hover:bg-primary-50"
+            className="w-full font-bold text-primary-600 hover:text-primary-700 hover:bg-primary-50 justify-start"
           >
             <LogOut className="h-4 w-4 mr-2" />
             Log Out
