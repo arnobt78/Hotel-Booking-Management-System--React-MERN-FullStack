@@ -103,6 +103,23 @@ const App = () => {
           }
         />
 
+        <Route
+          path="/my-hotels"
+          element={
+            <Layout>
+              <MyHotels />
+            </Layout>
+          }
+        />
+        <Route
+          path="/my-bookings"
+          element={
+            <Layout>
+              <MyBookings />
+            </Layout>
+          }
+        />
+
         {isLoggedIn && (
           <>
             <Route
@@ -113,7 +130,6 @@ const App = () => {
                 </Layout>
               }
             />
-
             <Route
               path="/add-hotel"
               element={
@@ -127,22 +143,6 @@ const App = () => {
               element={
                 <Layout>
                   <EditHotel />
-                </Layout>
-              }
-            />
-            <Route
-              path="/my-hotels"
-              element={
-                <Layout>
-                  <MyHotels />
-                </Layout>
-              }
-            />
-            <Route
-              path="/my-bookings"
-              element={
-                <Layout>
-                  <MyBookings />
                 </Layout>
               }
             />

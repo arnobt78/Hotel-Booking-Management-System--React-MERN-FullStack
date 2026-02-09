@@ -12,12 +12,19 @@ import {
   Star,
   Building2,
   Calendar,
+  LogIn,
+  UserCircle,
+  CreditCard,
 } from "lucide-react";
 import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import BookingLogModal from "../components/BookingLogModal";
 import { useState } from "react";
+import useAppContext from "../hooks/useAppContext";
 
 const MyHotels = () => {
+  const { isLoggedIn } = useAppContext();
   const [selectedHotel, setSelectedHotel] = useState<{
     id: string;
     name: string;
@@ -30,8 +37,53 @@ const MyHotels = () => {
     {
       onError: () => {},
       loadingMessage: "Loading your hotels...",
+      enabled: isLoggedIn,
     }
   );
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] px-4">
+        <Card className="max-w-lg w-full">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-primary-100">
+                <Building2 className="h-8 w-8 text-primary-600" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">My Hotels</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Manage your hotel listings and bookings
+                </p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              To view and manage your hotels, please sign in with your test
+              credentials or your personal account.
+            </p>
+            <div className="flex flex-col gap-2 text-sm mb-4">
+              <div className="flex items-center gap-2">
+                <UserCircle className="h-4 w-4 text-primary-600" />
+                <span>Test credentials: test@user.com / 12345678</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary-600" />
+                <span>Or use your own registered account</span>
+              </div>
+            </div>
+            <Link to="/sign-in">
+              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700">
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign In to View My Hotels
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const handleOpenBookingLog = (hotelId: string, hotelName: string) => {
     setSelectedHotel({ id: hotelId, name: hotelName });

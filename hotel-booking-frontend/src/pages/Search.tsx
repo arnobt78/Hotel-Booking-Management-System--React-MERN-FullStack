@@ -1,7 +1,8 @@
+import { useSearchParams } from "react-router-dom";
 import useSearchContext from "../hooks/useSearchContext";
 import { useQueryWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SearchResultsCard from "../components/SearchResultsCard";
 import Pagination from "../components/Pagination";
 import StarRatingFilter from "../components/StarRatingFilter";
@@ -11,8 +12,27 @@ import PriceFilter from "../components/PriceFilter";
 import SearchBar from "../components/SearchBar";
 
 const Search = () => {
+  const [urlSearchParams] = useSearchParams();
   const search = useSearchContext();
   const [page, setPage] = useState<number>(1);
+
+  // Sync URL params to search context when navigating with query string (e.g. Hotels nav link)
+  useEffect(() => {
+    const destination = urlSearchParams.get("destination");
+    const checkIn = urlSearchParams.get("checkIn");
+    const checkOut = urlSearchParams.get("checkOut");
+    const adultCount = urlSearchParams.get("adultCount");
+    const childCount = urlSearchParams.get("childCount");
+    if (checkIn && checkOut) {
+      search.saveSearchValues(
+        destination || "",
+        new Date(checkIn),
+        new Date(checkOut),
+        parseInt(adultCount || "1", 10),
+        parseInt(childCount || "1", 10)
+      );
+    }
+  }, [urlSearchParams.toString()]);
   const [selectedStars, setSelectedStars] = useState<string[]>([]);
   const [selectedHotelTypes, setSelectedHotelTypes] = useState<string[]>([]);
   const [selectedFacilities, setSelectedFacilities] = useState<string[]>([]);

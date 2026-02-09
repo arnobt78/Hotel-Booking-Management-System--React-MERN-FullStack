@@ -226,20 +226,18 @@ export const fetchHotelBookings = async (
   return response.data;
 };
 
-// Business Insights API functions
+// Business Insights API functions (public endpoints - no auth required)
 export const fetchBusinessInsightsDashboard = async () => {
-  const response = await axiosInstance.get("/api/business-insights/dashboard");
+  const response = await axiosInstance.get("/api/business-insights/dashboard/public");
   return response.data;
 };
 
 export const fetchBusinessInsightsForecast = async () => {
-  const response = await axiosInstance.get("/api/business-insights/forecast");
+  const response = await axiosInstance.get("/api/business-insights/forecast/public");
   return response.data;
 };
 
 export const fetchBusinessInsightsPerformance = async () => {
-  const response = await axiosInstance.get(
-    "/api/business-insights/system-stats"
-  );
+  const response = await axiosInstance.get("/api/business-insights/system-stats/public");
   return response.data;
 };

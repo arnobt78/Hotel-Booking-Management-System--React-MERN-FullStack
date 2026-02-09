@@ -2,6 +2,9 @@ import { useQueryWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
 import type { BookingType, HotelWithBookingsType } from "../../../shared/types";
 import { Badge } from "../components/ui/badge";
+import { Button } from "../components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Link } from "react-router-dom";
 import {
   Calendar,
   Users,
@@ -14,16 +17,65 @@ import {
   TrendingUp,
   Package,
   DollarSign,
+  LogIn,
+  UserCircle,
 } from "lucide-react";
+import useAppContext from "../hooks/useAppContext";
 
 const MyBookings = () => {
+  const { isLoggedIn } = useAppContext();
   const { data: hotels } = useQueryWithLoading<HotelWithBookingsType[]>(
     "fetchMyBookings",
     apiClient.fetchMyBookings,
     {
       loadingMessage: "Loading your bookings...",
+      enabled: isLoggedIn,
     }
   );
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px] px-4">
+        <Card className="max-w-lg w-full">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-3 rounded-full bg-primary-100">
+                <Calendar className="h-8 w-8 text-primary-600" />
+              </div>
+              <div>
+                <CardTitle className="text-xl">My Bookings</CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Track your hotel reservations and booking details
+                </p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-muted-foreground">
+              To view your bookings, please sign in with your test
+              credentials or your personal account.
+            </p>
+            <div className="flex flex-col gap-2 text-sm mb-4">
+              <div className="flex items-center gap-2">
+                <UserCircle className="h-4 w-4 text-primary-600" />
+                <span>Test credentials: test@user.com / 12345678</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-primary-600" />
+                <span>Or use your own registered account</span>
+              </div>
+            </div>
+            <Link to="/sign-in">
+              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700">
+                <LogIn className="h-4 w-4 mr-2" />
+                Sign In to View Bookings
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   if (!hotels || hotels.length === 0) {
     return (
