@@ -3,7 +3,7 @@
 A comprehensive, production-ready hotel booking platform built with the MERN stack (MongoDB, Express.js, React, Node.js) featuring advanced search, booking management, analytics dashboard, and payment integration.
 
 - **Frontend-Live-Demo:** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
-- **Backend-Live-Demo:** [https://hotel-booking-backend.duckdns.org](https://hotel-booking-backend.duckdns.org)
+- **Backend-Live-Demo:** [https://hotel-booking-backend.arnobmahmud.com](https://hotel-booking-backend.arnobmahmud.com)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)
@@ -1138,12 +1138,12 @@ cd hotel-booking-backend
 npm run build
 ```
 
-2. **Environment variables setup:**
+1. **Environment variables setup:**
    - Set all required environment variables in Coolify
    - Ensure MongoDB connection string is production-ready
    - Configure CORS for production domain
 
-3. **Deploy via Coolify:**
+2. **Deploy via Coolify:**
    - Connect your GitHub repository to Coolify
    - Redeploy the backend service when you push changes
 

@@ -3,7 +3,7 @@
 A modern, responsive frontend application for the Hotel Booking Management System. Built with React 18, TypeScript, Vite, and Tailwind CSS, featuring advanced search, booking management, and seamless user experience across all devices.
 
 - **Frontend-Live-Demo:** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
-- **Backend-Live-Demo:** [https://hotel-booking-backend.duckdns.org](https://hotel-booking-backend.duckdns.org)
+- **Backend-Live-Demo:** [https://hotel-booking-backend.arnobmahmud.com](https://hotel-booking-backend.arnobmahmud.com)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
 ![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)

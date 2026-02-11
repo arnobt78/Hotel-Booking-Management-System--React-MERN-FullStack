@@ -3,7 +3,7 @@
 A production-ready, scalable backend API for the Hotel Booking Management System. Built with Node.js, Express.js, TypeScript, and MongoDB, featuring secure authentication, real-time booking management, and third-party integrations.
 
 - **Frontend-Live-Demo:** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
-- **Backend-Live-Demo:** [https://hotel-booking-backend.duckdns.org](https://hotel-booking-backend.duckdns.org)
+- **Backend-Live-Demo:** [https://hotel-booking-backend.arnobmahmud.com](https://hotel-booking-backend.arnobmahmud.com)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
 ![MernHolidays](https://img.shields.io/badge/MERN-Stack-blue?style=for-the-badge&logo=mongodb&logoColor=white)
