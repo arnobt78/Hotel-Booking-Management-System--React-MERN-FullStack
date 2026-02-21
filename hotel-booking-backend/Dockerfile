@@ -26,7 +26,8 @@ COPY --from=builder /app/shared ./shared
 
 WORKDIR /app/hotel-booking-backend
 
-EXPOSE 5000
+# App uses process.env.PORT || 5000 (local default 5000). In Coolify set PORT=3000 and Ports Mappings 5001:3000.
+EXPOSE 3000
 
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
   CMD node -e "require('http').get('http://localhost:' + (process.env.PORT || 5000) + '/api/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))"
