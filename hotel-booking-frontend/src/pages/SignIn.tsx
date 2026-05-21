@@ -282,7 +282,7 @@ const SignIn = () => {
                 </div>
               </div>
 
-              {/* Google One-Click Button */}
+              {/* Google OAuth starts on backend; redirect_uri port must match PORT / VITE_API_BASE_URL */}
               <Button
                 type="button"
                 variant="outline"

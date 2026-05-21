@@ -1,7 +1,7 @@
 import path from "path";
 import swaggerJsdoc from "swagger-jsdoc";
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 const backendUrl =
   process.env.BACKEND_URL?.replace(/\/$/, "") || `http://localhost:${port}`;
 

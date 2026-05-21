@@ -10,13 +10,16 @@ const router = express.Router();
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_SECRET;
+// Local dev: Vite on 5174. OAuth success/error redirects use this origin (not a Google redirect URI).
 const FRONTEND_URL = (process.env.FRONTEND_URL || "http://localhost:5174").replace(
   /\/$/,
   ""
 );
+// Google Console "Authorized redirect URI" must match exactly: {BACKEND_URL}/api/auth/callback/google
+// Default PORT 5001 (5000 blocked on many Macs). Keep PORT, VITE_API_BASE_URL, Google redirect in sync.
 const BACKEND_URL = (
   process.env.BACKEND_URL ||
-  `http://localhost:${process.env.PORT || 5000}`
+  `http://localhost:${process.env.PORT || 5001}`
 ).replace(/\/$/, "");
 
 /**

@@ -1,13 +1,12 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
-// Define base URL based on environment
+// API origin: copy .env.local.example → .env.local. Canonical local backend port is 5001 (see backend PORT).
 const getBaseURL = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
 
-  // Fallback URLs (production domains)
   if (
     window.location.hostname === "mern-booking-hotel.netlify.app" ||
     window.location.hostname.includes("vercel.app")
@@ -15,8 +14,9 @@ const getBaseURL = () => {
     return "https://hotel-booking-backend.duckdns.org";
   }
 
+  // Must match hotel-booking-backend PORT (default 5001) when VITE_API_BASE_URL is unset.
   if (window.location.hostname === "localhost") {
-    return "http://localhost:5000";
+    return "http://localhost:5001";
   }
 
   // Default to production (VPS backend)

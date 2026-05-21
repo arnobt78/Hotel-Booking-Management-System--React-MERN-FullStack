@@ -9,7 +9,7 @@ import {
 
 const ApiDocs = () => {
   const apiBaseUrl =
-    import.meta.env.VITE_API_BASE_URL || "http://localhost:5000";
+    import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
   const apiEndpoints = [
     {

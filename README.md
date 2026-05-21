@@ -442,7 +442,7 @@ Create environment files for both frontend and backend (see [Environment Variabl
 ```bash
 cd hotel-booking-backend
 npm run dev
-# Server runs on http://localhost:7002
+# Server runs on http://localhost:5001
 ```
 
 #### Frontend Server
@@ -456,8 +456,8 @@ npm run dev
 ### Step 5: Access the Application
 
 - **Frontend**: <http://localhost:5174>
-- **Backend API**: <http://localhost:7002>
-- **API Documentation**: <http://localhost:7002/api-docs>
+- **Backend API**: <http://localhost:5001>
+- **API Documentation**: <http://localhost:5001/api-docs>
 
 ---
 
@@ -469,7 +469,7 @@ Create a `.env` file in the `hotel-booking-backend` directory:
 
 ```env
 # Server Configuration
-PORT=7002
+PORT=5001
 NODE_ENV=development
 
 # MongoDB Connection
@@ -506,7 +506,7 @@ Create a `.env` file in the `hotel-booking-frontend` directory:
 
 ```env
 # API Configuration
-VITE_API_BASE_URL=http://localhost:7002
+VITE_API_BASE_URL=http://localhost:5001
 
 # Stripe Configuration
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your-stripe-publishable-key

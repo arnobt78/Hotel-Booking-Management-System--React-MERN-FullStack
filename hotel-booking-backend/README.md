@@ -78,7 +78,7 @@ Create a `.env` file in the root directory:
 
 ```env
 # Server Configuration
-PORT=7002
+PORT=5001
 NODE_ENV=development
 
 # Database

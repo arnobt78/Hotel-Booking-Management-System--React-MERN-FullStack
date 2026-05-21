@@ -42,7 +42,7 @@ console.log("✅ All required environment variables are present");
 console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
 console.log(`🔗 Frontend URL: ${process.env.FRONTEND_URL || "Not set"}`);
 console.log(
-  `🔗 Backend URL: ${process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5000}`}`
+  `🔗 Backend URL: ${process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 5001}`}`
 );
 
 cloudinary.config({
@@ -222,8 +222,8 @@ app.use(
   })
 );
 
-// Dynamic Port Configuration (for Coolify/VPS and local development)
-const PORT = process.env.PORT || 5000;
+// Default 5001: macOS AirPlay (Control Center) often binds 5000. Override via PORT in .env.
+const PORT = process.env.PORT || 5001;
 
 const backendBaseUrl =
   process.env.BACKEND_URL?.replace(/\/$/, "") || `http://localhost:${PORT}`;

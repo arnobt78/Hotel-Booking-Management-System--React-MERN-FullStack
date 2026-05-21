@@ -77,7 +77,7 @@ Create a `.env` file in the root directory:
 
 ```env
 # API Configuration
-VITE_API_BASE_URL=http://localhost:5000
+VITE_API_BASE_URL=http://localhost:5001
 
 # Payment Processing
 VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your-stripe-publishable-key
