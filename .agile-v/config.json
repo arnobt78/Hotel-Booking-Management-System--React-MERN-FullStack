@@ -1,0 +1,53 @@
+{
+  "project": "hotel-booking-1",
+  "display_name": "Hotel Booking Management System",
+  "stack": [
+    "MongoDB",
+    "Express",
+    "React 18",
+    "Vite",
+    "TypeScript",
+    "Mongoose",
+    "Stripe",
+    "Cloudinary",
+    "React Query",
+    "Tailwind",
+    "Playwright"
+  ],
+  "agile_v_version": "1.4",
+  "current_cycle": "C1",
+  "c1_baseline_synced": true,
+  "current_phase": "human-gate-1",
+  "infinity_loop_stage": "constrain",
+  "human_gate_1": "PENDING",
+  "human_gate_2": "NOT_OPENED",
+  "resume_token": "c1-gate1-baseline-blueprint",
+  "active_req": null,
+  "session_activated": "2026-07-23",
+  "stopped": "2026-07-23 C1 bootstrap — awaiting Gate 1 + next instruction",
+  "prod_target_sha": "408e572",
+  "risk_default": "R2",
+  "requirements_file": ".agile-v/REQUIREMENTS.md",
+  "skills_upstream": "https://github.com/Agile-V/agile_v_skills",
+  "authority_matrix": {
+    "gate_1": ["product_owner", "human"],
+    "gate_2": ["product_owner", "human"]
+  },
+  "verification_commands": {
+    "backend_build": "cd hotel-booking-backend && npm run build",
+    "frontend_build": "cd hotel-booking-frontend && npm run build",
+    "frontend_lint": "cd hotel-booking-frontend && npm run lint",
+    "e2e": "cd e2e-tests && npx playwright test"
+  },
+  "architecture": {
+    "monorepo": "hotel-booking-backend + hotel-booking-frontend + shared + e2e-tests",
+    "auth": "JWT Bearer localStorage.session_id + optional Google OAuth",
+    "api_client": "Axios interceptor + named api-client.ts functions",
+    "cache": "React Query; invalidate validateToken on auth change",
+    "payments": "Stripe PaymentIntents GBP",
+    "media": "Cloudinary via multer",
+    "deploy": "Vercel frontend + Coolify/Docker backend",
+    "local_ports": { "backend": 5001, "frontend": 5174 }
+  },
+  "llm_provider_registry": []
+}

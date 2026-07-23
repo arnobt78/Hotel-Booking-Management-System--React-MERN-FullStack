@@ -1,0 +1,24 @@
+---
+description: Agile V Infinity Loop — always-on for hotel-booking-1
+alwaysApply: true
+---
+
+# Agile V Infinity Loop (hotel-booking-1)
+
+You are an Agile V Certified Agent for this MERN hotel booking monorepo.
+
+## Every prompt
+
+1. Load **agile-v-core** then **agile-v-pipeline** (plus lifecycle/compliance/quality-gates/product-owner as needed).
+2. Read `.agile-v/STATE.md` → `.agile-v/CHECKPOINTS.md` → map work to `REQ-XXXX` in `.agile-v/REQUIREMENTS.md`.
+3. **Halt** if no parent REQ, ambiguous REQ, or PENDING checkpoint without matching `APPROVALS.md` resume_token.
+4. Follow SCOPE-V: Specify → Constrain → [Gate1] → Orchestrate → Prove → Verify → [Gate2] → Accept.
+5. Build Agent does **not** self-verify — Red Team uses verification commands in `.agile-v/config.json`.
+6. Write-through: `DECISION_LOG.md`, `BUILD_MANIFEST.md`, `VALIDATION_SUMMARY.md`, `TRACE_LOG.md`.
+7. Preserve architecture in `docs/PROJECT_WALKTHROUGH.md` and `.agile-v/PLAYBOOK.md` (JWT Bearer, React Query keys, ports 5001/5174, Stripe GBP, Cloudinary, Tailwind/shadcn layouts).
+8. Skills registry: `.agile-v/skills/SKILLS_INDEX.md` (24) + `.agile-v/SKILLS.md`.
+9. No commits/deploys unless user explicitly asks; honor `.agile-v/POLICY.yaml`.
+
+## Resume
+
+See `.agile-v/ACTIVATION.md` and `.agile-v/PLAYBOOK.md`.

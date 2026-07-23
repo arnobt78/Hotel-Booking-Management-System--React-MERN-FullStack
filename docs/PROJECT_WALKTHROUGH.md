@@ -595,9 +595,16 @@ npm run dev            # → http://localhost:5174
 
 | File                                          | Topic                               |
 | --------------------------------------------- | ----------------------------------- |
+| `../README.md`                                | Educational project README          |
+| `../SECURITY.md`                              | Private vulnerability reporting     |
+| `../CLAUDE.md` / `../AGENTS.md`               | Agent / Agile V session memory      |
 | `AUTH_UI_IMPLEMENTATION_GUIDE.md`             | Auth UI patterns                    |
 | `CLERK_AUTH_COMPLETE_IMPLEMENTATION_GUIDE.md` | Clerk migration (not current stack) |
 | `DROPDOWN_TEST_CREDENTIALS_DOCS.md`           | Test credentials                    |
+
+**Deploy note (2026-07):** README Deployment = Optional Diploi launch → Coolify backend → Vercel/Netlify frontend. Production demos remain Coolify + Vercel.
+
+**Env note:** Frontend Stripe pub key env is `VITE_STRIPE_PUB_KEY` (see `AppContext`). Backend still fail-fast on required secrets.
 
 ---
 
@@ -627,4 +634,4 @@ Shared
 
 ---
 
-_Last aligned with codebase: local backend port **5001**, frontend **5174**, JWT in `localStorage`, production URLs on Vercel + duckdns._
+_Last aligned with codebase: local backend port **5001**, frontend **5174**, JWT in `localStorage`, production URLs on Vercel + Coolify; README/SECURITY/Diploi optional deploy (2026-07)._
