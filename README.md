@@ -14,7 +14,7 @@
 A production-style **hotel booking platform** for learning full-stack TypeScript: guests search and book with **Stripe**, owners manage hotels with **Cloudinary** images, and everyone can explore a **Business Insights** dashboard. Built as a **MERN** monorepo (MongoDB · Express · React · Node) with a Vite SPA frontend.
 
 - **Frontend (live):** [https://hotel-mern-booking.vercel.app/](https://hotel-mern-booking.vercel.app/)
-- **Backend (live):** [https://hotel-booking-backend.arnobmahmud.com](https://hotel-booking-backend.arnobmahmud.com) · API docs at `{BACKEND}/api-docs`
+- **Backend (live):** [https://hotel-booking-backend.arnobmahmud.com](https://hotel-booking-backend.arnobmahmud.com)
 - **Security:** please report vulnerabilities privately — see [SECURITY.md](./SECURITY.md)
 
 ![Screenshot 2025-09-04 at 12 02 23](https://github.com/user-attachments/assets/7b87581f-8a1a-4de4-99c3-ba5fab14f20d)
@@ -33,10 +33,6 @@ A production-style **hotel booking platform** for learning full-stack TypeScript
 ![Screenshot 2025-09-04 at 12 10 04](https://github.com/user-attachments/assets/68552511-83ac-42fa-8f54-99c926e3015d)
 ![Screenshot 2025-09-04 at 12 10 20](https://github.com/user-attachments/assets/a5d236d7-3a07-493d-b966-afdafa83b383)
 ![Screenshot 2025-09-04 at 12 10 33](https://github.com/user-attachments/assets/539c4d39-ca89-4383-9abd-1fa3dc184e50)
-![Screenshot 2025-09-04 at 12 10 51](https://github.com/user-attachments/assets/22ea115f-3383-4dcb-9540-448d4639383f)
-![Screenshot 2025-09-04 at 12 11 04](https://github.com/user-attachments/assets/20c8c57e-c224-4abe-b64d-1c0eb3fbcc91)
-
----
 
 ## Table of contents
 
@@ -477,10 +473,10 @@ Base URL local: `http://localhost:5001`
 
 ### Health — `/api/health`
 
-| Method | Path        | Description    |
-| ------ | ----------- | -------------- |
-| GET    | `/`         | DB + memory    |
-| GET    | `/detailed` | Extended stats |
+| Method | Path        | Description                                                      |
+| ------ | ----------- | ---------------------------------------------------------------- |
+| GET    | `/`         | Public liveness (`status`, `timestamp`, `database.status` only)  |
+| GET    | `/detailed` | JWT — rounded memory MB + uptime (no host/PID/Node)              |
 
 ### Business insights — `/api/business-insights`
 

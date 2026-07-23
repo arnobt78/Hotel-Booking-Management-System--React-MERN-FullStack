@@ -10,7 +10,7 @@
 | **Phase** | Stage 3–4 — REQ-0034 security fix done |
 | **Status** | VulDB health CWE-200 patched · RQ invalidation wired |
 | **Last REQ** | **REQ-0034** |
-| **HEAD** | local (push pending) |
+| **HEAD** | **`d47ae0e`** pushed `main` |
 | **Resume token** | `c1-gate1-baseline-blueprint` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
