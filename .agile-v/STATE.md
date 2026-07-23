@@ -10,7 +10,7 @@
 | **Phase** | Stage 2 — Gate 1 PENDING · docs Stage 3 done |
 | **Status** | REQ-0033 shipped (local→commit) · app Redis/SSR N/A |
 | **Last REQ** | **REQ-0033** |
-| **HEAD** | docs commit pending push |
+| **HEAD** | **`2e000b2`** pushed `main` |
 | **Resume token** | `c1-gate1-baseline-blueprint` |
 | **CHECKPOINTS** | INT-0001 PENDING |
 
