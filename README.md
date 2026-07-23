@@ -1129,7 +1129,23 @@ test("should search hotels with filters", async ({ page }) => {
 
 ## 🚀 Deployment
 
-### Backend Deployment (Coolify on VPS)
+### Option 1 (Diploi)
+
+[![launch with diploi button](https://diploi.com/launch-big.svg)](https://diploi.com/launch/arnobt78/Hotel-Booking-Management-System--React-MERN-FullStack)
+
+1. Launch the project in Diploi
+
+Click the launch button above to create a new deployment in Diploi.
+
+2. Open the preview URL
+
+Once the deployment finishes, open the preview URL shown on the Diploi deployment page.
+
+For more information, visit [diploi.com](https://diploi.com/).
+
+### Option 2
+
+#### Backend Deployment (Coolify on VPS)
 
 1. **Prepare for deployment:**
 
@@ -1147,7 +1163,7 @@ npm run build
    - Connect your GitHub repository to Coolify
    - Redeploy the backend service when you push changes
 
-### Frontend Deployment (Netlify/Vercel)
+#### Frontend Deployment (Netlify/Vercel)
 
 1. **Build the application:**
 
