@@ -288,10 +288,14 @@ export const fetchBusinessInsightsForecast = async () => {
   return response.data;
 };
 
-export const fetchBusinessInsightsPerformance = async () => {
+/** Public/auth ops figures (system-stats) — avoids /performance in the URL */
+export const fetchBusinessInsightsSystemStats = async () => {
   const response = await axiosInstance.get("/api/business-insights/system-stats/public");
   return response.data;
 };
+
+/** @deprecated Prefer fetchBusinessInsightsSystemStats */
+export const fetchBusinessInsightsPerformance = fetchBusinessInsightsSystemStats;
 
 /** Admin: all users */
 export const fetchAdminUsers = async (): Promise<UserType[]> => {
@@ -345,7 +349,7 @@ export const fetchAdminReviews = async (): Promise<ReviewType[]> => {
   return response.data;
 };
 
-export type AnalyticsSnapshot = {
+export type BusinessInsightsRollup = {
   _id: string;
   date: string | Date;
   metrics: {
@@ -360,17 +364,28 @@ export type AnalyticsSnapshot = {
   };
 };
 
-/** Admin: list Analytics snapshots */
-export const fetchAnalyticsSnapshots = async (): Promise<AnalyticsSnapshot[]> => {
-  const response = await axiosInstance.get("/api/analytics/snapshots");
+/** @deprecated Prefer BusinessInsightsRollup */
+export type AnalyticsSnapshot = BusinessInsightsRollup;
+
+/** Admin: list business-insights rollups (blocker-safe; not under /analytics) */
+export const fetchBusinessInsightsRollups = async (): Promise<
+  BusinessInsightsRollup[]
+> => {
+  const response = await axiosInstance.get("/api/business-insights/rollups");
   return response.data;
 };
 
-/** Admin: capture live metrics into Analytics */
-export const createAnalyticsSnapshot = async (): Promise<AnalyticsSnapshot> => {
-  const response = await axiosInstance.post("/api/analytics/snapshots");
+/** Admin: capture a live rollup */
+export const createBusinessInsightsRollup = async (): Promise<BusinessInsightsRollup> => {
+  const response = await axiosInstance.post("/api/business-insights/rollups");
   return response.data;
 };
+
+/** @deprecated Prefer fetchBusinessInsightsRollups */
+export const fetchAnalyticsSnapshots = fetchBusinessInsightsRollups;
+
+/** @deprecated Prefer createBusinessInsightsRollup */
+export const createAnalyticsSnapshot = createBusinessInsightsRollup;
 
 /**
  * AI draft assist — returns text only; caller must Apply (never auto-save).

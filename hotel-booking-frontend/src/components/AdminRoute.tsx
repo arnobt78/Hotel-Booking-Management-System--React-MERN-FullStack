@@ -14,7 +14,7 @@ const AdminRoute = ({ children }: Props) => {
   const { data: user, isLoading } = useQuery(
     "fetchCurrentUser",
     apiClient.fetchCurrentUser,
-    { enabled: isLoggedIn }
+    { enabled: isLoggedIn },
   );
 
   if (!isLoggedIn) {
@@ -24,7 +24,7 @@ const AdminRoute = ({ children }: Props) => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="h-10 w-48 bg-slate-200 rounded-lg animate-pulse" />
+        <div className="h-10 w-48 bg-slate-200 rounded-xl animate-pulse" />
       </div>
     );
   }

@@ -242,7 +242,7 @@ const SearchBar = () => {
               onBlur={() => setShowDropdown(false)}
             />
             {showDropdown && !isInitialMount && (
-              <ul className="absolute top-full left-0 w-full bg-white p-2 border border-input rounded-md shadow-lg z-10 max-h-40 overflow-y-auto">
+              <ul className="absolute top-full left-0 w-full bg-white p-2 border border-input rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto">
                 {filteredPlaces.map((place) => (
                   <li
                     key={place}
@@ -269,7 +269,7 @@ const SearchBar = () => {
               minDate={minDate}
               maxDate={maxDate}
               placeholderText="Check-in Date"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-0 focus-visible:border-primary-500 disabled:cursor-not-allowed disabled:opacity-50"
               wrapperClassName="min-w-full"
             />
           </div>
@@ -283,7 +283,7 @@ const SearchBar = () => {
               minDate={minDate}
               maxDate={maxDate}
               placeholderText="Check-out Date"
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="flex h-10 w-full rounded-xl border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-0 focus-visible:border-primary-500 disabled:cursor-not-allowed disabled:opacity-50"
               wrapperClassName="min-w-full"
             />
           </div>
@@ -323,14 +323,14 @@ const SearchBar = () => {
           <div className="flex flex-col sm:flex-row gap-2 sm:col-span-2 lg:col-span-1">
             <Button
               type="submit"
-              className="flex-1 items-center text-white bg-primary-600 px-6 py-2 rounded-md font-medium hover:bg-primary-500 hover:shadow-medium transition-all duration-200 group"
+              className="flex-1 items-center text-white bg-primary-600 px-6 py-2 rounded-xl font-medium hover:bg-primary-500 hover:shadow-medium transition-all duration-200 group"
             >
               Search
             </Button>
             <Button
               type="button"
               variant="secondary"
-              className="flex-1 items-center text-white bg-gray-500 px-6 py-2 rounded-md font-medium hover:bg-gray-400 hover:shadow-medium transition-all duration-200 group"
+              className="flex-1 items-center text-white bg-gray-500 px-6 py-2 rounded-xl font-medium hover:bg-gray-400 hover:shadow-medium transition-all duration-200 group"
               onClick={handleClear}
             >
               Clear

@@ -98,7 +98,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
               </div>
             </div>
 
-            <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 hover:bg-white/30 transition-colors">
+            <div className="bg-white/20 backdrop-blur-sm rounded-xl px-3 py-1 hover:bg-white/30 transition-colors">
               <span className="text-sm font-medium text-white">
                 View Details
               </span>

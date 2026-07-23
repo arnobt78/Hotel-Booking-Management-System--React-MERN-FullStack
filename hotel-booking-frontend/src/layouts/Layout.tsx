@@ -18,7 +18,7 @@ const Layout = ({ children }: Props) => {
     <div className="flex flex-col min-h-screen">
       <Header />
       {/* <Hero /> */}
-      {/* <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
         <SearchBar />
       </div> */}
       {isHomePage ? (

@@ -21,7 +21,7 @@ const AdminReviews = () => {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-16 bg-slate-200 animate-pulse rounded-lg"
+              className="h-16 bg-slate-200 animate-pulse rounded-xl"
             />
           ))}
         </div>

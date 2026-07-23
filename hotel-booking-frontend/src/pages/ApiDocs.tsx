@@ -149,7 +149,7 @@ const ApiDocs = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-medium text-gray-700 mb-4">
@@ -163,9 +163,9 @@ const ApiDocs = () => {
         </div>
 
         {/* API Base URL */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
           <h2 className="text-2xl font-medium text-gray-700 mb-4">Base URL</h2>
-          <div className="bg-gray-100 rounded-lg p-4">
+          <div className="bg-gray-100 rounded-xl p-4">
             <code className="text-lg font-mono text-gray-700">
               {apiBaseUrl}
             </code>
@@ -176,7 +176,7 @@ const ApiDocs = () => {
         </div>
 
         {/* Swagger UI Link */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-lg font-medium text-blue-900 mb-2">
@@ -192,7 +192,7 @@ const ApiDocs = () => {
               href={`${apiBaseUrl}/api-docs`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
             >
               <ExternalLink className="w-4 h-4 mr-2" />
               Open Swagger UI
@@ -205,7 +205,7 @@ const ApiDocs = () => {
           {apiEndpoints.map((category) => (
             <div
               key={category.category}
-              className="bg-white rounded-lg shadow-sm border"
+              className="bg-white rounded-xl shadow-sm border"
             >
               <div className="border-b border-gray-200 px-6 py-4">
                 <div className="flex items-center">
@@ -243,7 +243,7 @@ const ApiDocs = () => {
         </div>
 
         {/* Authentication Section */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mt-8">
+        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
           <h2 className="text-2xl font-medium text-gray-700 mb-4">
             Authentication
           </h2>
@@ -252,7 +252,7 @@ const ApiDocs = () => {
               The API uses JWT (JSON Web Tokens) for authentication. Most
               endpoints require authentication via HTTP-only cookies.
             </p>
-            <div className="bg-gray-100 rounded-lg p-4">
+            <div className="bg-gray-100 rounded-xl p-4">
               <h4 className="font-medium text-gray-700 mb-2">
                 Authentication Flow:
               </h4>
@@ -267,14 +267,14 @@ const ApiDocs = () => {
         </div>
 
         {/* Rate Limiting */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mt-8">
+        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
           <h2 className="text-2xl font-medium text-gray-700 mb-4">
             Rate Limiting
           </h2>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
             <p className="text-yellow-800">
-              <strong>Rate Limit:</strong> 100 requests per 15 minutes per IP
-              address
+              <span className="font-medium text-gray-700">Rate Limit:</span> 100
+              requests per 15 minutes per IP address
             </p>
             <p className="text-yellow-700 text-sm mt-1">
               Exceeding this limit will result in a 429 Too Many Requests
@@ -284,7 +284,7 @@ const ApiDocs = () => {
         </div>
 
         {/* Error Handling */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mt-8">
+        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
           <h2 className="text-2xl font-medium text-gray-700 mb-4">
             Error Handling
           </h2>
@@ -293,7 +293,7 @@ const ApiDocs = () => {
               <h4 className="font-medium text-gray-700">
                 Standard Error Response:
               </h4>
-              <pre className="bg-gray-100 rounded-lg p-4 text-sm overflow-x-auto">
+              <pre className="bg-gray-100 rounded-xl p-4 text-sm overflow-x-auto">
                 {`{
   "error": "Error message",
   "message": "Detailed error description"

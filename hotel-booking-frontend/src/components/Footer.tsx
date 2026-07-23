@@ -12,12 +12,12 @@ import {
 const Footer = () => {
   return (
     <footer className="bg-gradient-to-r from-primary-800 to-primary-900 text-white">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
-              <div className="bg-white p-2 rounded-lg">
+              <div className="bg-white p-2 rounded-xl">
                 <Building2 className="w-6 h-6 text-primary-600" />
               </div>
               <span className="text-2xl font-medium">HolidayHotel</span>

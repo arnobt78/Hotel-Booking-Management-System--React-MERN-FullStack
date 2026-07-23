@@ -7,10 +7,9 @@
 | Field | Value |
 |-------|-------|
 | **Cycle** | **C1** |
-| **Phase** | Stage 3–4 — T5 + post-T5 polish ready to ship |
-| **Status** | T1→T5 + polish **pushed** `8dda64b` — redeploy Vercel |
+| **Phase** | Stage 3–4 — UI polish + rollups path shipped |
+| **Status** | Gutter/focus/rollups/insights-shell ready — push + redeploy BE+FE |
 | **Last REQ** | **REQ-0052** |
-| **HEAD** | `8dda64b` on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
@@ -18,15 +17,12 @@
 
 | Range | Theme |
 |-------|-------|
-| 0035–0039 | T1 product hardening |
-| 0040–0042 | T2 cancel + Stripe refund |
-| 0043–0045 | T3 admin shell |
-| 0046–0048 | T4 AI + seed |
-| 0049–0052 | T5 LLM failover + auth/seed + role/active |
-| polish | Nav API→profile · Inter fonts · SafeImage · Vercel headers · API arnobmahmud |
+| 0035–0052 | T1–T5 roadmap |
+| polish | Nav API · Inter · SafeImage · Vercel · arnobmahmud API |
+| ui-2026-07-23 | `scrollbar-gutter:stable` · focus ring-offset-0 · rollups under `/api/business-insights/rollups` · insights shell+pulse · Ops tab |
 
 ## Next
 
-1. Push → Vercel redeploy (bake `VITE_API_BASE_URL`)
-2. Google OAuth redirect = `…arnobmahmud.com/api/auth/callback/google`
+1. Push → Coolify BE + Vercel FE redeploy
+2. Confirm Admin rollups with ad-blocker on
 3. Gate 1 (INT-0001)

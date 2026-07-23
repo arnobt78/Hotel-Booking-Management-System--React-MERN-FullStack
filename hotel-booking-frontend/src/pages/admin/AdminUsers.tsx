@@ -11,7 +11,7 @@ const AdminUsers = () => {
   const { showToast } = useAppContext();
   const { data: users, isLoading } = useQuery(
     "fetchAdminUsers",
-    apiClient.fetchAdminUsers
+    apiClient.fetchAdminUsers,
   );
 
   const mutation = useMutation(
@@ -28,7 +28,7 @@ const AdminUsers = () => {
           type: "ERROR",
         });
       },
-    }
+    },
   );
 
   return (
@@ -40,7 +40,10 @@ const AdminUsers = () => {
       {isLoading ? (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-14 bg-slate-200 animate-pulse rounded-lg" />
+            <div
+              key={i}
+              className="h-14 bg-slate-200 animate-pulse rounded-xl"
+            />
           ))}
         </div>
       ) : (
@@ -64,7 +67,7 @@ const AdminUsers = () => {
                   <td className="p-3 text-slate-600">{u.email}</td>
                   <td className="p-3">
                     <select
-                      className="border border-slate-200 rounded-md px-2 py-1 text-sm bg-white"
+                      className="border border-slate-200 rounded-xl px-2 py-1 text-sm bg-white"
                       value={u.role || "user"}
                       disabled={mutation.isLoading}
                       onChange={(e) =>
@@ -83,9 +86,7 @@ const AdminUsers = () => {
                     </select>
                   </td>
                   <td className="p-3">{u.totalBookings ?? 0}</td>
-                  <td className="p-3">
-                    {u.isActive === false ? "No" : "Yes"}
-                  </td>
+                  <td className="p-3">{u.isActive === false ? "No" : "Yes"}</td>
                 </tr>
               ))}
             </tbody>

@@ -51,7 +51,7 @@ const CancelBookingButton = ({ booking, className }: Props) => {
           type: "ERROR",
         });
       },
-    }
+    },
   );
 
   if (!isBookingCancellable(booking)) {
@@ -76,7 +76,7 @@ const CancelBookingButton = ({ booking, className }: Props) => {
 
   return (
     <div
-      className={`mt-3 space-y-3 rounded-lg border border-red-200 bg-red-50 p-4 ${className || ""}`}
+      className={`mt-3 space-y-3 rounded-xl border border-red-200 bg-red-50 p-4 ${className || ""}`}
     >
       <p className="text-sm text-red-800">
         Cancel this upcoming stay? Paid bookings receive a full Stripe refund
@@ -85,7 +85,7 @@ const CancelBookingButton = ({ booking, className }: Props) => {
       <label className="block text-sm font-medium text-gray-700">
         Reason (optional)
         <input
-          className="mt-1 block w-full rounded-md border border-gray-300 p-2"
+          className="mt-1 block w-full rounded-xl border border-gray-300 p-2"
           value={reason}
           onChange={(e) => setReason(e.target.value)}
           placeholder="e.g. Change of plans"

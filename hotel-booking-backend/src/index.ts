@@ -236,7 +236,8 @@ app.use("/api/bookings", bookingsManagementRoutes);
 app.use("/api/health", healthRoutes);
 app.use("/api/business-insights", businessInsightsRoutes);
 app.use("/api/reviews", reviewRoutes);
-app.use("/api/analytics", analyticsRoutes);
+// Rollups (former /api/analytics/snapshots) — same router, blocker-safe path under business-insights
+app.use("/api/business-insights", analyticsRoutes);
 app.use("/api/ai", aiRoutes);
 
 // Swagger API Documentation

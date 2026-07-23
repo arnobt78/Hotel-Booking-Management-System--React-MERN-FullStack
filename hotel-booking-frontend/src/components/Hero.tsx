@@ -59,7 +59,7 @@ const Hero = ({ onSearch }: { onSearch: (searchData: any) => void }) => {
         </div>
 
         {/* Advanced Search Component */}
-        <div className="max-w-8xl mx-auto">
+        <div className="max-w-7xl mx-auto">
           <AdvancedSearch onSearch={onSearch} />
         </div>
       </div>

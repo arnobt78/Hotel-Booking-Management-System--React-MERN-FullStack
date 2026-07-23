@@ -45,16 +45,16 @@ const Detail = () => {
   if (isHotelLoading) {
     return (
       <div className="space-y-6">
-        <div className="h-10 w-2/3 bg-gray-200 rounded-lg animate-pulse" />
+        <div className="h-10 w-2/3 bg-gray-200 rounded-xl animate-pulse" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-[300px] bg-gray-100 rounded-md animate-pulse"
+              className="h-[300px] bg-gray-100 rounded-xl animate-pulse"
             />
           ))}
         </div>
-        <div className="h-40 bg-gray-100 rounded-lg animate-pulse" />
+        <div className="h-40 bg-gray-100 rounded-xl animate-pulse" />
       </div>
     );
   }
@@ -156,14 +156,14 @@ const Detail = () => {
                 src={image}
                 alt={hotel.name}
                 fill
-                className="rounded-md object-cover object-center"
+                className="rounded-xl object-cover object-center"
               />
             </div>
           ))}
         </div>
 
         {/* Price and Guest Info */}
-        <div className="flex items-center justify-between mt-4 p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between mt-4 p-4 bg-gray-50 rounded-xl">
           <div className="flex items-center gap-6">
             <div className="text-center">
               <p className="text-2xl font-medium text-gray-700">
@@ -207,14 +207,15 @@ const Detail = () => {
 
       {/* Contact Information */}
       {hotel.contact && (
-        <div className="border border-slate-300 rounded-lg p-4">
+        <div className="border border-slate-300 rounded-xl p-4">
           <h3 className="text-xl font-medium mb-3">Contact Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {hotel.contact.phone && (
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-gray-600" />
                 <span>
-                  <strong>Phone:</strong> {hotel.contact.phone}
+                  <span className="font-medium text-gray-700">Phone:</span>{" "}
+                  {hotel.contact.phone}
                 </span>
               </div>
             )}
@@ -222,7 +223,8 @@ const Detail = () => {
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4 text-gray-600" />
                 <span>
-                  <strong>Email:</strong> {hotel.contact.email}
+                  <span className="font-medium text-gray-700">Email:</span>{" "}
+                  {hotel.contact.email}
                 </span>
               </div>
             )}
@@ -230,14 +232,14 @@ const Detail = () => {
               <div className="flex items-center gap-2">
                 <Globe className="w-4 h-4 text-gray-600" />
                 <span>
-                  <strong>Website:</strong>{" "}
+                  <span className="font-medium text-gray-700">Website:</span>{" "}
                   <a
                     href={hotel.contact.website}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-600 hover:underline"
                   >
-                    Visit Website
+                    www.arnobmahmud.com
                   </a>
                 </span>
               </div>
@@ -248,14 +250,15 @@ const Detail = () => {
 
       {/* Hotel Policies */}
       {hotel.policies && (
-        <div className="border border-slate-300 rounded-lg p-4">
+        <div className="border border-slate-300 rounded-xl p-4">
           <h3 className="text-xl font-medium mb-3">Hotel Policies</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {hotel.policies.checkInTime && (
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-600" />
                 <span>
-                  <strong>Check-in:</strong> {hotel.policies.checkInTime}
+                  <span className="font-medium text-gray-700">Check-in:</span>{" "}
+                  {hotel.policies.checkInTime}
                 </span>
               </div>
             )}
@@ -263,24 +266,27 @@ const Detail = () => {
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-gray-600" />
                 <span>
-                  <strong>Check-out:</strong> {hotel.policies.checkOutTime}
+                  <span className="font-medium text-gray-700">Check-out:</span>{" "}
+                  {hotel.policies.checkOutTime}
                 </span>
               </div>
             )}
             {hotel.policies.cancellationPolicy && (
               <div>
-                <strong>Cancellation:</strong>{" "}
+                <span className="font-medium text-gray-700">Cancellation:</span>{" "}
                 {hotel.policies.cancellationPolicy}
               </div>
             )}
             {hotel.policies.petPolicy && (
               <div>
-                <strong>Pet Policy:</strong> {hotel.policies.petPolicy}
+                <span className="font-medium text-gray-700">Pet Policy:</span>{" "}
+                {hotel.policies.petPolicy}
               </div>
             )}
             {hotel.policies.smokingPolicy && (
               <div>
-                <strong>Smoking:</strong> {hotel.policies.smokingPolicy}
+                <span className="font-medium text-gray-700">Smoking:</span>{" "}
+                {hotel.policies.smokingPolicy}
               </div>
             )}
           </div>
@@ -288,7 +294,7 @@ const Detail = () => {
       )}
 
       {/* Facilities */}
-      <div className="border border-slate-300 rounded-lg p-4">
+      <div className="border border-slate-300 rounded-xl p-4">
         <h3 className="text-xl font-medium mb-3">Facilities</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {hotel.facilities.map((facility) => (
@@ -328,14 +334,14 @@ const Detail = () => {
       </div>
 
       {/* Guest Reviews */}
-      <div className="border border-slate-300 rounded-lg p-4">
+      <div className="border border-slate-300 rounded-xl p-4">
         <h3 className="text-xl font-medium mb-3">Guest Reviews</h3>
         {isReviewsLoading ? (
           <div className="space-y-3">
             {[1, 2].map((i) => (
               <div
                 key={i}
-                className="h-16 bg-gray-100 rounded-md animate-pulse"
+                className="h-16 bg-gray-100 rounded-xl animate-pulse"
               />
             ))}
           </div>

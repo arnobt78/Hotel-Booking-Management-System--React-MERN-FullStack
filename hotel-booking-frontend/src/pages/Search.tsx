@@ -96,7 +96,7 @@ const Search = () => {
   return (
     <div className="space-y-6">
       {/* Search Bar */}
-      <div className="bg-white rounded-lg shadow-sm border p-4">
+      <div className="bg-white rounded-xl shadow-sm border p-4">
         <h2 className="text-lg font-medium text-gray-700 mb-4">
           Modify Your Search
         </h2>
@@ -105,7 +105,7 @@ const Search = () => {
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
-        <div className="rounded-lg border border-slate-300 p-5 h-fit lg:sticky lg:top-10 order-2 lg:order-1">
+        <div className="rounded-xl border border-slate-300 p-5 h-fit lg:sticky lg:top-10 order-2 lg:order-1">
           <div className="space-y-5">
             <h3 className="text-lg font-medium border-b border-slate-300 pb-5">
               Filter by:
@@ -139,7 +139,7 @@ const Search = () => {
             <select
               value={sortOption}
               onChange={(event) => setSortOption(event.target.value)}
-              className="p-2 border rounded-md"
+              className="p-2 border rounded-xl"
             >
               <option value="">Sort By</option>
               <option value="starRating">Star Rating</option>
@@ -156,7 +156,7 @@ const Search = () => {
               {[1, 2, 3].map((i) => (
                 <div
                   key={i}
-                  className="h-40 bg-gray-100 rounded-lg animate-pulse border border-gray-100"
+                  className="h-40 bg-gray-100 rounded-xl animate-pulse border border-gray-100"
                 />
               ))}
             </div>

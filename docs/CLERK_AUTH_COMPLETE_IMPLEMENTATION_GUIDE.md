@@ -403,7 +403,7 @@ export default function SignInForm({ isGuest = false }: SignInFormProps) {
   if (!isLoaded) {
     return (
       <div className="w-full max-w-md">
-        <div className="bg-muted p-8 rounded-lg">
+        <div className="bg-muted p-8 rounded-xl">
           <div className="space-y-2 mb-6">
             <Skeleton className="h-8 w-48" />
             <Skeleton className="h-4 w-64" />
@@ -411,17 +411,17 @@ export default function SignInForm({ isGuest = false }: SignInFormProps) {
           <div className="space-y-4">
             <div className="space-y-2">
               <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-10 w-full rounded-md" />
+              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-2">
               <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-10 w-full rounded-md" />
+              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-2">
               <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full rounded-md" />
+              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
-            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-xl" />
           </div>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
@@ -432,8 +432,8 @@ export default function SignInForm({ isGuest = false }: SignInFormProps) {
             </div>
           </div>
           <div className="space-y-4 mb-4">
-            <Skeleton className="h-10 w-full rounded-md" />
-            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-10 w-full rounded-xl" />
           </div>
           <div className="flex justify-center">
             <Skeleton className="h-4 w-48" />
@@ -445,7 +445,7 @@ export default function SignInForm({ isGuest = false }: SignInFormProps) {
 
   return (
     <div className="w-full max-w-md">
-      <div className="bg-muted p-8 rounded-lg">
+      <div className="bg-muted p-8 rounded-xl">
         <div className="space-y-2 mb-6">
           <h1 className="text-2xl font-medium">Welcome back</h1>
           <p className="text-muted-foreground">Sign in to your account</p>
@@ -641,14 +641,14 @@ export default function SignUpWrapper() {
   if (!isLoaded) {
     return (
       <div className="w-full max-w-[400px]">
-        <div className="bg-muted p-8 rounded-lg">
+        <div className="bg-muted p-8 rounded-xl">
           <div className="space-y-2 mb-6">
             <Skeleton className="h-8 w-52" />
             <Skeleton className="h-4 w-72" />
           </div>
           <div className="space-y-4 mb-4">
-            <Skeleton className="h-10 w-full rounded-md" />
-            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-xl" />
+            <Skeleton className="h-10 w-full rounded-xl" />
           </div>
           <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
@@ -662,22 +662,22 @@ export default function SignUpWrapper() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-10 w-full rounded-xl" />
               </div>
             </div>
             <div className="space-y-2">
               <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-10 w-full rounded-md" />
+              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
             <div className="space-y-2">
               <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-10 w-full rounded-md" />
+              <Skeleton className="h-10 w-full rounded-xl" />
             </div>
-            <Skeleton className="h-10 w-full rounded-md" />
+            <Skeleton className="h-10 w-full rounded-xl" />
           </div>
           <div className="flex justify-center mt-4">
             <Skeleton className="h-4 w-56" />

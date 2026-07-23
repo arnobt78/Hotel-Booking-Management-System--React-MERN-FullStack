@@ -157,7 +157,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
 
         <CardContent className="space-y-6">
           {/* Price Display */}
-          <div className="flex justify-between items-center p-4 bg-white rounded-lg border border-gray-100 shadow-sm">
+          <div className="flex justify-between items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
             <div className="flex items-center gap-2">
               <span className="text-gray-600">
                 £{pricePerNight} × {numberOfNights} night
@@ -197,7 +197,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                     minDate={minDate}
                     maxDate={maxDate}
                     placeholderText="Check-in Date"
-                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     wrapperClassName="w-full"
                   />
                 </div>
@@ -213,7 +213,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                     minDate={minDate}
                     maxDate={maxDate}
                     placeholderText="Check-out Date"
-                    className="w-full bg-white border border-gray-200 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                     wrapperClassName="w-full"
                   />
                 </div>
@@ -275,7 +275,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             {/* Action Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               {isLoggedIn ? (
                 <div className="flex items-center gap-2">

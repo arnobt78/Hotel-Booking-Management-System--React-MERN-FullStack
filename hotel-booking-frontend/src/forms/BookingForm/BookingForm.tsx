@@ -232,7 +232,7 @@ MM/YY: 12/35 CVC: 123`;
               <textarea
                 rows={4}
                 placeholder="Any special requests, preferences, or additional information..."
-                className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full rounded-xl border border-gray-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 value={specialRequests}
                 onChange={(e) => setSpecialRequests(e.target.value)}
               />
@@ -250,7 +250,7 @@ MM/YY: 12/35 CVC: 123`;
               Price Summary
             </h3>
 
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-700 font-medium">Total Cost</span>
                 <span className="text-2xl font-medium text-blue-600">
@@ -271,7 +271,7 @@ MM/YY: 12/35 CVC: 123`;
               Payment Details
             </h3>
 
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+            <div className="border border-gray-200 rounded-xl p-4 bg-gray-50">
               <CardElement
                 id="payment-element"
                 className="text-sm"
@@ -300,7 +300,7 @@ MM/YY: 12/35 CVC: 123`;
 
           {/* Test Credentials Note */}
           <div className="space-y-4">
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
@@ -312,7 +312,7 @@ MM/YY: 12/35 CVC: 123`;
                     see the booking status page, analytical page, or other pages
                     to see the interactive results:
                   </p>
-                  <div className="bg-white border border-yellow-300 rounded-md p-3 relative">
+                  <div className="bg-white border border-yellow-300 rounded-xl p-3 relative">
                     <div className="flex items-center justify-between">
                       <div className="text-sm font-mono text-gray-700">
                         <div>Card: 4242 4242 4242 4242</div>
@@ -347,7 +347,7 @@ MM/YY: 12/35 CVC: 123`;
             <Button
               disabled={isLoading}
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

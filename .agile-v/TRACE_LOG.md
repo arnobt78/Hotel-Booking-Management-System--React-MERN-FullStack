@@ -21,3 +21,4 @@
 | 2026-07-23T16:30:00Z | BUILD | T5 multi-model AI + auth + full seed REQ-0049…0052 | OK | REQ-0049…0052 |
 | 2026-07-23T16:30:00Z | ORCH | T5 complete | OK | resume `c1-t5-ai-auth-seed` |
 | 2026-07-23T16:50:00Z | BUILD | Post-T5 polish (fonts/SafeImage/Vercel/API domain) | OK | resume `c1-t5-ai-auth-seed` |
+| 2026-07-23T19:40:00Z | BUILD | Gutter + rollups path + insights shell pulse | OK | `/api/business-insights/rollups` |

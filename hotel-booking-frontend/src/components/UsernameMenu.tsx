@@ -29,7 +29,7 @@ const getAvatarUrl = () => {
 };
 
 const menuItemClass =
-  "py-1.5 rounded-md cursor-pointer hover:bg-gray-100 focus:bg-gray-100";
+  "py-1.5 rounded-xl cursor-pointer hover:bg-gray-100 focus:bg-gray-100";
 
 const linkRowClass =
   "flex items-center gap-2 w-full font-medium text-gray-700 hover:text-primary-600";
@@ -44,7 +44,7 @@ const UsernameMenu = () => {
   const { data: currentUser } = useQuery(
     "fetchCurrentUser",
     apiClient.fetchCurrentUser,
-    { enabled: isLoggedIn }
+    { enabled: isLoggedIn },
   );
 
   const email = localStorage.getItem("user_email");

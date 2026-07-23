@@ -92,3 +92,9 @@
 - **Decision:** Ship post-T5 polish: API links in profile menu; self-hosted Inter; SafeImage; Vercel security headers + robots.txt; production API host `hotel-booking-backend.arnobmahmud.com` (retire DuckDNS).
 - **Rationale:** Prod console/FOUT/crawl guardrails; Coolify custom domain live.
 - **Resume:** `c1-t5-ai-auth-seed`
+
+## [C1] 2026-07-23T19:40:00Z | PRODUCT | UI_GUTTER_ROLLUPS_INSIGHTS
+
+- **Decision:** Restore `scrollbar-gutter:stable`; move admin snapshots to `GET/POST /api/business-insights/rollups` (drop `/api/analytics`); Business Insights shell+inline pulse (no full-page spinner); tab Ops status; single focus ring.
+- **Rationale:** Layout squeeze + ad-block on `/analytics` + UX spinner complaint; Vite SPA (no SSR/Redis).
+- **Resume:** `c1-t5-ai-auth-seed`

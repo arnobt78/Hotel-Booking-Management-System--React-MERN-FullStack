@@ -18,7 +18,7 @@ const Home = () => {
       <Hero onSearch={handleSearch} />
       <div className="space-y-8">
         {/* Latest Destinations Section */}
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8 py-4">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-medium text-gray-700 mb-2">
               Latest Destinations

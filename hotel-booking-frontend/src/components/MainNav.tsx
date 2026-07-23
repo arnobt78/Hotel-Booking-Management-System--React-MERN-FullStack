@@ -9,7 +9,7 @@ import * as apiClient from "../api-client";
 const NAV_AUTH_WIDTH = "min-w-[120px]";
 
 const navLinkClass =
-  "flex items-center text-white/90 hover:text-white px-4 py-2 rounded-lg font-medium hover:bg-white/10 transition-all duration-200";
+  "flex items-center text-white/90 hover:text-white px-4 py-2 rounded-xl font-medium hover:bg-white/10 transition-all duration-200";
 
 const MainNav = () => {
   const { isLoggedIn } = useAppContext();
@@ -21,7 +21,10 @@ const MainNav = () => {
   };
   const prefetchMyBookings = () => {
     if (!isLoggedIn) return;
-    void queryClient.prefetchQuery("fetchMyBookings", apiClient.fetchMyBookings);
+    void queryClient.prefetchQuery(
+      "fetchMyBookings",
+      apiClient.fetchMyBookings,
+    );
   };
 
   return (

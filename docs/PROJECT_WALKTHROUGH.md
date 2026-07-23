@@ -166,7 +166,7 @@ flowchart TB
 | `/api/my-bookings`       | `routes/my-bookings.ts`       | Guest’s bookings                                |
 | `/api/bookings`          | `routes/bookings.ts`          | Owner/admin booking management                  |
 | `/api/health`            | `routes/health.ts`            | Health checks                                   |
-| `/api/business-insights` | `routes/business-insights.ts` | Analytics aggregates                            |
+| `/api/business-insights` | `routes/business-insights.ts` + `routes/analytics.ts` (rollups) | Dashboard/forecast/system-stats + admin rollups |
 | `/api-docs`              | `swagger.ts`                  | Interactive API documentation                   |
 
 ### 5.4 Auth middleware (`middleware/auth.ts`)
@@ -246,16 +246,18 @@ Attaches `req.userId` for downstream handlers. Returns **401** if missing/invali
 
 #### Business insights — `/api/business-insights`
 
-| Method | Path                   | Auth | Description              |
-| ------ | ---------------------- | ---- | ------------------------ |
-| GET    | `/dashboard/public`    | —    | Public dashboard metrics |
-| GET    | `/dashboard`           | JWT  | Same (authenticated)     |
-| GET    | `/forecast/public`     | —    | Forecast data            |
-| GET    | `/forecast`            | JWT  | Forecast (auth)          |
-| GET    | `/system-stats/public` | —    | System/performance stats |
-| GET    | `/system-stats`        | JWT  | System stats (auth)      |
+| Method | Path                   | Auth        | Description                                      |
+| ------ | ---------------------- | ----------- | ------------------------------------------------ |
+| GET    | `/dashboard/public`    | —           | Public dashboard figures                         |
+| GET    | `/dashboard`           | JWT         | Same (authenticated)                             |
+| GET    | `/forecast/public`     | —           | Forecast data                                    |
+| GET    | `/forecast`            | JWT         | Forecast (auth)                                  |
+| GET    | `/system-stats/public` | —           | Ops/system figures (no `/performance` in path)   |
+| GET    | `/system-stats`        | JWT         | Ops figures + process memory                     |
+| GET    | `/rollups`             | JWT+admin   | List persisted rollups (blocker-safe; not `/analytics`) |
+| POST   | `/rollups`             | JWT+admin   | Capture live rollup into Analytics model         |
 
-> **Note:** `Review` and `Analytics` Mongoose models exist but have **no REST routes** yet. Insights are computed live from `Hotel`, `User`, and `Booking` collections.
+> **Note:** Live insights compute from `Hotel`/`User`/`Booking`. Admin rollups persist via Mongoose `Analytics` model under `/rollups` (avoid `/api/analytics` — ad-blockers).
 
 ### 5.6 Data models (MongoDB / Mongoose)
 
@@ -264,8 +266,8 @@ Attaches `req.userId` for downstream handlers. Returns **401** if missing/invali
 | **User**      | `models/user.ts`      | `email`, `password` (bcrypt pre-save), `firstName`, `lastName`, `image`, `role`, `totalBookings`, `totalSpent`                                                                  |
 | **Hotel**     | `models/hotel.ts`     | `userId`, `name`, `city`, `country`, `type[]`, `facilities[]`, `pricePerNight`, `starRating`, `imageUrls[]`, `location`, `contact`, `policies`, `totalBookings`, `totalRevenue` |
 | **Booking**   | `models/booking.ts`   | `userId`, `hotelId`, guest info, `checkIn`/`checkOut`, `totalCost`, `status`, `paymentStatus`                                                                                   |
-| **Review**    | `models/review.ts`    | Schema only (future)                                                                                                                                                            |
-| **Analytics** | `models/analytics.ts` | Schema only (future)                                                                                                                                                            |
+| **Review**    | `models/review.ts`    | Reviews API wired                                                                                                 |
+| **Analytics** | `models/analytics.ts` | Persisted admin rollups via `GET/POST /api/business-insights/rollups`                                            |
 
 Bookings live in a **separate collection** (not embedded in `Hotel`).
 
@@ -460,7 +462,8 @@ Authorization: Bearer ${localStorage.getItem("session_id")}
 | `fetchMyBookings` | `MyBookings`         | guest bookings                 |
 | `fetchMyHotels`   | `MyHotels`           | owner hotels                   |
 | hotel id          | `EditHotel`          | owner hotel                    |
-| insight keys      | `AnalyticsDashboard` | business-insights              |
+| insight keys      | `AnalyticsDashboard` | business-insights (shell + inline pulse) |
+| `fetchBusinessInsightsRollups` | `AdminDashboard` | `GET /api/business-insights/rollups` |
 | health            | `ApiStatus`          | `/api/health`                  |
 
 **Invalidation / refetch on auth change**
@@ -471,6 +474,8 @@ Authorization: Bearer ${localStorage.getItem("session_id")}
 | Register     | `Register.tsx`      | `invalidateQueries("validateToken")`                   |
 | Google OAuth | `AuthCallback.tsx`  | `invalidateQueries("validateToken")`                   |
 | Sign out     | `SignOutButton.tsx` | `invalidateQueries("validateToken")`                   |
+
+CRUD invalidation is centralized in `lib/invalidate-queries.ts` (hotels, bookings, reviews, admin + `fetchBusinessInsightsRollups`). Vite SPA — no Next SSR/Redis.
 
 `AppContext` derives `isLoggedIn` from `validateToken` success + optional localStorage JWT fallback.
 

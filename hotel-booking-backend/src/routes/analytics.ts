@@ -129,11 +129,12 @@ const buildLiveSnapshot = async () => {
 };
 
 /**
- * List recent Analytics snapshots (admin).
- * GET /api/analytics/snapshots
+ * List recent business-insights rollups (admin).
+ * Mounted under /api/business-insights — avoids /analytics path (ad-blockers).
+ * GET /api/business-insights/rollups
  */
 router.get(
-  "/snapshots",
+  "/rollups",
   verifyToken,
   requireAdmin,
   async (req: Request, res: Response) => {
@@ -145,17 +146,17 @@ router.get(
       res.json(snapshots);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Unable to fetch analytics snapshots" });
+      res.status(500).json({ message: "Unable to fetch business insights rollups" });
     }
   }
 );
 
 /**
- * Capture a live snapshot into Analytics (admin).
- * POST /api/analytics/snapshots
+ * Capture a live rollup into Analytics model (admin).
+ * POST /api/business-insights/rollups
  */
 router.post(
-  "/snapshots",
+  "/rollups",
   verifyToken,
   requireAdmin,
   async (_req: Request, res: Response) => {
@@ -165,7 +166,7 @@ router.post(
       res.status(201).json(snapshot);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Unable to create analytics snapshot" });
+      res.status(500).json({ message: "Unable to create business insights rollup" });
     }
   }
 );

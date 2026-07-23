@@ -156,7 +156,7 @@ const ApiStatus = () => {
           </p>
           <button
             onClick={() => refetch()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors"
           >
             Retry Connection
           </button>
@@ -174,7 +174,7 @@ const ApiStatus = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-medium text-gray-700 mb-4">
             API Status
@@ -184,7 +184,7 @@ const ApiStatus = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <Server className="w-8 h-8 text-blue-600 mr-3" />
@@ -209,7 +209,7 @@ const ApiStatus = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">
                   API Status
@@ -225,7 +225,7 @@ const ApiStatus = () => {
               </span>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">
                   Database
@@ -241,7 +241,7 @@ const ApiStatus = () => {
               </span>
             </div>
 
-            <div className="bg-gray-50 rounded-lg p-4">
+            <div className="bg-gray-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">
                   Probe time
@@ -258,7 +258,7 @@ const ApiStatus = () => {
         </div>
 
         {needsSignInForDetails && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8 text-center">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-8 text-center">
             <AlertCircle className="w-8 h-8 text-amber-600 mx-auto mb-2" />
             <p className="text-amber-900 font-medium">
               Sign in to view detailed status
@@ -272,7 +272,7 @@ const ApiStatus = () => {
 
         {isDetailed && detailedData && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="bg-white rounded-xl shadow-sm border p-6">
               <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
                 <Database className="w-5 h-5 text-green-600 mr-2" />
                 Database
@@ -293,7 +293,7 @@ const ApiStatus = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm border p-6">
+            <div className="bg-white rounded-xl shadow-sm border p-6">
               <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
                 <HardDrive className="w-5 h-5 text-blue-600 mr-2" />
                 Memory (rounded MB)
@@ -323,7 +323,7 @@ const ApiStatus = () => {
         )}
 
         {isDetailed && detailedData && (
-          <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
+          <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
             <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
               <Activity className="w-5 h-5 text-purple-600 mr-2" />
               Performance

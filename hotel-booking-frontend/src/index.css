@@ -35,7 +35,8 @@
   src: url("/fonts/Inter-Bold.woff2") format("woff2");
 }
 
-/* Stable gutter + thin scrollbar — avoids horizontal layout shift when overflow appears */
+/* Stable gutter keeps content width fixed when scrollbar appears (no layout squeeze).
+   Transparent track so the reserved strip does not look like a second painted bar. */
 html {
   scrollbar-gutter: stable;
 }

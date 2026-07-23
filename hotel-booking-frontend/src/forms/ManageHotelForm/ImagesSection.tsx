@@ -135,9 +135,9 @@ const ImagesSection = () => {
   return (
     <div>
       <h2 className="text-2xl font-medium mb-3">Images</h2>
-      <div className="border rounded-lg p-6 flex flex-col gap-6">
+      <div className="border rounded-xl p-6 flex flex-col gap-6">
         {/* Upload Area */}
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
+        <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 transition-colors">
           <div className="flex flex-col items-center gap-4">
             <div className="p-3 bg-blue-50 rounded-full">
               <Upload className="w-8 h-8 text-blue-600" />
@@ -188,7 +188,7 @@ const ImagesSection = () => {
               {imagePreviews.map((image) => (
                 <div
                   key={image.id}
-                  className="relative group bg-gray-50 rounded-lg overflow-hidden border"
+                  className="relative group bg-gray-50 rounded-xl overflow-hidden border"
                 >
                   <img
                     src={image.url}
@@ -224,7 +224,7 @@ const ImagesSection = () => {
 
         {/* Error Message */}
         {errors.imageFiles && (
-          <div className="text-red-500 text-sm font-medium bg-red-50 p-3 rounded-lg">
+          <div className="text-red-500 text-sm font-medium bg-red-50 p-3 rounded-xl">
             {errors.imageFiles.message}
           </div>
         )}

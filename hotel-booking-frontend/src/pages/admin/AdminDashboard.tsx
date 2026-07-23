@@ -15,26 +15,32 @@ const AdminDashboard = () => {
     apiClient.fetchAdminBusinessInsightsDashboard,
   );
 
-  const { data: snapshots, isLoading: snapsLoading } = useQuery(
-    "fetchAnalyticsSnapshots",
-    apiClient.fetchAnalyticsSnapshots,
+  // Rollups via /api/business-insights/rollups (not /analytics — ad-blocker safe)
+  const {
+    data: rollups,
+    isLoading: rollupsLoading,
+    isError: rollupsError,
+    refetch: refetchRollups,
+  } = useQuery(
+    "fetchBusinessInsightsRollups",
+    apiClient.fetchBusinessInsightsRollups,
   );
 
   const { mutate: capture, isLoading: capturing } = useMutation(
-    apiClient.createAnalyticsSnapshot,
+    apiClient.createBusinessInsightsRollup,
     {
       onSuccess: async () => {
         await invalidateAdminQueries(queryClient);
         showToast({
-          title: "Snapshot saved",
-          description: "Live metrics captured to Analytics.",
+          title: "Rollup saved",
+          description: "Live figures captured to business insights rollups.",
           type: "SUCCESS",
         });
       },
       onError: () => {
         showToast({
-          title: "Snapshot failed",
-          description: "Could not create analytics snapshot.",
+          title: "Rollup failed",
+          description: "Could not create business insights rollup.",
           type: "ERROR",
         });
       },
@@ -85,7 +91,7 @@ const AdminDashboard = () => {
         <div>
           <h1 className="text-2xl font-medium text-slate-900">Dashboard</h1>
           <p className="text-sm text-slate-500">
-            Live hotel-domain metrics and Analytics snapshots
+            Live hotel-domain figures and business insights rollups
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -100,7 +106,7 @@ const AdminDashboard = () => {
             </Button>
           )}
           <Button onClick={() => capture()} disabled={capturing}>
-            {capturing ? "Capturing…" : "Capture snapshot"}
+            {capturing ? "Capturing…" : "Capture rollup"}
           </Button>
         </div>
       </div>
@@ -187,8 +193,8 @@ const AdminDashboard = () => {
       )}
 
       <div className="bg-white border border-slate-200 rounded-xl p-4">
-        <h2 className="font-medium text-slate-900 mb-3">Recent snapshots</h2>
-        {snapsLoading ? (
+        <h2 className="font-medium text-slate-900 mb-3">Recent rollups</h2>
+        {rollupsLoading ? (
           <div className="space-y-2">
             {[1, 2].map((i) => (
               <div
@@ -197,13 +203,27 @@ const AdminDashboard = () => {
               />
             ))}
           </div>
-        ) : !snapshots?.length ? (
+        ) : rollupsError ? (
+          <div className="space-y-2">
+            <p className="text-sm text-red-600">
+              Failed to load rollups. Retry or check network / extensions.
+            </p>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => refetchRollups()}
+            >
+              Retry
+            </Button>
+          </div>
+        ) : !rollups?.length ? (
           <p className="text-sm text-slate-500">
-            No snapshots yet. Capture one to persist Analytics model data.
+            No rollups yet. Capture one to persist live business figures.
           </p>
         ) : (
           <ul className="divide-y divide-slate-100">
-            {snapshots.slice(0, 10).map((s) => (
+            {rollups.slice(0, 10).map((s) => (
               <li
                 key={s._id}
                 className="py-3 flex flex-wrap items-center gap-3 text-sm"

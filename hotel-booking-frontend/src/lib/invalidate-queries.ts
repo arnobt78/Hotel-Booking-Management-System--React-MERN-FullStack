@@ -10,7 +10,7 @@ import { QueryClient } from "react-query";
  * - fetchHotelById / fetchHotelByID — hotel detail
  * - fetchMyBookings, fetchHotelBookings, fetchAdminBookings — booking lists
  * - fetchHotelReviews, fetchAdminReviews — reviews
- * - fetchAdminUsers, fetchAnalyticsSnapshots, fetchBusinessInsightsDashboard
+ * - fetchAdminUsers, fetchBusinessInsightsRollups, fetchBusinessInsightsDashboard
  * - fetchCurrentUser — profile role / AdminRoute (invalidate on role PATCH)
  */
 export const invalidateHotelQueries = async (queryClient: QueryClient) => {
@@ -45,13 +45,13 @@ export const invalidateReviewQueries = async (queryClient: QueryClient) => {
   ]);
 };
 
-/** Admin shell lists + analytics + current user (role changes refresh Admin link) */
+/** Admin shell lists + rollups + current user (role changes refresh Admin link) */
 export const invalidateAdminQueries = async (queryClient: QueryClient) => {
   await Promise.all([
     queryClient.invalidateQueries("fetchAdminUsers"),
     queryClient.invalidateQueries("fetchAdminReviews"),
     queryClient.invalidateQueries("fetchAdminBookings"),
-    queryClient.invalidateQueries("fetchAnalyticsSnapshots"),
+    queryClient.invalidateQueries("fetchBusinessInsightsRollups"),
     queryClient.invalidateQueries("fetchBusinessInsightsDashboard"),
     queryClient.invalidateQueries("fetchAdminBusinessInsightsDashboard"),
     queryClient.invalidateQueries("fetchCurrentUser"),

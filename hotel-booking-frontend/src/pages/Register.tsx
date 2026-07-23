@@ -105,11 +105,14 @@ const Register = () => {
 
             {/* Development Notice */}
             {!import.meta.env.PROD && (
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
                 <p className="text-sm text-yellow-800">
-                  <strong>Development Note:</strong> Authentication state
-                  persists between sessions. If you're seeing a logged-in state
-                  unexpectedly, use the "Clear Auth" button in the header.
+                  <span className="font-medium text-gray-700">
+                    Development Note:
+                  </span>{" "}
+                  Authentication state persists between sessions. If you're
+                  seeing a logged-in state unexpectedly, use the "Clear Auth"
+                  button in the header.
                 </p>
               </div>
             )}
@@ -134,7 +137,7 @@ const Register = () => {
                     <Input
                       id="firstName"
                       type="text"
-                      className="pl-10 pr-3 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                      className="pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:border-primary-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
                       placeholder="Enter first name"
                       {...register("firstName", {
                         required: "First name is required",
@@ -168,7 +171,7 @@ const Register = () => {
                     <Input
                       id="lastName"
                       type="text"
-                      className="pl-10 pr-3 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                      className="pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:border-primary-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
                       placeholder="Enter last name"
                       {...register("lastName", {
                         required: "Last name is required",
@@ -204,7 +207,7 @@ const Register = () => {
                   <Input
                     id="email"
                     type="email"
-                    className="pl-10 pr-3 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                    className="pl-10 pr-3 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:border-primary-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
                     placeholder="Enter your email"
                     {...register("email", { required: "Email is required" })}
                   />
@@ -237,7 +240,7 @@ const Register = () => {
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    className="pl-10 pr-12 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                    className="pl-10 pr-12 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:border-primary-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
                     placeholder="Create a password"
                     {...register("password", {
                       required: "Password is required",
@@ -289,7 +292,7 @@ const Register = () => {
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
-                    className="pl-10 pr-12 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                    className="pl-10 pr-12 py-3 border border-gray-300 rounded-xl text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-0 focus:border-primary-500 transition-all duration-200 bg-white/80 backdrop-blur-sm"
                     placeholder="Confirm your password"
                     {...register("confirmPassword", {
                       validate: (val) => {
@@ -345,7 +348,7 @@ const Register = () => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 px-4 rounded-md text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
               >
                 {isLoading ? (
                   <div className="flex items-center">

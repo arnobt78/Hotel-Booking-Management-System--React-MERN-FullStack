@@ -3,7 +3,7 @@ import { useQueryWithLoading } from "../hooks/useLoadingHooks";
 import {
   fetchBusinessInsightsDashboard,
   fetchBusinessInsightsForecast,
-  fetchBusinessInsightsPerformance,
+  fetchBusinessInsightsSystemStats,
 } from "../api-client";
 import {
   BarChart,
@@ -86,7 +86,7 @@ interface ForecastData {
   lastUpdated: string;
 }
 
-interface PerformanceData {
+interface OpsStatusData {
   /** Present on auth /system-stats only — omitted from public (CWE-200) */
   system?: {
     memory: {
@@ -114,9 +114,10 @@ interface PerformanceData {
 }
 
 const AnalyticsDashboard = () => {
-  const [activeTab, setActiveTab] = useState<
-    "overview" | "forecast" | "performance"
-  >("overview");
+  // Shell renders immediately; data regions use inline pulse (no full-page spinner)
+  const [activeTab, setActiveTab] = useState<"overview" | "forecast" | "ops">(
+    "overview",
+  );
 
   const {
     data: analyticsData,
@@ -127,34 +128,33 @@ const AnalyticsDashboard = () => {
     "business-insights-dashboard",
     fetchBusinessInsightsDashboard,
     {
-      refetchInterval: false, // Disable auto-refresh to avoid blocking
+      refetchInterval: false,
       retry: 3,
       retryDelay: 1000,
-      loadingMessage: "Loading business insights dashboard...",
     },
   );
 
-  const { data: forecastData } = useQueryWithLoading<ForecastData>(
-    "business-insights-forecast",
-    fetchBusinessInsightsForecast,
-    {
-      refetchInterval: false, // Disable auto-refresh to avoid blocking
-      retry: 3,
-      retryDelay: 1000,
-      loadingMessage: "Loading forecast data...",
-    },
-  );
+  const { data: forecastData, isLoading: forecastLoading } =
+    useQueryWithLoading<ForecastData>(
+      "business-insights-forecast",
+      fetchBusinessInsightsForecast,
+      {
+        refetchInterval: false,
+        retry: 3,
+        retryDelay: 1000,
+      },
+    );
 
-  const { data: performanceData } = useQueryWithLoading<PerformanceData>(
-    "business-insights-performance",
-    fetchBusinessInsightsPerformance,
-    {
-      refetchInterval: false, // Disable auto-refresh to avoid blocking
-      retry: 3,
-      retryDelay: 1000,
-      loadingMessage: "Loading performance data...",
-    },
-  );
+  const { data: opsData, isLoading: opsLoading } =
+    useQueryWithLoading<OpsStatusData>(
+      "business-insights-ops",
+      fetchBusinessInsightsSystemStats,
+      {
+        refetchInterval: false,
+        retry: 3,
+        retryDelay: 1000,
+      },
+    );
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
@@ -169,39 +169,10 @@ const AnalyticsDashboard = () => {
     return new Intl.NumberFormat("en-US").format(num);
   };
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading business insights data...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-red-500 mb-4">
-            Failed to load business insights data
-          </div>
-          <button
-            onClick={() => refetch()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
+        {/* Header — always visible */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-medium text-gray-700 mb-2">
@@ -213,7 +184,7 @@ const AnalyticsDashboard = () => {
           </div>
           <button
             onClick={() => refetch()}
-            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
           >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh Data
@@ -221,19 +192,23 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white rounded-lg shadow-sm border mb-8">
+        <div className="bg-white rounded-xl shadow-sm border mb-8">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               {[
-                { id: "overview", label: "Overview", icon: BarChart3 },
-                { id: "forecast", label: "Forecasting", icon: TrendingUp },
-                { id: "performance", label: "Performance", icon: Activity },
+                { id: "overview" as const, label: "Overview", icon: BarChart3 },
+                {
+                  id: "forecast" as const,
+                  label: "Forecasting",
+                  icon: TrendingUp,
+                },
+                { id: "ops" as const, label: "Ops status", icon: Activity },
               ].map((tab) => {
                 const Icon = tab.icon;
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id)}
                     className={`flex items-center py-4 px-1 border-b-2 font-medium text-sm ${
                       activeTab === tab.id
                         ? "border-blue-500 text-blue-600"
@@ -249,14 +224,48 @@ const AnalyticsDashboard = () => {
           </div>
         </div>
 
+        {/* Inline error for dashboard load (content area only) */}
+        {error && activeTab === "overview" && !isLoading && (
+          <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 text-center">
+            <p className="text-red-500 mb-4">
+              Failed to load business insights data
+            </p>
+            <button
+              onClick={() => refetch()}
+              className="bg-blue-600 text-white px-4 py-2 rounded-xl hover:bg-blue-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Overview loading — inline pulses matching KPI / chart boxes */}
+        {activeTab === "overview" && isLoading && (
+          <div className="w-full space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="h-24 bg-slate-200 rounded-xl animate-pulse"
+                />
+              ))}
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
+              <div className="h-[360px] bg-slate-200 rounded-xl animate-pulse" />
+              <div className="h-[360px] bg-slate-200 rounded-xl animate-pulse" />
+            </div>
+            <div className="h-64 bg-slate-200 rounded-xl animate-pulse w-full" />
+          </div>
+        )}
+
         {/* Overview Tab */}
         {activeTab === "overview" && analyticsData && (
           <div className="w-full space-y-8">
             {/* Key Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-blue-100 rounded-lg">
+                  <div className="p-2 bg-blue-100 rounded-xl">
                     <Building className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
@@ -270,9 +279,9 @@ const AnalyticsDashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-green-100 rounded-lg">
+                  <div className="p-2 bg-green-100 rounded-xl">
                     <Users className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4">
@@ -286,9 +295,9 @@ const AnalyticsDashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-purple-100 rounded-lg">
+                  <div className="p-2 bg-purple-100 rounded-xl">
                     <Calendar className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="ml-4">
@@ -302,9 +311,9 @@ const AnalyticsDashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-yellow-100 rounded-lg">
+                  <div className="p-2 bg-yellow-100 rounded-xl">
                     <DollarSign className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div className="ml-4">
@@ -338,7 +347,7 @@ const AnalyticsDashboard = () => {
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
               {/* Daily Bookings Chart */}
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Daily Bookings
                 </h3>
@@ -364,15 +373,10 @@ const AnalyticsDashboard = () => {
               </div>
 
               {/* Popular Destinations */}
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Popular Destinations
                 </h3>
-                {/* Debug info */}
-                <div className="text-xs text-gray-500 mb-2">
-                  Debug: {analyticsData.popularDestinations.length} destinations
-                  found
-                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
@@ -401,14 +405,10 @@ const AnalyticsDashboard = () => {
             </div>
 
             {/* Hotel Performance Table */}
-            <div className="bg-white rounded-lg shadow-sm border p-6 w-full">
+            <div className="bg-white rounded-xl shadow-sm border p-6 w-full">
               <h3 className="text-lg font-medium text-gray-700 mb-4">
                 Top Performing Hotels
               </h3>
-              {/* Debug info */}
-              <div className="text-xs text-gray-500 mb-2">
-                Debug: {analyticsData.hotelPerformance.length} hotels found
-              </div>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
@@ -465,12 +465,30 @@ const AnalyticsDashboard = () => {
           </div>
         )}
 
+        {/* Forecast loading */}
+        {activeTab === "forecast" && forecastLoading && !forecastData && (
+          <div className="w-full space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-24 bg-slate-200 rounded-xl animate-pulse"
+                />
+              ))}
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
+              <div className="h-[360px] bg-slate-200 rounded-xl animate-pulse" />
+              <div className="h-[360px] bg-slate-200 rounded-xl animate-pulse" />
+            </div>
+          </div>
+        )}
+
         {/* Forecast Tab */}
         {activeTab === "forecast" && forecastData && (
           <div className="w-full space-y-8">
             {/* Forecast Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
                   Booking Trend
                 </h3>
@@ -486,7 +504,7 @@ const AnalyticsDashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
                   Revenue Trend
                 </h3>
@@ -502,7 +520,7 @@ const AnalyticsDashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-2">
                   Seasonal Growth
                 </h3>
@@ -528,15 +546,10 @@ const AnalyticsDashboard = () => {
             {/* Forecast Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
               {/* Historical vs Forecast Bookings */}
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Booking Forecast
                 </h3>
-                {/* Debug info */}
-                <div className="text-xs text-gray-500 mb-2">
-                  Debug: {forecastData.historical.length} historical +{" "}
-                  {forecastData.forecasts.length} forecast points
-                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <AreaChart
                     data={[
@@ -574,16 +587,10 @@ const AnalyticsDashboard = () => {
               </div>
 
               {/* Revenue Forecast */}
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Revenue Forecast
                 </h3>
-                {/* Debug info */}
-                <div className="text-xs text-gray-500 mb-2">
-                  Debug: Revenue data points - Historical:{" "}
-                  {forecastData.historical.length}, Forecast:{" "}
-                  {forecastData.forecasts.length}
-                </div>
                 <ResponsiveContainer width="100%" height={300}>
                   <LineChart
                     data={[
@@ -621,14 +628,28 @@ const AnalyticsDashboard = () => {
           </div>
         )}
 
-        {/* Performance Tab */}
-        {activeTab === "performance" && performanceData && (
+        {/* Ops status loading */}
+        {activeTab === "ops" && opsLoading && !opsData && (
           <div className="w-full space-y-8">
-            {/* System Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="h-28 bg-slate-200 rounded-xl animate-pulse"
+                />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Ops status tab (system-stats; avoids /performance in paths & UI labels) */}
+        {activeTab === "ops" && opsData && (
+          <div className="w-full space-y-8">
+            {/* System figures */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-blue-100 rounded-lg">
+                  <div className="p-2 bg-blue-100 rounded-xl">
                     <Activity className="w-6 h-6 text-blue-600" />
                   </div>
                   <div className="ml-4">
@@ -636,40 +657,40 @@ const AnalyticsDashboard = () => {
                       Memory Usage
                     </p>
                     <p className="text-2xl font-medium text-gray-700">
-                      {performanceData.system?.memory.percentage ?? "—"}
-                      {performanceData.system?.memory != null ? "%" : ""}
+                      {opsData.system?.memory.percentage ?? "—"}
+                      {opsData.system?.memory != null ? "%" : ""}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {performanceData.system?.memory != null
-                        ? `${performanceData.system.memory.used}MB / ${performanceData.system.memory.total}MB`
+                      {opsData.system?.memory != null
+                        ? `${opsData.system.memory.used}MB / ${opsData.system.memory.total}MB`
                         : "Sign in for process metrics"}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-green-100 rounded-lg">
+                  <div className="p-2 bg-green-100 rounded-xl">
                     <Server className="w-6 h-6 text-green-600" />
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Uptime</p>
                     <p className="text-2xl font-medium text-gray-700">
-                      {performanceData.application.uptime}
+                      {opsData.application.uptime}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {performanceData.system?.uptime != null
-                        ? `${Math.round(performanceData.system.uptime / 3600)}h ${Math.round((performanceData.system.uptime % 3600) / 60)}m`
+                      {opsData.system?.uptime != null
+                        ? `${Math.round(opsData.system.uptime / 3600)}h ${Math.round((opsData.system.uptime % 3600) / 60)}m`
                         : "Availability SLA"}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-purple-100 rounded-lg">
+                  <div className="p-2 bg-purple-100 rounded-xl">
                     <Clock className="w-6 h-6 text-purple-600" />
                   </div>
                   <div className="ml-4">
@@ -677,16 +698,16 @@ const AnalyticsDashboard = () => {
                       Response Time
                     </p>
                     <p className="text-2xl font-medium text-gray-700">
-                      {performanceData.application.avgResponseTime}ms
+                      {opsData.application.avgResponseTime}ms
                     </p>
                     <p className="text-sm text-gray-500">Average</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <div className="flex items-center">
-                  <div className="p-2 bg-yellow-100 rounded-lg">
+                  <div className="p-2 bg-yellow-100 rounded-xl">
                     <AlertCircle className="w-6 h-6 text-yellow-600" />
                   </div>
                   <div className="ml-4">
@@ -694,12 +715,12 @@ const AnalyticsDashboard = () => {
                       Error Rate
                     </p>
                     <p className="text-2xl font-medium text-gray-700">
-                      {(performanceData.application.errorRate * 100).toFixed(2)}
+                      {(opsData.application.errorRate * 100).toFixed(2)}
                       %
                     </p>
                     <p className="text-sm text-gray-500">
                       Requests per minute:{" "}
-                      {performanceData.application.requestsPerMinute}
+                      {opsData.application.requestsPerMinute}
                     </p>
                   </div>
                 </div>
@@ -708,7 +729,7 @@ const AnalyticsDashboard = () => {
 
             {/* Database Metrics */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Database Overview
                 </h3>
@@ -716,31 +737,31 @@ const AnalyticsDashboard = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Collections</span>
                     <span className="font-medium">
-                      {performanceData.database.collections ?? "—"}
+                      {opsData.database.collections ?? "—"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Hotels</span>
                     <span className="font-medium">
-                      {performanceData.database.totalHotels}
+                      {opsData.database.totalHotels}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Bookings</span>
                     <span className="font-medium">
-                      {performanceData.database.totalBookings}
+                      {opsData.database.totalBookings}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Revenue</span>
                     <span className="font-medium">
-                      {formatCurrency(performanceData.database.totalRevenue)}
+                      {formatCurrency(opsData.database.totalRevenue)}
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white rounded-lg shadow-sm border p-6">
+              <div className="bg-white rounded-xl shadow-sm border p-6">
                 <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Recent Activity
                 </h3>
@@ -748,13 +769,13 @@ const AnalyticsDashboard = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Today's Bookings</span>
                     <span className="font-medium">
-                      {performanceData.application.todayBookings}
+                      {opsData.application.todayBookings}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">This Week's Bookings</span>
                     <span className="font-medium">
-                      {performanceData.application.thisWeekBookings}
+                      {opsData.application.thisWeekBookings}
                     </span>
                   </div>
                 </div>

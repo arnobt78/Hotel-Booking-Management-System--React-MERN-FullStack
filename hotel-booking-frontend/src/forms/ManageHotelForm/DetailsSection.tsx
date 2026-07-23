@@ -116,7 +116,7 @@ const DetailsSection = () => {
             {isLoading ? "Suggesting…" : "Suggest polish"}
           </Button>
           {draft && (
-            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 p-3 space-y-2">
               <p className="text-xs text-slate-500">
                 Draft ({provider}) — review then Apply or Discard
               </p>

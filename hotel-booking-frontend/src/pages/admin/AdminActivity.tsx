@@ -56,7 +56,7 @@ const AdminActivity = () => {
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="h-14 bg-slate-200 animate-pulse rounded-lg"
+              className="h-14 bg-slate-200 animate-pulse rounded-xl"
             />
           ))}
         </div>

@@ -165,7 +165,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
         </DialogHeader>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-4 p-4 bg-gray-50 rounded-lg">
+        <div className="flex flex-wrap gap-4 p-4 bg-gray-50 rounded-xl">
           <div className="flex items-center space-x-2">
             <Filter className="w-4 h-4 text-gray-600" />
             <span className="text-sm font-medium text-gray-700">Filters:</span>
@@ -174,7 +174,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="px-3 py-1 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -187,7 +187,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
           <select
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            className="px-3 py-1 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           >
             <option value="all">All Dates</option>
             <option value="upcoming">Upcoming (Next 7 Days)</option>
@@ -210,7 +210,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                       {bookings.length}
                     </p>
                   </div>
-                  <div className="bg-blue-100 p-2 rounded-lg">
+                  <div className="bg-blue-100 p-2 rounded-xl">
                     <Users className="w-5 h-5 text-blue-600" />
                   </div>
                 </div>
@@ -232,7 +232,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                       }
                     </p>
                   </div>
-                  <div className="bg-green-100 p-2 rounded-lg">
+                  <div className="bg-green-100 p-2 rounded-xl">
                     <Star className="w-5 h-5 text-green-600" />
                   </div>
                 </div>
@@ -258,7 +258,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                         .toLocaleString()}
                     </p>
                   </div>
-                  <div className="bg-yellow-100 p-2 rounded-lg">
+                  <div className="bg-yellow-100 p-2 rounded-xl">
                     <CreditCard className="w-5 h-5 text-yellow-600" />
                   </div>
                 </div>
@@ -278,7 +278,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                       }
                     </p>
                   </div>
-                  <div className="bg-yellow-100 p-2 rounded-lg">
+                  <div className="bg-yellow-100 p-2 rounded-xl">
                     <Clock className="w-5 h-5 text-yellow-600" />
                   </div>
                 </div>
@@ -337,7 +337,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                 <p className="text-gray-500 mb-4">
                   This hotel doesn't have any bookings yet.
                 </p>
-                <div className="bg-blue-50 rounded-lg p-4 max-w-md">
+                <div className="bg-blue-50 rounded-xl p-4 max-w-md">
                   <p className="text-sm text-blue-700">
                     When guests make bookings for this hotel, they will appear
                     here with all their details, special requests, and payment
@@ -354,7 +354,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                 <p className="text-gray-500 mb-4">
                   No bookings match your current filter criteria.
                 </p>
-                <div className="bg-yellow-50 rounded-lg p-4 max-w-md">
+                <div className="bg-yellow-50 rounded-xl p-4 max-w-md">
                   <p className="text-sm text-yellow-700">
                     Try adjusting your filters:
                     {statusFilter !== "all" && (
@@ -395,7 +395,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                           <CardHeader className="pb-3">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center space-x-3">
-                                <div className="bg-primary-100 p-2 rounded-lg">
+                                <div className="bg-primary-100 p-2 rounded-xl">
                                   <Users className="w-5 h-5 text-primary-600" />
                                 </div>
                                 <div>
@@ -507,7 +507,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
 
                             {/* Special Requests */}
                             {booking.specialRequests && (
-                              <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                              <div className="mt-4 p-3 bg-blue-50 rounded-xl">
                                 <div className="flex items-start space-x-2">
                                   <FileText className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                                   <div>
@@ -523,7 +523,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                             )}
 
                             {booking.cancellationReason && (
-                              <div className="mt-4 p-3 bg-red-50 rounded-lg">
+                              <div className="mt-4 p-3 bg-red-50 rounded-xl">
                                 <p className="text-sm font-medium text-red-800 mb-1">
                                   Cancellation reason
                                 </p>

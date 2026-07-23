@@ -207,10 +207,10 @@ const MyBookings = () => {
   };
 
   return (
-    <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
       <div className="space-y-8">
         {/* Header Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-8 text-white">
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
           <h1 className="text-4xl font-medium mb-2">My Bookings History</h1>
           <p className="text-blue-100 text-lg">
             Track all your hotel reservations and booking details
@@ -253,7 +253,7 @@ const MyBookings = () => {
                       alt={hotel.name}
                       width={96}
                       height={96}
-                      className="w-24 h-24 rounded-lg object-cover object-center shadow-md"
+                      className="w-24 h-24 rounded-xl object-cover object-center shadow-md"
                     />
                     <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-medium px-2 py-1 rounded-full">
                       {hotel.starRating}★
@@ -306,7 +306,7 @@ const MyBookings = () => {
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-3">
                             <div
-                              className={`p-2 rounded-lg ${getStatusColor(
+                              className={`p-2 rounded-xl ${getStatusColor(
                                 booking.status || "pending",
                               )}`}
                             >
@@ -353,7 +353,7 @@ const MyBookings = () => {
                         {/* Booking Details Grid */}
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                           {/* Dates */}
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="bg-white rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center gap-2 mb-2">
                               <Calendar className="w-4 h-4 text-blue-600" />
                               <span className="font-medium text-gray-700">
@@ -373,7 +373,7 @@ const MyBookings = () => {
                           </div>
 
                           {/* Guests */}
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="bg-white rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center gap-2 mb-2">
                               <Users className="w-4 h-4 text-green-600" />
                               <span className="font-medium text-gray-700">
@@ -397,7 +397,7 @@ const MyBookings = () => {
                           </div>
 
                           {/* Contact */}
-                          <div className="bg-white rounded-lg p-4 border border-gray-200">
+                          <div className="bg-white rounded-xl p-4 border border-gray-200">
                             <div className="flex items-center gap-2 mb-2">
                               <Phone className="w-4 h-4 text-purple-600" />
                               <span className="font-medium text-gray-700">
@@ -412,7 +412,7 @@ const MyBookings = () => {
 
                           {/* Pricing */}
                           {totalPrice > 0 && (
-                            <div className="bg-white rounded-lg p-4 border border-gray-200">
+                            <div className="bg-white rounded-xl p-4 border border-gray-200">
                               <div className="flex items-center gap-2 mb-2">
                                 <CreditCard className="w-4 h-4 text-orange-600" />
                                 <span className="font-medium text-gray-700">
@@ -445,7 +445,7 @@ const MyBookings = () => {
                           booking.cancellationReason) && (
                           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             {booking.specialRequests && (
-                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                                 <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
                                   <Package className="w-4 h-4" />
                                   Special Requests
@@ -456,7 +456,7 @@ const MyBookings = () => {
                               </div>
                             )}
                             {booking.cancellationReason && (
-                              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                              <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                                 <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2">
                                   <Building className="w-4 h-4" />
                                   Cancellation Reason

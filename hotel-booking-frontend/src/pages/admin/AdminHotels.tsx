@@ -11,7 +11,7 @@ const AdminHotels = () => {
   const { showToast } = useAppContext();
   const { data: hotels, isLoading } = useQuery(
     "fetchHotels",
-    apiClient.fetchHotels
+    apiClient.fetchHotels,
   );
 
   const mutation = useMutation(
@@ -28,7 +28,7 @@ const AdminHotels = () => {
           type: "ERROR",
         });
       },
-    }
+    },
   );
 
   return (
@@ -40,7 +40,10 @@ const AdminHotels = () => {
       {isLoading ? (
         <div className="space-y-2">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-14 bg-slate-200 animate-pulse rounded-lg" />
+            <div
+              key={i}
+              className="h-14 bg-slate-200 animate-pulse rounded-xl"
+            />
           ))}
         </div>
       ) : (
@@ -70,7 +73,7 @@ const AdminHotels = () => {
                   <td className="p-3">
                     <button
                       type="button"
-                      className="text-sm px-2 py-1 rounded-md border border-slate-200 hover:bg-slate-50 disabled:opacity-50"
+                      className="text-sm px-2 py-1 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50"
                       disabled={mutation.isLoading}
                       onClick={() =>
                         mutation.mutate({

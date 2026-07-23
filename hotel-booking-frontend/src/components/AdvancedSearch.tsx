@@ -374,7 +374,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             <input
               type="text"
               placeholder="Where are you going?"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
               value={searchData.destination}
               onChange={(e) => handleInputChange("destination", e.target.value)}
               onFocus={() => setShowDropdown(filteredPlaces.length > 0)}
@@ -382,7 +382,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             />
             <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             {showDropdown && (
-              <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-40 overflow-y-auto">
+              <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto">
                 {filteredPlaces.map((place) => (
                   <li
                     key={place}
@@ -409,7 +409,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           <div className="relative">
             <input
               type="date"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
               value={searchData.checkIn.toISOString().split("T")[0]}
               onChange={(e) =>
                 handleInputChange("checkIn", new Date(e.target.value))
@@ -428,7 +428,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           <div className="relative">
             <input
               type="date"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
               value={searchData.checkOut.toISOString().split("T")[0]}
               onChange={(e) =>
                 handleInputChange("checkOut", new Date(e.target.value))
@@ -446,7 +446,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </label>
           <div className="relative">
             <select
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
               value={`${searchData.adultCount} adults, ${searchData.childCount} children`}
               onChange={(e) => {
                 const [adults, children] = e.target.value.split(", ");
@@ -499,7 +499,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 <input
                   type="number"
                   placeholder="Min"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                   value={searchData.minPrice}
                   onChange={(e) =>
                     handleInputChange("minPrice", e.target.value)
@@ -509,7 +509,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 <input
                   type="number"
                   placeholder="Max"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                   value={searchData.maxPrice}
                   onChange={(e) =>
                     handleInputChange("maxPrice", e.target.value)
@@ -524,7 +524,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 Star Rating
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                 value={searchData.starRating}
                 onChange={(e) =>
                   handleInputChange("starRating", e.target.value)
@@ -544,7 +544,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 Hotel Type
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                 value={searchData.hotelType}
                 onChange={(e) => handleInputChange("hotelType", e.target.value)}
               >
@@ -590,7 +590,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 Sort By
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                 value={searchData.sortBy}
                 onChange={(e) => handleInputChange("sortBy", e.target.value)}
               >
@@ -607,7 +607,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                 Search Radius (km)
               </label>
               <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
                 value={searchData.radius}
                 onChange={(e) => handleInputChange("radius", e.target.value)}
               >
