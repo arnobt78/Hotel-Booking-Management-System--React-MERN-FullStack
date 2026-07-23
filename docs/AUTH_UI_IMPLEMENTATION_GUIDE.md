@@ -38,14 +38,14 @@ This implementation provides:
 
 ## Key Challenges Solved
 
-| Challenge | Solution |
-|-----------|----------|
-| Hydration mismatch | `mounted` state + deferred localStorage read |
-| Login flicker on page refresh | `wasAuthenticated` localStorage persistence |
-| OAuth return flicker | Set flags BEFORE redirect to Google |
-| Logout flicker | Immediate localStorage clear + state update |
-| Body scroll on dropdown | `modal={false}` on DropdownMenu |
-| Google image not loading | `referrerPolicy="no-referrer"` + `onError` fallback |
+| Challenge                     | Solution                                            |
+| ----------------------------- | --------------------------------------------------- |
+| Hydration mismatch            | `mounted` state + deferred localStorage read        |
+| Login flicker on page refresh | `wasAuthenticated` localStorage persistence         |
+| OAuth return flicker          | Set flags BEFORE redirect to Google                 |
+| Logout flicker                | Immediate localStorage clear + state update         |
+| Body scroll on dropdown       | `modal={false}` on DropdownMenu                     |
+| Google image not loading      | `referrerPolicy="no-referrer"` + `onError` fallback |
 
 ---
 
@@ -74,8 +74,8 @@ This implementation provides:
 
 ```typescript
 // Keys for persisting auth state
-const AUTH_STATE_KEY = "navbar_was_authenticated";  // Tracks if user was logged in
-const OAUTH_PENDING_KEY = "oauth_login_pending";    // Tracks pending OAuth redirect
+const AUTH_STATE_KEY = "navbar_was_authenticated"; // Tracks if user was logged in
+const OAUTH_PENDING_KEY = "oauth_login_pending"; // Tracks pending OAuth redirect
 ```
 
 ---
@@ -113,7 +113,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const { data: session, status } = useSession();
-  
+
   const user = session?.user as User | undefined;
   const isAuthenticated = status === "authenticated";
   const isLoading = status === "loading";
@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Store user ID in localStorage for API calls
   useEffect(() => {
     if (typeof window === "undefined") return;
-    
+
     if (userId && user) {
       localStorage.setItem("user_id", userId);
     } else {
@@ -218,11 +218,11 @@ const Navbar = memo(() => {
   const [avatarError, setAvatarError] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const [mounted, setMounted] = useState(false);
-  
+
   // IMPORTANT: Initialize to false for SSR consistency
   // Will be updated from localStorage after mount
   const [wasAuthenticated, setWasAuthenticated] = useState(false);
-  
+
   // Track previous auth state for welcome/goodbye messages
   const prevAuthRef = useRef<boolean | null>(null);
   const prevUserNameRef = useRef<string | null>(null);
@@ -238,9 +238,9 @@ const Navbar = memo(() => {
   // STEP 2: Sync auth state to localStorage and handle OAuth cleanup
   useEffect(() => {
     if (!mounted) return;  // Only run after mount
-    
+
     const oauthPending = localStorage.getItem(OAUTH_PENDING_KEY) === "true";
-    
+
     if (isAuthenticated) {
       // Login successful
       localStorage.setItem(AUTH_STATE_KEY, "true");
@@ -274,7 +274,7 @@ const Navbar = memo(() => {
         <div className="flex items-center gap-2">
           <span className="text-2xl">👋</span>
           <div>
-            <p className="font-semibold">Welcome back, {firstName}!</p>
+            <p className="font-medium">Welcome back, {firstName}!</p>
             <p className="text-sm text-gray-500">Let&apos;s cook something amazing together!</p>
           </div>
         </div>,
@@ -290,7 +290,7 @@ const Navbar = memo(() => {
         <div className="flex items-center gap-2">
           <span className="text-2xl">👋</span>
           <div>
-            <p className="font-semibold">Goodbye, {firstName}!</p>
+            <p className="font-medium">Goodbye, {firstName}!</p>
             <p className="text-sm text-gray-500">We&apos;ll cook together again soon!</p>
           </div>
         </div>,
@@ -333,7 +333,7 @@ const Navbar = memo(() => {
   return (
     <nav className="...">
       {/* ... Logo and other nav items ... */}
-      
+
       <div className="flex items-center gap-2">
         {/* Auth Section - SSR-safe three-state rendering */}
         {isAuthenticated ? (
@@ -467,7 +467,7 @@ export function LoginDialog({ open, onOpenChange, onSwitchToRegister }: LoginDia
         localStorage.setItem("navbar_was_authenticated", "true");
         localStorage.setItem("oauth_login_pending", "true");
       }
-      
+
       await signIn("google", {
         callbackUrl: window.location.origin,
         redirect: true,
@@ -489,7 +489,7 @@ export function LoginDialog({ open, onOpenChange, onSwitchToRegister }: LoginDia
         <DialogHeader>
           <DialogTitle>Welcome Back</DialogTitle>
         </DialogHeader>
-        
+
         {/* Email/Password Form */}
         <form onSubmit={/* ... */}>
           {/* ... form fields ... */}
@@ -528,12 +528,12 @@ const getAvatarUrl = () => {
   if (avatarError) {
     return `https://robohash.org/${user?.name || user?.email || "user"}.png?size=80x80`;
   }
-  
+
   // Use Google image if available (OAuth users)
   if (user?.image && user.image.trim() !== "") {
     return user.image;
   }
-  
+
   // Fallback to RoboHash for email/password users
   return `https://robohash.org/${user?.name || user?.email || "user"}.png?size=80x80`;
 };
@@ -545,8 +545,8 @@ const getAvatarUrl = () => {
 <img
   src={getAvatarUrl()}
   alt={user?.name || "User"}
-  onError={() => setAvatarError(true)}  // Fallback on load error
-  referrerPolicy="no-referrer"          // REQUIRED for Google images!
+  onError={() => setAvatarError(true)} // Fallback on load error
+  referrerPolicy="no-referrer" // REQUIRED for Google images!
 />
 ```
 
@@ -583,7 +583,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.id = user.id;
         if (user.image) token.picture = user.image;
       }
-      
+
       // IMPORTANT: Get Google profile picture from OAuth profile
       if (profile && account?.provider === "google") {
         const googleProfile = profile as { picture?: string };
@@ -591,7 +591,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           token.picture = googleProfile.picture;
         }
       }
-      
+
       return token;
     },
     async session({ session, token }) {
@@ -643,6 +643,7 @@ declare module "next-auth/jwt" {
 ### 1. Hydration Mismatch Error
 
 **Error:**
+
 ```
 Hydration failed because the server rendered HTML didn't match the client.
 ```
@@ -650,6 +651,7 @@ Hydration failed because the server rendered HTML didn't match the client.
 **Cause:** Reading from localStorage during initial render (localStorage doesn't exist on server).
 
 **Solution:**
+
 ```typescript
 // WRONG: Causes hydration mismatch
 const [wasAuth, setWasAuth] = useState(() => {
@@ -677,6 +679,7 @@ useEffect(() => {
 **Cause:** Session takes time to load on page refresh.
 
 **Solution:** Persist `wasAuthenticated` in localStorage:
+
 ```typescript
 // On login success
 localStorage.setItem("navbar_was_authenticated", "true");
@@ -690,6 +693,7 @@ localStorage.setItem("navbar_was_authenticated", "true");
 **Cause:** localStorage flags not set before redirect.
 
 **Solution:** Set flags BEFORE redirecting to Google:
+
 ```typescript
 const handleGoogleSignIn = async () => {
   localStorage.setItem("navbar_was_authenticated", "true");
@@ -703,11 +707,12 @@ const handleGoogleSignIn = async () => {
 **Cause:** localStorage not cleared immediately.
 
 **Solution:** Clear localStorage BEFORE calling logout:
+
 ```typescript
 const handleLogout = async () => {
   localStorage.removeItem("navbar_was_authenticated");
   localStorage.removeItem("oauth_login_pending");
-  setWasAuthenticated(false);  // Update state immediately
+  setWasAuthenticated(false); // Update state immediately
   await logout();
 };
 ```
@@ -717,10 +722,9 @@ const handleLogout = async () => {
 **Cause:** Radix UI dropdown locks body scroll by default.
 
 **Solution:** Set `modal={false}`:
+
 ```tsx
-<DropdownMenu modal={false}>
-  {/* ... */}
-</DropdownMenu>
+<DropdownMenu modal={false}>{/* ... */}</DropdownMenu>
 ```
 
 ### 6. Google Profile Image Shows Initials/Fallback
@@ -728,6 +732,7 @@ const handleLogout = async () => {
 **Cause:** Missing `referrerPolicy` or image URL not passed through session.
 
 **Solution:**
+
 1. Add `referrerPolicy="no-referrer"` to img tag
 2. Ensure `profile.picture` is passed in auth.ts jwt callback
 3. Use standard `<img>` tag instead of Next.js `<Image>` for external URLs

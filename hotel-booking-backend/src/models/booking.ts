@@ -19,6 +19,8 @@ export interface IBooking extends Document {
   specialRequests: string;
   cancellationReason: string;
   refundAmount: number;
+  /** Stripe PaymentIntent id — required for refunds on cancel */
+  stripePaymentIntentId?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -52,6 +54,7 @@ const bookingSchema = new mongoose.Schema(
     specialRequests: { type: String },
     cancellationReason: { type: String },
     refundAmount: { type: Number, default: 0 },
+    stripePaymentIntentId: { type: String, index: true },
     // Audit fields
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

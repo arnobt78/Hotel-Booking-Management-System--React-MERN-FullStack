@@ -8,6 +8,8 @@ import ContactSection from "./ContactSection";
 import PoliciesSection from "./PoliciesSection";
 import { HotelType } from "../../../../shared/types";
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Button } from "../../components/ui/button";
 
 export type HotelFormData = {
   name: string;
@@ -53,9 +55,18 @@ type Props = {
   hotel?: HotelType;
   onSave: (hotelFormData: FormData) => void;
   isLoading: boolean;
+  /** When set, show Cancel (calls this) + Back link to My Hotels */
+  onCancel?: () => void;
+  showBack?: boolean;
 };
 
-const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
+const ManageHotelForm = ({
+  onSave,
+  isLoading,
+  hotel,
+  onCancel,
+  showBack = false,
+}: Props) => {
   const formMethods = useForm<HotelFormData>();
   const { handleSubmit, reset } = formMethods;
 
@@ -158,14 +169,29 @@ const ManageHotelForm = ({ onSave, isLoading, hotel }: Props) => {
         <ContactSection />
         <PoliciesSection />
         <ImagesSection />
-        <span className="flex justify-end">
-          <button
+        <span className="flex flex-wrap justify-end gap-3">
+          {showBack && (
+            <Button type="button" variant="outline" asChild>
+              <Link to="/my-hotels">Back</Link>
+            </Button>
+          )}
+          {onCancel && (
+            <Button
+              type="button"
+              variant="secondary"
+              disabled={isLoading}
+              onClick={onCancel}
+            >
+              Cancel
+            </Button>
+          )}
+          <Button
             disabled={isLoading}
             type="submit"
-            className="bg-blue-600 text-white  px-6 py-2 rounded-lg font-semibold hover:bg-blue-500 text-xl disabled:bg-gray-500"
+            className="bg-blue-600 text-white hover:bg-blue-500 text-lg px-6"
           >
-            {isLoading ? "Saving..." : "Save"}
-          </button>
+            {isLoading ? "Saving..." : hotel ? "Update" : "Save"}
+          </Button>
         </span>
       </form>
     </FormProvider>

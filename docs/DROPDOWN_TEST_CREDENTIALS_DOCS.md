@@ -158,7 +158,7 @@ const authConfig: NextAuthConfig = {
         }
         const isValid = await bcrypt.compare(
           credentials.password as string,
-          user.password
+          user.password,
         );
         if (!isValid) {
           return null;
@@ -809,7 +809,6 @@ Uses react-hook-form's `setValue` method to programmatically update form fields.
 ### JWT vs Database Sessions
 
 - **JWT Sessions** (Current Implementation):
-
   - No database queries for session validation
   - Stateless (scales better)
   - Token stored in cookie
@@ -866,9 +865,9 @@ Update the className props to match your theme:
 
 ```tsx
 // Light theme example
-<SelectTrigger className="border border-gray-300 bg-white text-gray-900">
+<SelectTrigger className="border border-gray-300 bg-white text-gray-700">
 <SelectContent className="border-gray-300 bg-white">
-  <SelectItem className="text-gray-900 focus:bg-gray-100">
+  <SelectItem className="text-gray-700 focus:bg-gray-100">
 ```
 
 ### Change Labels
@@ -1546,7 +1545,6 @@ export default function CustomAuth0SignIn() {
 ## Recommendations
 
 1. **Use NextAuth.js v5** if:
-
    - You want full control over authentication flow
    - You need custom UI/UX
    - You want to self-host everything
@@ -1554,7 +1552,6 @@ export default function CustomAuth0SignIn() {
    - You're building a custom authentication experience
 
 2. **Use Clerk** if:
-
    - You want authentication implemented quickly
    - You're okay with pre-built UI components
    - You need user management features out of the box

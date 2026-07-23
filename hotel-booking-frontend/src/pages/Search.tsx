@@ -29,7 +29,7 @@ const Search = () => {
         new Date(checkIn),
         new Date(checkOut),
         parseInt(adultCount || "1", 10),
-        parseInt(childCount || "1", 10)
+        parseInt(childCount || "1", 10),
       );
     }
   }, [urlSearchParams.toString()]);
@@ -53,12 +53,12 @@ const Search = () => {
     sortOption,
   };
 
-  const { data: hotelData } = useQueryWithLoading(
+  const { data: hotelData, isLoading: isSearchLoading } = useQueryWithLoading(
     ["searchHotels", searchParams],
     () => apiClient.searchHotels(searchParams),
     {
       loadingMessage: "Searching for perfect hotels...",
-    }
+    },
   );
 
   const handleStarsChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -67,19 +67,19 @@ const Search = () => {
     setSelectedStars((prevStars) =>
       event.target.checked
         ? [...prevStars, starRating]
-        : prevStars.filter((star) => star !== starRating)
+        : prevStars.filter((star) => star !== starRating),
     );
   };
 
   const handleHotelTypeChange = (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const hotelType = event.target.value;
 
     setSelectedHotelTypes((prevHotelTypes) =>
       event.target.checked
         ? [...prevHotelTypes, hotelType]
-        : prevHotelTypes.filter((hotel) => hotel !== hotelType)
+        : prevHotelTypes.filter((hotel) => hotel !== hotelType),
     );
   };
 
@@ -89,7 +89,7 @@ const Search = () => {
     setSelectedFacilities((prevFacilities) =>
       event.target.checked
         ? [...prevFacilities, facility]
-        : prevFacilities.filter((prevFacility) => prevFacility !== facility)
+        : prevFacilities.filter((prevFacility) => prevFacility !== facility),
     );
   };
 
@@ -97,7 +97,7 @@ const Search = () => {
     <div className="space-y-6">
       {/* Search Bar */}
       <div className="bg-white rounded-lg shadow-sm border p-4">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+        <h2 className="text-lg font-medium text-gray-700 mb-4">
           Modify Your Search
         </h2>
         <SearchBar />
@@ -107,7 +107,7 @@ const Search = () => {
       <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
         <div className="rounded-lg border border-slate-300 p-5 h-fit lg:sticky lg:top-10 order-2 lg:order-1">
           <div className="space-y-5">
-            <h3 className="text-lg font-semibold border-b border-slate-300 pb-5">
+            <h3 className="text-lg font-medium border-b border-slate-300 pb-5">
               Filter by:
             </h3>
             <StarRatingFilter
@@ -130,8 +130,10 @@ const Search = () => {
         </div>
         <div className="flex flex-col gap-5 order-1 lg:order-2">
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold">
-              {hotelData?.pagination.total} Hotels found
+            <span className="text-xl font-medium">
+              {isSearchLoading
+                ? "Searching…"
+                : `${hotelData?.pagination.total ?? 0} Hotels found`}
               {search.destination ? ` in ${search.destination}` : ""}
             </span>
             <select
@@ -149,7 +151,16 @@ const Search = () => {
               </option>
             </select>
           </div>
-          {hotelData?.data.length === 0 ? (
+          {isSearchLoading || hotelData === undefined ? (
+            <div className="flex flex-col gap-5">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="h-40 bg-gray-100 rounded-lg animate-pulse border border-gray-100"
+                />
+              ))}
+            </div>
+          ) : hotelData.data.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
               <div className="text-gray-400 mb-4">
                 <svg
@@ -167,7 +178,7 @@ const Search = () => {
                   />
                 </svg>
               </div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+              <h3 className="text-xl font-medium text-gray-700 mb-2">
                 No hotels found
               </h3>
               <p className="text-gray-500 max-w-md">
@@ -227,7 +238,7 @@ const Search = () => {
               {hotelData?.data.map(
                 (hotel: import("../../../shared/types").HotelType) => (
                   <SearchResultsCard key={hotel._id} hotel={hotel} />
-                )
+                ),
               )}
               <div>
                 <Pagination

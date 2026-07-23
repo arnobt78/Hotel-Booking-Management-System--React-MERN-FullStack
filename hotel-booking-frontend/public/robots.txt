@@ -1,0 +1,22 @@
+# Crawl policy for Vite SPA on Vercel (single source — no App Router robots.ts).
+# Dashboard: enable Firewall → Bot Management → Bot Protection + AI Bots.
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+
+User-agent: Claude-Web
+Disallow: /

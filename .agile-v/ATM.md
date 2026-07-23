@@ -33,8 +33,22 @@
 | REQ-0029 | ART-0029 | — | VER-0007 | baseline done |
 | REQ-0030 | ART-0030 | TC-0001..0004 | VER-0001..0004 | baseline done |
 | REQ-0031 | ART-0031 | — | VER-0009 | baseline done |
-| REQ-0032 | ART-0032 | TC-0005 (TBD) | VER-0010 (TBD) | planned |
+| REQ-0032 | ART-0032 / ART-0037 | TC-0005 (TBD) | VER-0010 / VER-0013 | partial (Reviews done; Analytics → T3) |
 | REQ-0033 | ART-0033 | — (docs) | VER-0011 | done locally |
 | REQ-0034 | ART-0034 | — | VER-0012 | done |
+| REQ-0035 | ART-0035 | — | VER-0013 | done |
+| REQ-0036 | ART-0036 | — | VER-0013 | done |
+| REQ-0037 | ART-0037 | TC-0005 partial | VER-0013 | done |
+| REQ-0038 | ART-0038 | — | VER-0013 | done |
+| REQ-0039 | ART-0039 | — | VER-0013 | done |
+| REQ-0040 | ART-0040 | — | VER-0014 | done |
+| REQ-0041 | ART-0041 | — | VER-0014 | done |
+| REQ-0042 | ART-0042 | — | VER-0014 | done |
+| REQ-0043 | ART-0043 | — | VER-0015 | done |
+| REQ-0044 | ART-0044 | — | VER-0015 | done |
+| REQ-0045 | ART-0045 | — | VER-0015 | done |
+| REQ-0046 | ART-0046 | — | VER-0016 | done |
+| REQ-0047 | ART-0047 | — | VER-0016 | done |
+| REQ-0048 | ART-0048 | — | VER-0016 | done |
 
 **Auditor note:** C1 baseline VER rows = sync acceptance (code + walkthrough + live demos). Full Red Team suite opens after Gate 1 for new work.

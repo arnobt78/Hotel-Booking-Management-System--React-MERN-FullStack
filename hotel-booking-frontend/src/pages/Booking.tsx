@@ -38,11 +38,11 @@ const Booking = () => {
     () =>
       apiClient.createPaymentIntent(
         hotelId as string,
-        numberOfNights.toString()
+        numberOfNights.toString(),
       ),
     {
       enabled: !!hotelId && numberOfNights > 0,
-    }
+    },
   );
 
   const { data: hotel, isLoading: isLoadingHotel } = useQuery(
@@ -50,12 +50,12 @@ const Booking = () => {
     () => apiClient.fetchHotelById(hotelId as string),
     {
       enabled: !!hotelId,
-    }
+    },
   );
 
   const { data: currentUser, isLoading: isLoadingUser } = useQuery(
     "fetchCurrentUser",
-    apiClient.fetchCurrentUser
+    apiClient.fetchCurrentUser,
   );
 
   if (isLoadingHotel || isLoadingUser) {
@@ -75,7 +75,7 @@ const Booking = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-2">
+          <h2 className="text-2xl font-medium text-gray-700 mb-2">
             Hotel Not Found
           </h2>
           <p className="text-gray-600">
@@ -93,7 +93,7 @@ const Booking = () => {
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <CreditCard className="h-6 w-6 text-blue-600" />
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-medium text-gray-700">
               Complete Your Booking
             </h1>
           </div>
@@ -109,7 +109,7 @@ const Booking = () => {
           <div className="space-y-6">
             <Card className="shadow-lg border-0 bg-white">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+                <CardTitle className="flex items-center gap-2 text-lg font-medium">
                   <Calendar className="h-5 w-5 text-blue-600" />
                   Booking Summary
                 </CardTitle>
@@ -129,14 +129,14 @@ const Booking = () => {
             {/* Hotel Info Card */}
             <Card className="shadow-lg border-0 bg-white">
               <CardHeader className="pb-4">
-                <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+                <CardTitle className="flex items-center gap-2 text-lg font-medium">
                   <Users className="h-5 w-5 text-blue-600" />
                   Hotel Information
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">
+                  <h3 className="font-medium text-gray-700 mb-2">
                     {hotel.name}
                   </h3>
                   <p className="text-gray-600 text-sm mb-3">

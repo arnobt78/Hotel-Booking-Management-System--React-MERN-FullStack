@@ -46,8 +46,19 @@ const EditHotel = () => {
     mutate(hotelFormData);
   };
 
+  // Cancel discards edits and returns to My Hotels without saving
+  const handleCancel = () => {
+    navigate("/my-hotels");
+  };
+
   return (
-    <ManageHotelForm hotel={hotel} onSave={handleSave} isLoading={isLoading} />
+    <ManageHotelForm
+      hotel={hotel}
+      onSave={handleSave}
+      isLoading={isLoading}
+      onCancel={handleCancel}
+      showBack
+    />
   );
 };
 

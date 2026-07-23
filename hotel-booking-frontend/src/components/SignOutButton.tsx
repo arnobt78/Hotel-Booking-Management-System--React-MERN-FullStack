@@ -115,7 +115,7 @@ const SignOutButton = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 bg-white" align="end">
         <DropdownMenuLabel>
-          <p className="font-medium text-gray-900">{displayName}</p>
+          <p className="font-medium text-gray-700">{displayName}</p>
           {userEmail && (
             <p className="text-xs text-gray-500 truncate">{userEmail}</p>
           )}

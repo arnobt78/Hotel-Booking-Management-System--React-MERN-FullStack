@@ -88,9 +88,33 @@ export type HotelType = {
   totalRevenue?: number;
   averageRating?: number;
   reviewCount?: number;
+  /** Owner dashboard counts (enriched by GET /api/my-hotels) */
+  upcomingBookings?: number;
+  completedBookings?: number;
+  cancelledBookings?: number;
   occupancyRate?: number;
   isActive?: boolean;
   isFeatured?: boolean;
+  createdAt?: Date;
+  updatedAt?: Date;
+};
+
+export type ReviewType = {
+  _id: string;
+  userId: string;
+  hotelId: string;
+  bookingId: string;
+  rating: number;
+  comment: string;
+  categories: {
+    cleanliness: number;
+    service: number;
+    location: number;
+    value: number;
+    amenities: number;
+  };
+  isVerified?: boolean;
+  helpfulCount?: number;
   createdAt?: Date;
   updatedAt?: Date;
 };
@@ -114,6 +138,8 @@ export type BookingType = {
   specialRequests?: string;
   cancellationReason?: string;
   refundAmount?: number;
+  /** Stripe PaymentIntent id used at booking time (for refunds) */
+  stripePaymentIntentId?: string;
   createdAt?: Date;
   updatedAt?: Date;
 };

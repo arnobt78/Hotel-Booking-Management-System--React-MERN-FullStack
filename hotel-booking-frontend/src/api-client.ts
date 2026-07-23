@@ -8,6 +8,7 @@ import {
   UserType,
   HotelWithBookingsType,
   BookingType,
+  ReviewType,
 } from "../../shared/types";
 import { BookingFormData } from "./forms/BookingForm/BookingForm";
 import { queryClient } from "./main";
@@ -31,13 +32,11 @@ export const signIn = async (formData: SignInFormData) => {
   const token = response.data?.token;
   if (token) {
     localStorage.setItem("session_id", token);
-    console.log("JWT token stored in localStorage for incognito compatibility");
   }
 
-  // Store user info for incognito mode fallback and profile avatar
+  // Store user info for profile avatar / UsernameMenu
   if (response.data?.userId) {
     localStorage.setItem("user_id", response.data.userId);
-    console.log("User ID stored for incognito mode fallback");
   }
   if (response.data?.user) {
     const { email, firstName, lastName } = response.data.user;
@@ -46,38 +45,44 @@ export const signIn = async (formData: SignInFormData) => {
     if (name) localStorage.setItem("user_name", name);
   }
 
-  // Force validate token after successful login to update React Query cache
+  // Refresh validateToken cache so isLoggedIn flips without full reload
   try {
-    const validationResult = await validateToken();
-    console.log("Token validation after login:", validationResult);
-
-    // Invalidate and refetch the validateToken query to update the UI
-    queryClient.invalidateQueries("validateToken");
-
-    // Force a refetch to ensure the UI updates
+    await validateToken();
+    await queryClient.invalidateQueries("validateToken");
     await queryClient.refetchQueries("validateToken");
-  } catch (error) {
-    console.log("Token validation failed after login, but continuing...");
-
-    // Even if validation fails, if we have a token stored, consider it a success for incognito mode
-    if (localStorage.getItem("session_id")) {
-      console.log("Incognito mode detected - using stored token as fallback");
-    }
+  } catch {
+    // Token stored — UI still works if validate races; do not spam console
   }
 
   return response.data;
 };
 
+/** Clears JWT keys when session is invalid */
+const clearAuthStorage = () => {
+  localStorage.removeItem("session_id");
+  localStorage.removeItem("user_id");
+  localStorage.removeItem("user_email");
+  localStorage.removeItem("user_name");
+  localStorage.removeItem("user_image");
+};
+
 export const validateToken = async () => {
+  const token = localStorage.getItem("session_id");
+  // No JWT — guest; skip network (callers should also gate with enabled)
+  if (!token) {
+    return null;
+  }
+
   try {
     const response = await axiosInstance.get("/api/auth/validate-token");
     return response.data;
-  } catch (error: any) {
-    if (error.response?.status === 401) {
-      // Not logged in, throw error so React Query knows it failed
+  } catch (error: unknown) {
+    const status = (error as { response?: { status?: number } })?.response
+      ?.status;
+    if (status === 401) {
+      clearAuthStorage();
       throw new Error("Token invalid");
     }
-    // For any other error (network, etc.), also throw
     throw new Error("Token validation failed");
   }
 };
@@ -226,9 +231,55 @@ export const fetchHotelBookings = async (
   return response.data;
 };
 
+/** Guest / owner / admin cancel — may trigger Stripe full refund when paid */
+export const cancelBooking = async (
+  bookingId: string,
+  payload?: { cancellationReason?: string }
+): Promise<{
+  booking: BookingType;
+  refundAmount: number;
+  refundSkipped?: string;
+}> => {
+  const response = await axiosInstance.post(
+    `/api/bookings/${bookingId}/cancel`,
+    payload || {}
+  );
+  return response.data;
+};
+
+/** Public list of reviews for a hotel */
+export const fetchHotelReviews = async (hotelId: string) => {
+  const response = await axiosInstance.get(`/api/reviews/hotel/${hotelId}`);
+  return response.data;
+};
+
+/** Create review (JWT) — invalidates hotel/review queries in callers */
+export const createHotelReview = async (payload: {
+  hotelId: string;
+  bookingId: string;
+  rating: number;
+  comment: string;
+  categories: {
+    cleanliness: number;
+    service: number;
+    location: number;
+    value: number;
+    amenities: number;
+  };
+}) => {
+  const response = await axiosInstance.post("/api/reviews", payload);
+  return response.data;
+};
+
 // Business Insights API functions (public endpoints - no auth required)
 export const fetchBusinessInsightsDashboard = async () => {
   const response = await axiosInstance.get("/api/business-insights/dashboard/public");
+  return response.data;
+};
+
+/** Admin: JWT-gated dashboard (same payload as public) */
+export const fetchAdminBusinessInsightsDashboard = async () => {
+  const response = await axiosInstance.get("/api/business-insights/dashboard");
   return response.data;
 };
 
@@ -239,5 +290,103 @@ export const fetchBusinessInsightsForecast = async () => {
 
 export const fetchBusinessInsightsPerformance = async () => {
   const response = await axiosInstance.get("/api/business-insights/system-stats/public");
+  return response.data;
+};
+
+/** Admin: all users */
+export const fetchAdminUsers = async (): Promise<UserType[]> => {
+  const response = await axiosInstance.get("/api/users");
+  return response.data;
+};
+
+/** Admin: PATCH user role */
+export const updateUserRole = async (
+  userId: string,
+  role: "user" | "admin" | "hotel_owner"
+): Promise<UserType> => {
+  const response = await axiosInstance.patch(`/api/users/${userId}/role`, {
+    role,
+  });
+  return response.data;
+};
+
+/** Admin: toggle hotel isActive */
+export const updateHotelActive = async (
+  hotelId: string,
+  isActive: boolean
+): Promise<HotelType> => {
+  const response = await axiosInstance.patch(`/api/hotels/${hotelId}/active`, {
+    isActive,
+  });
+  return response.data;
+};
+
+/** Owner: toggle own hotel isActive (PATCH /api/my-hotels/:id/active) */
+export const updateMyHotelActive = async (
+  hotelId: string,
+  isActive: boolean
+): Promise<HotelType> => {
+  const response = await axiosInstance.patch(
+    `/api/my-hotels/${hotelId}/active`,
+    { isActive }
+  );
+  return response.data;
+};
+
+/** Admin: all bookings */
+export const fetchAdminBookings = async (): Promise<BookingType[]> => {
+  const response = await axiosInstance.get("/api/bookings");
+  return response.data;
+};
+
+/** Admin: global reviews */
+export const fetchAdminReviews = async (): Promise<ReviewType[]> => {
+  const response = await axiosInstance.get("/api/reviews");
+  return response.data;
+};
+
+export type AnalyticsSnapshot = {
+  _id: string;
+  date: string | Date;
+  metrics: {
+    totalBookings: number;
+    totalRevenue: number;
+    totalUsers: number;
+    totalHotels: number;
+    averageBookingValue: number;
+    conversionRate: number;
+    cancellationRate: number;
+    averageRating: number;
+  };
+};
+
+/** Admin: list Analytics snapshots */
+export const fetchAnalyticsSnapshots = async (): Promise<AnalyticsSnapshot[]> => {
+  const response = await axiosInstance.get("/api/analytics/snapshots");
+  return response.data;
+};
+
+/** Admin: capture live metrics into Analytics */
+export const createAnalyticsSnapshot = async (): Promise<AnalyticsSnapshot> => {
+  const response = await axiosInstance.post("/api/analytics/snapshots");
+  return response.data;
+};
+
+/**
+ * AI draft assist — returns text only; caller must Apply (never auto-save).
+ * 503 when AI_ASSIST_ENABLED is not true on the server.
+ */
+export const suggestAiAssist = async (payload: {
+  kind: "hotel_description" | "insights_copy";
+  input: string;
+  context?: Record<string, unknown>;
+}): Promise<{
+  draft: string;
+  provider: "groq" | "openai" | "openrouter" | "stub";
+  model?: string;
+  usedFallback?: boolean;
+  warning?: string;
+}> => {
+  const response = await axiosInstance.post("/api/ai/suggest", payload);
   return response.data;
 };

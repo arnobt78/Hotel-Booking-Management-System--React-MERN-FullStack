@@ -113,7 +113,7 @@ const SignIn = () => {
             <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
               <LogIn className="w-8 h-8 text-white" />
             </div>
-            <CardTitle className="text-3xl font-bold text-gray-900 mb-2">
+            <CardTitle className="text-3xl font-medium text-gray-700 mb-2">
               Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-600">
@@ -139,7 +139,7 @@ const SignIn = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="test-account"
-                  className="text-sm font-semibold text-gray-700"
+                  className="text-sm font-medium text-gray-700"
                 >
                   Test Accounts To Login With
                 </Label>
@@ -148,13 +148,13 @@ const SignIn = () => {
                   value={selectedRole || undefined}
                   onValueChange={handleRoleSelect}
                 >
-                  <SelectTrigger className="border border-gray-300 bg-white/80 text-gray-900">
+                  <SelectTrigger className="border border-gray-300 bg-white/80 text-gray-700">
                     <SelectValue placeholder="Select Role Based Test Account" />
                   </SelectTrigger>
                   <SelectContent className="border-gray-200 bg-white">
                     <SelectItem
                       value="guest-user"
-                      className="cursor-pointer text-gray-900 focus:bg-primary-50 focus:text-primary-900"
+                      className="cursor-pointer text-gray-700 focus:bg-primary-50 focus:text-primary-900"
                     >
                       Guest User (test@user.com)
                     </SelectItem>
@@ -174,18 +174,18 @@ const SignIn = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="email"
-                  className="text-sm font-semibold text-gray-700"
+                  className="text-sm font-medium text-gray-700"
                 >
                   Email Address
                 </Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                    <Mail className="h-6 w-6 text-gray-600" />
+                    <Mail className="h-4 w-4 text-gray-600" />
                   </div>
                   <Input
                     id="email"
                     type="email"
-                    className="pl-10 pr-3 py-3 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                    className="pl-10 pr-3 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                     placeholder="Enter your email"
                     {...register("email", { required: "Email is required" })}
                   />
@@ -207,18 +207,18 @@ const SignIn = () => {
               <div className="space-y-2">
                 <Label
                   htmlFor="password"
-                  className="text-sm font-semibold text-gray-700"
+                  className="text-sm font-medium text-gray-700"
                 >
                   Password
                 </Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-10">
-                    <Lock className="h-6 w-6 text-gray-600" />
+                    <Lock className="h-4 w-4 text-gray-600" />
                   </div>
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    className="pl-10 pr-12 py-3 border border-gray-300 rounded-md text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                    className="pl-10 pr-12 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
                     placeholder="Enter your password"
                     {...register("password", {
                       required: "Password is required",
@@ -236,9 +236,9 @@ const SignIn = () => {
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      <EyeOff className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
+                      <Eye className="h-4 w-4 text-gray-400 hover:text-gray-600" />
                     )}
                   </Button>
                 </div>
@@ -323,7 +323,7 @@ const SignIn = () => {
                   Don't have an account?{" "}
                   <Link
                     to="/register"
-                    className="font-semibold text-primary-600 hover:text-primary-700 transition-colors duration-200 underline decoration-2 underline-offset-2"
+                    className="font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200 underline decoration-2 underline-offset-2"
                   >
                     Create one here
                   </Link>

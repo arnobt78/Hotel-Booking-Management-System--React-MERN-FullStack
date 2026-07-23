@@ -85,7 +85,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
           type: "ERROR",
         });
       },
-    }
+    },
   );
 
   const { handleSubmit, register } = useForm<BookingFormData>({
@@ -147,7 +147,7 @@ MM/YY: 12/35 CVC: 123`;
   return (
     <div className="p-6">
       <CardHeader className="pb-6">
-        <CardTitle className="flex items-center gap-2 text-2xl font-bold text-gray-900">
+        <CardTitle className="flex items-center gap-2 text-2xl font-medium text-gray-700">
           <User className="h-6 w-6 text-blue-600" />
           Confirm Your Details
         </CardTitle>
@@ -160,7 +160,7 @@ MM/YY: 12/35 CVC: 123`;
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Personal Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
               <User className="h-5 w-5 text-blue-600" />
               Personal Information
             </h3>
@@ -223,7 +223,7 @@ MM/YY: 12/35 CVC: 123`;
 
           {/* Special Requests */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-blue-600" />
               Special Requests (Optional)
             </h3>
@@ -245,7 +245,7 @@ MM/YY: 12/35 CVC: 123`;
 
           {/* Price Summary */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-blue-600" />
               Price Summary
             </h3>
@@ -253,7 +253,7 @@ MM/YY: 12/35 CVC: 123`;
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-100">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-700 font-medium">Total Cost</span>
-                <span className="text-2xl font-bold text-blue-600">
+                <span className="text-2xl font-medium text-blue-600">
                   £{paymentIntent.totalCost.toFixed(2)}
                 </span>
               </div>
@@ -266,7 +266,7 @@ MM/YY: 12/35 CVC: 123`;
 
           {/* Payment Details */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-gray-700 flex items-center gap-2">
               <Shield className="h-5 w-5 text-blue-600" />
               Payment Details
             </h3>
@@ -304,7 +304,7 @@ MM/YY: 12/35 CVC: 123`;
               <div className="flex items-start gap-3">
                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                 <div className="flex-1">
-                  <h4 className="text-sm font-semibold text-yellow-800 mb-2">
+                  <h4 className="text-sm font-medium text-yellow-800 mb-2">
                     For Testing Purpose
                   </h4>
                   <p className="text-sm text-yellow-700 mb-3">
@@ -314,7 +314,7 @@ MM/YY: 12/35 CVC: 123`;
                   </p>
                   <div className="bg-white border border-yellow-300 rounded-md p-3 relative">
                     <div className="flex items-center justify-between">
-                      <div className="text-sm font-mono text-gray-800">
+                      <div className="text-sm font-mono text-gray-700">
                         <div>Card: 4242 4242 4242 4242</div>
                         <div>MM/YY: 12/35 CVC: 123 ZIP: 12345</div>
                       </div>
@@ -347,7 +347,7 @@ MM/YY: 12/35 CVC: 123`;
             <Button
               disabled={isLoading}
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

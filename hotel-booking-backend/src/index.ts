@@ -13,6 +13,9 @@ import bookingRoutes from "./routes/my-bookings";
 import bookingsManagementRoutes from "./routes/bookings";
 import healthRoutes from "./routes/health";
 import businessInsightsRoutes from "./routes/business-insights";
+import reviewRoutes from "./routes/reviews";
+import analyticsRoutes from "./routes/analytics";
+import aiRoutes from "./routes/ai";
 import swaggerUi from "swagger-ui-express";
 import { specs } from "./swagger";
 import helmet from "helmet";
@@ -53,13 +56,29 @@ cloudinary.config({
 
 console.log("☁️  Cloudinary configured successfully");
 
-// MongoDB Connection with Error Handling
+// MongoDB Connection with Error Handling + TLS for Atlas / tls=true URIs
 const connectDB = async () => {
   try {
     console.log("📡 Attempting to connect to MongoDB...");
-    await mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string);
+    const uri = process.env.MONGODB_CONNECTION_STRING as string;
+    const wantsTls =
+      uri.includes("mongodb+srv://") ||
+      /[?&]tls=true/i.test(uri) ||
+      /[?&]ssl=true/i.test(uri);
+
+    await mongoose.connect(uri, {
+      ...(wantsTls
+        ? {
+            tls: true,
+            tlsAllowInvalidCertificates: false,
+          }
+        : {}),
+    });
     console.log("✅ MongoDB connected successfully");
     console.log(`📦 Database: ${mongoose.connection.db.databaseName}`);
+    if (wantsTls) {
+      console.log("🔒 MongoDB TLS enabled");
+    }
   } catch (error) {
     console.error("❌ MongoDB connection error:", error);
     console.error("💡 Please check your MONGODB_CONNECTION_STRING");
@@ -84,10 +103,15 @@ connectDB();
 
 const app = express();
 
-// Security middleware
-app.use(helmet());
+// Security middleware — API does not need cross-origin embedding of responses
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
+    contentSecurityPolicy: false, // Swagger UI needs inline assets
+  })
+);
 
-// Trust proxy for production (fixes rate limiting issues)
+// Trust proxy for production (Coolify/Vercel reverse proxy — rate limit + secure cookies)
 app.set("trust proxy", 1);
 
 // Rate limiting - more lenient for payment endpoints
@@ -211,6 +235,9 @@ app.use("/api/my-bookings", bookingRoutes);
 app.use("/api/bookings", bookingsManagementRoutes);
 app.use("/api/health", healthRoutes);
 app.use("/api/business-insights", businessInsightsRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/analytics", analyticsRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Swagger API Documentation
 app.use(

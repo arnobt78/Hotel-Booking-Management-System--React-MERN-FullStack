@@ -9,4 +9,4 @@
 | RISK-0003 | C1 | Technical | Cloudinary/Mongo outage breaks uploads/search | Low | High | Medium | Health endpoints; graceful UI errors | ops | open |
 | RISK-0004 | C1 | Process | Gate 1 not approved → agents invent features | Med | Med | Medium | Halt without REQ; checkpoint INT-0001 | orchestrator | open |
 | RISK-0005 | C1 | Compliance | Secrets committed to git | Low | High | Medium | POLICY R003; .gitignore env files | compliance | open |
-| RISK-0006 | C1 | Technical | Review/Analytics models unused → schema drift | Med | Low | Low | Tracked as REQ-0032 | product | open |
+| RISK-0006 | C1 | Technical | Analytics schema drift | Low | Low | Low | Snapshots shipped REQ-0043 | product | closed |

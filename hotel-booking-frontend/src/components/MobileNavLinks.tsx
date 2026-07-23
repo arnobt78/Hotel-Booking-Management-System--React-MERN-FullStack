@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import {
-  FileText,
-  Activity,
   Building2,
   Calendar,
   BarChart3,
@@ -14,8 +12,9 @@ import useAppContext from "../hooks/useAppContext";
 import { getHotelsSearchUrl } from "../lib/nav-utils";
 
 const linkClass =
-  "flex items-center gap-2 w-full py-3 font-bold text-gray-900 hover:text-primary-600 transition-colors";
+  "flex items-center gap-2 w-full py-3 font-medium text-gray-700 hover:text-primary-600 transition-colors";
 
+/** Mobile nav — API Docs/Status live in UsernameMenu when logged in (not here). */
 const MobileNavLinks = () => {
   const { isLoggedIn } = useAppContext();
 
@@ -37,19 +36,6 @@ const MobileNavLinks = () => {
         <Building2 className="h-4 w-4" />
         My Hotels
       </Link>
-      <div className="py-2">
-        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1 mb-2">
-          API
-        </p>
-        <Link to="/api-docs" className={`${linkClass} pl-4`}>
-          <FileText className="h-4 w-4" />
-          API Docs
-        </Link>
-        <Link to="/api-status" className={`${linkClass} pl-4`}>
-          <Activity className="h-4 w-4" />
-          API Status
-        </Link>
-      </div>
 
       <div className="h-px bg-border my-4" />
 
@@ -58,7 +44,7 @@ const MobileNavLinks = () => {
           <UsernameMenu />
         ) : (
           <Link to="/sign-in" className="w-full">
-            <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700">
+            <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700">
               <LogIn className="h-4 w-4 mr-2" />
               Log In
             </Button>

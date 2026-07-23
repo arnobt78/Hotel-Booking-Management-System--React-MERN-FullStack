@@ -44,7 +44,7 @@ export interface IAnalytics extends Document {
 
 const analyticsSchema = new mongoose.Schema(
   {
-    date: { type: Date, required: true, index: true },
+    date: { type: Date, required: true },
     metrics: {
       totalBookings: { type: Number, default: 0 },
       totalRevenue: { type: Number, default: 0 },
@@ -78,9 +78,9 @@ const analyticsSchema = new mongoose.Schema(
       ],
       byHotelType: [
         {
-          type: String,
-          bookings: Number,
-          revenue: Number,
+          type: { type: String },
+          bookings: { type: Number },
+          revenue: { type: Number },
         },
       ],
     },

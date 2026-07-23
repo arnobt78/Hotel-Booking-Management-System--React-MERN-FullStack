@@ -16,6 +16,7 @@ import {
   Building,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { SafeImage } from "./ui/safe-image";
 
 type Props = {
   hotel: HotelType;
@@ -42,19 +43,23 @@ const SearchResultsCard = ({ hotel }: Props) => {
       <div className="grid grid-cols-1 xl:grid-cols-[2fr_3fr] gap-0 w-full h-full">
         {/* Image Section */}
         <div className="relative overflow-hidden h-64 xl:h-[500px]">
-          <img
+          <SafeImage
             src={hotel.imageUrls[0]}
-            className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
+            alt={hotel.name}
+            fill
+            className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
           />
 
           {/* Overlay Badges */}
           <div className="absolute top-4 left-4 flex flex-col space-y-2">
             <div className="bg-primary-600 text-white rounded-full px-3 py-1">
-              <span className="text-sm font-bold">£{hotel.pricePerNight}</span>
+              <span className="text-sm font-medium">
+                £{hotel.pricePerNight}
+              </span>
             </div>
             {hotel.isFeatured && (
               <div className="bg-yellow-500 text-white rounded-full px-3 py-1">
-                <span className="text-xs font-bold">Featured</span>
+                <span className="text-xs font-medium">Featured</span>
               </div>
             )}
           </div>
@@ -63,7 +68,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
           <div className="absolute top-4 right-4">
             <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">
               <AiFillStar className="w-4 h-4 text-yellow-500" />
-              <span className="text-sm font-semibold text-gray-800">
+              <span className="text-sm font-medium text-gray-700">
                 {hotel.starRating}
               </span>
             </div>
@@ -104,7 +109,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
 
               <Link
                 to={`/detail/${hotel._id}`}
-                className="text-2xl font-bold text-gray-900 hover:text-primary-600 transition-colors cursor-pointer"
+                className="text-2xl font-medium text-gray-700 hover:text-primary-600 transition-colors cursor-pointer"
               >
                 {hotel.name}
               </Link>
@@ -143,7 +148,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
 
           {/* Facilities */}
           <div className="mt-6">
-            <h4 className="text-sm font-semibold text-gray-700 mb-3">
+            <h4 className="text-sm font-medium text-gray-700 mb-3">
               Key Amenities
             </h4>
             <div className="flex flex-wrap gap-2">
@@ -167,7 +172,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
           <div className="mt-6 pt-4 border-t border-gray-100">
             <Link
               to={`/detail/${hotel._id}`}
-              className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-3 px-6 rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 text-center block"
+              className="w-full bg-gradient-to-r from-primary-600 to-primary-700 text-white py-3 px-6 rounded-xl font-medium hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 text-center block"
             >
               View Details & Book
             </Link>

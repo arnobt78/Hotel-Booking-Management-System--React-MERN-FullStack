@@ -1,16 +1,61 @@
+import { useState } from "react";
 import { useFormContext } from "react-hook-form";
+import { useMutation } from "react-query";
 import { HotelFormData } from "./ManageHotelForm";
+import * as apiClient from "../../api-client";
+import { Button } from "../../components/ui/button";
+import useAppContext from "../../hooks/useAppContext";
 
 const DetailsSection = () => {
   const {
     register,
+    getValues,
+    setValue,
     formState: { errors },
   } = useFormContext<HotelFormData>();
+  const { showToast, isLoggedIn } = useAppContext();
+  const [draft, setDraft] = useState<string | null>(null);
+  const [provider, setProvider] = useState<string | null>(null);
+  const [aiDisabled, setAiDisabled] = useState(false);
+
+  const { mutate: suggest, isLoading } = useMutation(
+    () =>
+      apiClient.suggestAiAssist({
+        kind: "hotel_description",
+        input: getValues("description") || getValues("name") || "",
+      }),
+    {
+      onSuccess: (data) => {
+        setDraft(data.draft);
+        setProvider(data.provider);
+        setAiDisabled(false);
+      },
+      onError: (err: unknown) => {
+        const status = (err as { response?: { status?: number } })?.response
+          ?.status;
+        if (status === 503) {
+          setAiDisabled(true);
+          showToast({
+            title: "AI assist unavailable",
+            description:
+              "Enable AI_ASSIST_ENABLED on the server to use suggestions.",
+            type: "INFO",
+          });
+          return;
+        }
+        showToast({
+          title: "Suggestion failed",
+          description: "Could not generate a draft.",
+          type: "ERROR",
+        });
+      },
+    },
+  );
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-bold mb-3">Add Hotel</h1>
-      <label className="text-gray-700 text-sm font-bold flex-1">
+      <h1 className="text-3xl font-medium mb-3">Add Hotel</h1>
+      <label className="text-gray-700 text-sm font-medium flex-1">
         Name
         <input
           type="text"
@@ -23,7 +68,7 @@ const DetailsSection = () => {
       </label>
 
       <div className="flex gap-4">
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           City
           <input
             type="text"
@@ -34,7 +79,7 @@ const DetailsSection = () => {
             <span className="text-red-500">{errors.city.message}</span>
           )}
         </label>
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           Country
           <input
             type="text"
@@ -46,7 +91,7 @@ const DetailsSection = () => {
           )}
         </label>
       </div>
-      <label className="text-gray-700 text-sm font-bold flex-1">
+      <label className="text-gray-700 text-sm font-medium flex-1">
         Description
         <textarea
           rows={10}
@@ -57,7 +102,58 @@ const DetailsSection = () => {
           <span className="text-red-500">{errors.description.message}</span>
         )}
       </label>
-      <label className="text-gray-700 text-sm font-bold max-w-[50%]">
+
+      {/* Draft-and-approve: never auto-saves description */}
+      {isLoggedIn && !aiDisabled && (
+        <div className="space-y-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            disabled={isLoading}
+            onClick={() => suggest()}
+          >
+            {isLoading ? "Suggesting…" : "Suggest polish"}
+          </Button>
+          {draft && (
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 space-y-2">
+              <p className="text-xs text-slate-500">
+                Draft ({provider}) — review then Apply or Discard
+              </p>
+              <p className="text-sm text-slate-800 whitespace-pre-line">
+                {draft}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => {
+                    setValue("description", draft, { shouldDirty: true });
+                    setDraft(null);
+                    showToast({
+                      title: "Draft applied",
+                      description: "Save the hotel form to persist.",
+                      type: "SUCCESS",
+                    });
+                  }}
+                >
+                  Apply
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => setDraft(null)}
+                >
+                  Discard
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      <label className="text-gray-700 text-sm font-medium max-w-[50%]">
         Price Per Night
         <input
           type="number"
@@ -69,7 +165,7 @@ const DetailsSection = () => {
           <span className="text-red-500">{errors.pricePerNight.message}</span>
         )}
       </label>
-      <label className="text-gray-700 text-sm font-bold max-w-[50%]">
+      <label className="text-gray-700 text-sm font-medium max-w-[50%]">
         Star Rating
         <select
           {...register("starRating", {
@@ -77,11 +173,13 @@ const DetailsSection = () => {
           })}
           className="border rounded w-full p-2 text-gray-700 font-normal"
         >
-          <option value="" className="text-sm font-bold">
+          <option value="" className="text-sm font-medium">
             Select as Rating
           </option>
           {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>{num}</option>
+            <option key={num} value={num}>
+              {num}
+            </option>
           ))}
         </select>
         {errors.starRating && (

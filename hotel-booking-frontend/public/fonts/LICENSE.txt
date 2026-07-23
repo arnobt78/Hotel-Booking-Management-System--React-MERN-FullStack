@@ -1,0 +1,2 @@
+/** OFL — Inter by rsms; files in /public/fonts */
+export {};

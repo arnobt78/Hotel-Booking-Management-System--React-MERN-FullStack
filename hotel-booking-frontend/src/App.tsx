@@ -23,6 +23,14 @@ import ApiDocs from "./pages/ApiDocs";
 import ApiStatus from "./pages/ApiStatus";
 import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 import AuthCallback from "./pages/AuthCallback";
+import AdminRoute from "./components/AdminRoute";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminHotels from "./pages/admin/AdminHotels";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminReviews from "./pages/admin/AdminReviews";
+import AdminBookings from "./pages/admin/AdminBookings";
+import AdminActivity from "./pages/admin/AdminActivity";
 
 const App = () => {
   const { isLoggedIn } = useAppContext();
@@ -119,6 +127,23 @@ const App = () => {
             </Layout>
           }
         />
+
+        {/* Hotel-domain admin shell — role gate via /users/me */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route index element={<AdminDashboard />} />
+          <Route path="hotels" element={<AdminHotels />} />
+          <Route path="users" element={<AdminUsers />} />
+          <Route path="reviews" element={<AdminReviews />} />
+          <Route path="bookings" element={<AdminBookings />} />
+          <Route path="activity" element={<AdminActivity />} />
+        </Route>
 
         {isLoggedIn && (
           <>

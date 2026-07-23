@@ -68,9 +68,9 @@ const SearchBar = () => {
               .map((hotel) => hotel.city || hotel.place || hotel.name)
               .filter(
                 (place): place is string =>
-                  typeof place === "string" && place.length > 0
-              )
-          )
+                  typeof place === "string" && place.length > 0,
+              ),
+          ),
         );
 
         // Cache the places data
@@ -103,7 +103,7 @@ const SearchBar = () => {
   useEffect(() => {
     if (destination && places.length > 0) {
       const filtered = places.filter((place) =>
-        place.toLowerCase().includes(destination.toLowerCase())
+        place.toLowerCase().includes(destination.toLowerCase()),
       );
       setFilteredPlaces(filtered);
       // Don't automatically show dropdown when destination is pre-filled
@@ -121,7 +121,7 @@ const SearchBar = () => {
   useEffect(() => {
     if (destination.length > 0) {
       const filtered = places.filter((place) =>
-        place.toLowerCase().includes(destination.toLowerCase())
+        place.toLowerCase().includes(destination.toLowerCase()),
       );
       setFilteredPlaces(filtered);
       setShowDropdown(filtered.length > 0);
@@ -142,7 +142,7 @@ const SearchBar = () => {
         checkIn,
         checkOut,
         adultCount,
-        childCount
+        childCount,
       );
 
       // Close dropdown before navigation
@@ -169,7 +169,7 @@ const SearchBar = () => {
       checkIn,
       checkOut,
       adultCount,
-      childCount
+      childCount,
     );
 
     // Close dropdown before navigation
@@ -323,14 +323,14 @@ const SearchBar = () => {
           <div className="flex flex-col sm:flex-row gap-2 sm:col-span-2 lg:col-span-1">
             <Button
               type="submit"
-              className="flex-1 items-center text-white bg-primary-600 px-6 py-2 rounded-md font-semibold hover:bg-primary-500 hover:shadow-medium transition-all duration-200 group"
+              className="flex-1 items-center text-white bg-primary-600 px-6 py-2 rounded-md font-medium hover:bg-primary-500 hover:shadow-medium transition-all duration-200 group"
             >
               Search
             </Button>
             <Button
               type="button"
               variant="secondary"
-              className="flex-1 items-center text-white bg-gray-500 px-6 py-2 rounded-md font-semibold hover:bg-gray-400 hover:shadow-medium transition-all duration-200 group"
+              className="flex-1 items-center text-white bg-gray-500 px-6 py-2 rounded-md font-medium hover:bg-gray-400 hover:shadow-medium transition-all duration-200 group"
               onClick={handleClear}
             >
               Clear

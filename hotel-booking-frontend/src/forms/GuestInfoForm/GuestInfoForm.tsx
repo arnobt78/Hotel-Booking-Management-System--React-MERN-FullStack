@@ -70,7 +70,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
       data.checkIn,
       data.checkOut,
       data.adultCount,
-      data.childCount
+      data.childCount,
     );
     navigate("/sign-in", { state: { from: location } });
   };
@@ -81,7 +81,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
       data.checkIn,
       data.checkOut,
       data.adultCount,
-      data.childCount
+      data.childCount,
     );
     navigate(`/hotel/${hotelId}/booking`);
   };
@@ -144,7 +144,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
       </style>
       <Card className="w-full shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
         <CardHeader className="pb-4">
-          <CardTitle className="flex items-center justify-between text-lg font-semibold">
+          <CardTitle className="flex items-center justify-between text-lg font-medium">
             <div className="flex items-center gap-2">
               <CreditCard className="h-5 w-5 text-blue-600" />
               <span>Booking Summary</span>
@@ -165,7 +165,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               </span>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-medium text-blue-600">
                 £{totalPrice}
               </div>
               <div className="text-xs text-gray-500">Total Price</div>
@@ -237,7 +237,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                     type="number"
                     min={1}
                     max={20}
-                    className="text-center font-semibold"
+                    className="text-center font-medium"
                     {...register("adultCount", {
                       required: "This field is required",
                       min: {
@@ -263,7 +263,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
                     type="number"
                     min={0}
                     max={20}
-                    className="text-center font-semibold"
+                    className="text-center font-medium"
                     {...register("childCount", {
                       valueAsNumber: true,
                     })}
@@ -275,7 +275,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             {/* Action Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               {isLoggedIn ? (
                 <div className="flex items-center gap-2">

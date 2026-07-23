@@ -3,6 +3,7 @@ import * as apiClient from "../api-client";
 import type { BookingType, HotelWithBookingsType } from "../../../shared/types";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
+import { SafeImage } from "../components/ui/safe-image";
 import {
   Card,
   CardContent,
@@ -26,10 +27,16 @@ import {
   UserCircle,
 } from "lucide-react";
 import useAppContext from "../hooks/useAppContext";
+import WriteReviewForm from "../components/WriteReviewForm";
+import CancelBookingButton from "../components/CancelBookingButton";
 
 const MyBookings = () => {
   const { isLoggedIn } = useAppContext();
-  const { data: hotels } = useQueryWithLoading<HotelWithBookingsType[]>(
+  const {
+    data: hotels,
+    isLoading: isBookingsLoading,
+    isFetching,
+  } = useQueryWithLoading<HotelWithBookingsType[]>(
     "fetchMyBookings",
     apiClient.fetchMyBookings,
     {
@@ -71,7 +78,7 @@ const MyBookings = () => {
               </div>
             </div>
             <Link to="/sign-in">
-              <Button className="w-full font-bold bg-primary-600 hover:bg-primary-700 mt-4">
+              <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700 mt-4">
                 <LogIn className="h-4 w-4 mr-2 text-white" />
                 Sign In to View Bookings
               </Button>
@@ -82,12 +89,37 @@ const MyBookings = () => {
     );
   }
 
+  // Skeleton while query settles — avoids "No Bookings Found" flash on nav
+  if (isBookingsLoading || (isFetching && hotels === undefined)) {
+    return (
+      <div className="space-y-8">
+        <div className="h-10 w-56 bg-gray-200 rounded-xl animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <div
+              key={i}
+              className="h-28 bg-gray-100 rounded-2xl animate-pulse border border-gray-100"
+            />
+          ))}
+        </div>
+        <div className="space-y-6">
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="h-48 bg-gray-100 rounded-2xl animate-pulse border border-gray-100"
+            />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   if (!hotels || hotels.length === 0) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
         <div className="text-center">
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold text-gray-600 mb-2">
+          <h3 className="text-xl font-medium text-gray-600 mb-2">
             No Bookings Found
           </h3>
           <p className="text-gray-500">You haven't made any bookings yet.</p>
@@ -136,9 +168,9 @@ const MyBookings = () => {
       case "completed":
         return "bg-blue-100 text-blue-800 border-blue-200";
       case "refunded":
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
@@ -151,9 +183,9 @@ const MyBookings = () => {
       case "failed":
         return "bg-red-100 text-red-800 border-red-200";
       case "refunded":
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-gray-100 text-gray-700 border-gray-200";
     }
   };
 
@@ -179,7 +211,7 @@ const MyBookings = () => {
       <div className="space-y-8">
         {/* Header Section */}
         <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg p-8 text-white">
-          <h1 className="text-4xl font-bold mb-2">My Bookings History</h1>
+          <h1 className="text-4xl font-medium mb-2">My Bookings History</h1>
           <p className="text-blue-100 text-lg">
             Track all your hotel reservations and booking details
           </p>
@@ -216,17 +248,19 @@ const MyBookings = () => {
               <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b border-gray-200">
                 <div className="flex items-start gap-6">
                   <div className="relative">
-                    <img
+                    <SafeImage
                       src={hotel.imageUrls[0]}
-                      className="w-24 h-24 rounded-lg object-cover object-center shadow-md"
                       alt={hotel.name}
+                      width={96}
+                      height={96}
+                      className="w-24 h-24 rounded-lg object-cover object-center shadow-md"
                     />
-                    <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
+                    <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-medium px-2 py-1 rounded-full">
                       {hotel.starRating}★
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                    <h2 className="text-2xl font-medium text-gray-700 mb-2">
                       {hotel.name}
                     </h2>
                     <div className="flex items-center gap-4 text-gray-600">
@@ -279,7 +313,7 @@ const MyBookings = () => {
                               {getStatusIcon(booking.status || "pending")}
                             </div>
                             <div>
-                              <h3 className="font-semibold text-gray-900">
+                              <h3 className="font-medium text-gray-700">
                                 Booking #{booking._id.slice(-8).toUpperCase()}
                               </h3>
                               <p className="text-sm text-gray-500">
@@ -322,7 +356,7 @@ const MyBookings = () => {
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <div className="flex items-center gap-2 mb-2">
                               <Calendar className="w-4 h-4 text-blue-600" />
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-medium text-gray-700">
                                 Stay Dates
                               </span>
                             </div>
@@ -342,7 +376,7 @@ const MyBookings = () => {
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <div className="flex items-center gap-2 mb-2">
                               <Users className="w-4 h-4 text-green-600" />
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-medium text-gray-700">
                                 Guests
                               </span>
                             </div>
@@ -366,7 +400,7 @@ const MyBookings = () => {
                           <div className="bg-white rounded-lg p-4 border border-gray-200">
                             <div className="flex items-center gap-2 mb-2">
                               <Phone className="w-4 h-4 text-purple-600" />
-                              <span className="font-semibold text-gray-900">
+                              <span className="font-medium text-gray-700">
                                 Contact
                               </span>
                             </div>
@@ -381,7 +415,7 @@ const MyBookings = () => {
                             <div className="bg-white rounded-lg p-4 border border-gray-200">
                               <div className="flex items-center gap-2 mb-2">
                                 <CreditCard className="w-4 h-4 text-orange-600" />
-                                <span className="font-semibold text-gray-900">
+                                <span className="font-medium text-gray-700">
                                   Pricing
                                 </span>
                               </div>
@@ -390,7 +424,7 @@ const MyBookings = () => {
                                   <span className="font-medium">{nights}</span>{" "}
                                   Nights
                                 </div>
-                                <div className="text-lg font-bold text-green-600">
+                                <div className="text-lg font-medium text-green-600">
                                   £{totalPrice}
                                 </div>
                                 {/* Only show refund if it exists and is greater than 0 */}
@@ -412,7 +446,7 @@ const MyBookings = () => {
                           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             {booking.specialRequests && (
                               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                                <h4 className="font-semibold text-blue-800 mb-2 flex items-center gap-2">
+                                <h4 className="font-medium text-blue-800 mb-2 flex items-center gap-2">
                                   <Package className="w-4 h-4" />
                                   Special Requests
                                 </h4>
@@ -423,7 +457,7 @@ const MyBookings = () => {
                             )}
                             {booking.cancellationReason && (
                               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                                <h4 className="font-semibold text-red-800 mb-2 flex items-center gap-2">
+                                <h4 className="font-medium text-red-800 mb-2 flex items-center gap-2">
                                   <Building className="w-4 h-4" />
                                   Cancellation Reason
                                 </h4>
@@ -432,6 +466,25 @@ const MyBookings = () => {
                                 </p>
                               </div>
                             )}
+                          </div>
+                        )}
+
+                        {/* Cancel upcoming stay */}
+                        <CancelBookingButton
+                          booking={booking}
+                          className="mt-4"
+                        />
+
+                        {/* Review after stay (completed or past check-out, not cancelled) */}
+                        {(booking.status === "completed" ||
+                          (checkOutDate < new Date() &&
+                            booking.status !== "cancelled" &&
+                            booking.status !== "refunded")) && (
+                          <div className="mt-4">
+                            <WriteReviewForm
+                              hotelId={hotel._id}
+                              bookingId={booking._id}
+                            />
                           </div>
                         )}
                       </div>

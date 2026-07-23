@@ -131,11 +131,8 @@ const AnalyticsDashboard = () => {
       retry: 3,
       retryDelay: 1000,
       loadingMessage: "Loading business insights dashboard...",
-    }
+    },
   );
-
-  // Debug logging
-  console.log("Frontend Business Insights Data:", analyticsData);
 
   const { data: forecastData } = useQueryWithLoading<ForecastData>(
     "business-insights-forecast",
@@ -145,11 +142,8 @@ const AnalyticsDashboard = () => {
       retry: 3,
       retryDelay: 1000,
       loadingMessage: "Loading forecast data...",
-    }
+    },
   );
-
-  // Debug logging
-  console.log("Frontend Forecast Data:", forecastData);
 
   const { data: performanceData } = useQueryWithLoading<PerformanceData>(
     "business-insights-performance",
@@ -159,11 +153,8 @@ const AnalyticsDashboard = () => {
       retry: 3,
       retryDelay: 1000,
       loadingMessage: "Loading performance data...",
-    }
+    },
   );
-
-  // Debug logging
-  console.log("Frontend Performance Data:", performanceData);
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
@@ -213,7 +204,7 @@ const AnalyticsDashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-medium text-gray-700 mb-2">
               Business Insights Dashboard
             </h1>
             <p className="text-gray-600">
@@ -272,7 +263,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Total Hotels
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {formatNumber(analyticsData.overview.totalHotels)}
                     </p>
                   </div>
@@ -288,7 +279,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Total Users
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {formatNumber(analyticsData.overview.totalUsers)}
                     </p>
                   </div>
@@ -304,7 +295,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Total Bookings
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {formatNumber(analyticsData.overview.totalBookings)}
                     </p>
                   </div>
@@ -320,7 +311,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Total Revenue
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {formatCurrency(analyticsData.overview.totalRevenue)}
                     </p>
                     <div className="flex items-center mt-1">
@@ -348,7 +339,7 @@ const AnalyticsDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
               {/* Daily Bookings Chart */}
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Daily Bookings
                 </h3>
                 <ResponsiveContainer width="100%" height={300}>
@@ -374,7 +365,7 @@ const AnalyticsDashboard = () => {
 
               {/* Popular Destinations */}
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Popular Destinations
                 </h3>
                 {/* Debug info */}
@@ -411,7 +402,7 @@ const AnalyticsDashboard = () => {
 
             {/* Hotel Performance Table */}
             <div className="bg-white rounded-lg shadow-sm border p-6 w-full">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <h3 className="text-lg font-medium text-gray-700 mb-4">
                 Top Performing Hotels
               </h3>
               {/* Debug info */}
@@ -447,7 +438,7 @@ const AnalyticsDashboard = () => {
                       .slice(0, 10)
                       .map((hotel, index) => (
                         <tr key={index} className="hover:bg-gray-50">
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-700">
                             {hotel.name}
                           </td>
                           <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -480,7 +471,7 @@ const AnalyticsDashboard = () => {
             {/* Forecast Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">
                   Booking Trend
                 </h3>
                 <div className="flex items-center">
@@ -489,14 +480,14 @@ const AnalyticsDashboard = () => {
                   ) : (
                     <TrendingDown className="w-6 h-6 text-red-500 mr-2" />
                   )}
-                  <span className="text-2xl font-bold text-gray-900 capitalize">
+                  <span className="text-2xl font-medium text-gray-700 capitalize">
                     {forecastData.trends.bookingTrend}
                   </span>
                 </div>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">
                   Revenue Trend
                 </h3>
                 <div className="flex items-center">
@@ -505,14 +496,14 @@ const AnalyticsDashboard = () => {
                   ) : (
                     <TrendingDown className="w-6 h-6 text-red-500 mr-2" />
                   )}
-                  <span className="text-2xl font-bold text-gray-900 capitalize">
+                  <span className="text-2xl font-medium text-gray-700 capitalize">
                     {forecastData.trends.revenueTrend}
                   </span>
                 </div>
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-medium text-gray-700 mb-2">
                   Seasonal Growth
                 </h3>
                 <div className="flex items-center">
@@ -522,7 +513,7 @@ const AnalyticsDashboard = () => {
                     <TrendingDown className="w-6 h-6 text-red-500 mr-2" />
                   )}
                   <span
-                    className={`text-2xl font-bold ${
+                    className={`text-2xl font-medium ${
                       forecastData.seasonalGrowth >= 0
                         ? "text-green-600"
                         : "text-red-600"
@@ -538,7 +529,7 @@ const AnalyticsDashboard = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
               {/* Historical vs Forecast Bookings */}
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Booking Forecast
                 </h3>
                 {/* Debug info */}
@@ -584,7 +575,7 @@ const AnalyticsDashboard = () => {
 
               {/* Revenue Forecast */}
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Revenue Forecast
                 </h3>
                 {/* Debug info */}
@@ -644,7 +635,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Memory Usage
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {performanceData.system?.memory.percentage ?? "—"}
                       {performanceData.system?.memory != null ? "%" : ""}
                     </p>
@@ -664,7 +655,7 @@ const AnalyticsDashboard = () => {
                   </div>
                   <div className="ml-4">
                     <p className="text-sm font-medium text-gray-600">Uptime</p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {performanceData.application.uptime}
                     </p>
                     <p className="text-sm text-gray-500">
@@ -685,7 +676,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Response Time
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {performanceData.application.avgResponseTime}ms
                     </p>
                     <p className="text-sm text-gray-500">Average</p>
@@ -702,7 +693,7 @@ const AnalyticsDashboard = () => {
                     <p className="text-sm font-medium text-gray-600">
                       Error Rate
                     </p>
-                    <p className="text-2xl font-bold text-gray-900">
+                    <p className="text-2xl font-medium text-gray-700">
                       {(performanceData.application.errorRate * 100).toFixed(2)}
                       %
                     </p>
@@ -718,31 +709,31 @@ const AnalyticsDashboard = () => {
             {/* Database Metrics */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full">
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Database Overview
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Collections</span>
-                    <span className="font-semibold">
+                    <span className="font-medium">
                       {performanceData.database.collections ?? "—"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Hotels</span>
-                    <span className="font-semibold">
+                    <span className="font-medium">
                       {performanceData.database.totalHotels}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Bookings</span>
-                    <span className="font-semibold">
+                    <span className="font-medium">
                       {performanceData.database.totalBookings}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Total Revenue</span>
-                    <span className="font-semibold">
+                    <span className="font-medium">
                       {formatCurrency(performanceData.database.totalRevenue)}
                     </span>
                   </div>
@@ -750,19 +741,19 @@ const AnalyticsDashboard = () => {
               </div>
 
               <div className="bg-white rounded-lg shadow-sm border p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-medium text-gray-700 mb-4">
                   Recent Activity
                 </h3>
                 <div className="space-y-4">
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Today's Bookings</span>
-                    <span className="font-semibold">
+                    <span className="font-medium">
                       {performanceData.application.todayBookings}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">This Week's Bookings</span>
-                    <span className="font-semibold">
+                    <span className="font-medium">
                       {performanceData.application.thisWeekBookings}
                     </span>
                   </div>

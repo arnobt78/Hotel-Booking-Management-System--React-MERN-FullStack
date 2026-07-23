@@ -33,7 +33,7 @@ const ImagesSection = () => {
           id: `existing-${index}`,
           url,
           isExisting: true,
-        })
+        }),
       );
       setImagePreviews(existingPreviews);
     }
@@ -49,7 +49,7 @@ const ImagesSection = () => {
         file,
         url: URL.createObjectURL(file),
         isExisting: false,
-      })
+      }),
     );
 
     const updatedPreviews = [...imagePreviews, ...newPreviews];
@@ -77,7 +77,7 @@ const ImagesSection = () => {
     if (imageToDelete.isExisting) {
       // Remove from existing imageUrls
       const updatedUrls = existingImageUrls.filter(
-        (url) => url !== imageToDelete.url
+        (url) => url !== imageToDelete.url,
       );
       setValue("imageUrls", updatedUrls);
     } else {
@@ -94,7 +94,7 @@ const ImagesSection = () => {
       updatedFiles.forEach((file) => dataTransfer.items.add(file));
       setValue(
         "imageFiles",
-        updatedFiles.length > 0 ? dataTransfer.files : undefined
+        updatedFiles.length > 0 ? dataTransfer.files : undefined,
       );
     }
 
@@ -134,7 +134,7 @@ const ImagesSection = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold mb-3">Images</h2>
+      <h2 className="text-2xl font-medium mb-3">Images</h2>
       <div className="border rounded-lg p-6 flex flex-col gap-6">
         {/* Upload Area */}
         <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-gray-400 transition-colors">
@@ -143,7 +143,7 @@ const ImagesSection = () => {
               <Upload className="w-8 h-8 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
+              <h3 className="text-lg font-medium text-gray-700 mb-2">
                 Upload Hotel Images
               </h3>
               <p className="text-gray-500 mb-4">
@@ -174,7 +174,7 @@ const ImagesSection = () => {
         {imagePreviews.length > 0 && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-700">
+              <h3 className="text-lg font-medium text-gray-700">
                 Selected Images ({totalImages}/6)
               </h3>
               {totalImages > 6 && (

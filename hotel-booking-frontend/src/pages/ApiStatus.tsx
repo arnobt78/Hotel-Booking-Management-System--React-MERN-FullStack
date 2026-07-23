@@ -62,7 +62,7 @@ const ApiStatus = () => {
       refetchInterval: 30000,
       retry: 3,
       retryDelay: 1000,
-    }
+    },
   );
 
   // Detailed requires JWT — Bearer from localStorage (same as axios interceptor)
@@ -89,7 +89,7 @@ const ApiStatus = () => {
       enabled: isDetailed && isLoggedIn,
       refetchInterval: isDetailed && isLoggedIn ? 30000 : false,
       retry: false,
-    }
+    },
   );
 
   const getStatusIcon = (status: string) => {
@@ -148,7 +148,7 @@ const ApiStatus = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-medium text-gray-700 mb-2">
             API Unavailable
           </h2>
           <p className="text-gray-600 mb-4">
@@ -176,7 +176,9 @@ const ApiStatus = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">API Status</h1>
+          <h1 className="text-4xl font-medium text-gray-700 mb-4">
+            API Status
+          </h1>
           <p className="text-xl text-gray-600">
             Real-time monitoring of our hotel booking API health and performance
           </p>
@@ -186,7 +188,7 @@ const ApiStatus = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <Server className="w-8 h-8 text-blue-600 mr-3" />
-              <h2 className="text-2xl font-semibold text-gray-900">
+              <h2 className="text-2xl font-medium text-gray-700">
                 Overall Status
               </h2>
             </div>
@@ -215,8 +217,8 @@ const ApiStatus = () => {
                 {getStatusIcon(healthData?.status || "unknown")}
               </div>
               <span
-                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                  healthData?.status || "unknown"
+                className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                  healthData?.status || "unknown",
                 )}`}
               >
                 {healthData?.status || "Unknown"}
@@ -231,8 +233,8 @@ const ApiStatus = () => {
                 {getStatusIcon(healthData?.database?.status || "unknown")}
               </div>
               <span
-                className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                  healthData?.database?.status || "unknown"
+                className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(
+                  healthData?.database?.status || "unknown",
                 )}`}
               >
                 {healthData?.database?.status || "Unknown"}
@@ -246,7 +248,7 @@ const ApiStatus = () => {
                 </span>
                 <Clock className="w-4 h-4 text-gray-400" />
               </div>
-              <span className="text-sm font-semibold text-gray-900">
+              <span className="text-sm font-medium text-gray-700">
                 {healthData?.timestamp
                   ? new Date(healthData.timestamp).toLocaleTimeString()
                   : "N/A"}
@@ -271,7 +273,7 @@ const ApiStatus = () => {
         {isDetailed && detailedData && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
                 <Database className="w-5 h-5 text-green-600 mr-2" />
                 Database
               </h3>
@@ -292,7 +294,7 @@ const ApiStatus = () => {
             </div>
 
             <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
                 <HardDrive className="w-5 h-5 text-blue-600 mr-2" />
                 Memory (rounded MB)
               </h3>
@@ -322,19 +324,19 @@ const ApiStatus = () => {
 
         {isDetailed && detailedData && (
           <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
               <Activity className="w-5 h-5 text-purple-600 mr-2" />
               Performance
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">
+                <div className="text-2xl font-medium text-blue-600">
                   {detailedData.performance.memory.percentage}%
                 </div>
                 <div className="text-sm text-gray-600">Heap usage</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">
+                <div className="text-2xl font-medium text-orange-600">
                   {formatUptime(detailedData.performance.uptime)}
                 </div>
                 <div className="text-sm text-gray-600">Uptime</div>

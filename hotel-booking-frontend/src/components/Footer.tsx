@@ -20,7 +20,7 @@ const Footer = () => {
               <div className="bg-white p-2 rounded-lg">
                 <Building2 className="w-6 h-6 text-primary-600" />
               </div>
-              <span className="text-2xl font-bold">MernHolidays</span>
+              <span className="text-2xl font-medium">HolidayHotel</span>
             </div>
             <p className="text-gray-300 leading-relaxed">
               Discover amazing hotels, resorts, and accommodations worldwide.
@@ -56,7 +56,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Quick Links</h3>
+            <h3 className="text-lg font-medium">Quick Links</h3>
             <ul className="space-y-2">
               <li>
                 <a
@@ -103,7 +103,7 @@ const Footer = () => {
 
           {/* Support */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Support</h3>
+            <h3 className="text-lg font-medium">Support</h3>
             <ul className="space-y-2">
               <li>
                 <a
@@ -150,11 +150,11 @@ const Footer = () => {
 
           {/* Contact Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold">Contact Us</h3>
+            <h3 className="text-lg font-medium">Contact Us</h3>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-primary-300" />
-                <span className="text-gray-300">support@mernholidays.com</span>
+                <span className="text-gray-300">support@HolidayHotel.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-primary-300" />
@@ -173,7 +173,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-primary-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-300 text-sm">
-            © 2025 MernHolidays. All rights reserved.
+            © 2025 HolidayHotel. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a

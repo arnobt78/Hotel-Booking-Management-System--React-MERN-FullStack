@@ -315,6 +315,17 @@ Smoke checks:
 - Health: `http://localhost:5001/api/health`
 - Swagger: `http://localhost:5001/api-docs`
 
+### Demo data seed (Mongoose — wipes local DB)
+
+```bash
+cd hotel-booking-backend
+npm run seed   # destroys User/Hotel/Booking/Review/Analytics then reseeds
+```
+
+Login after seed: `test@user.com` / `12345678` (**admin** — opens `/admin`). Also: `owner@hotel.com`, `guest@user.com` (same password). This stack uses **MongoDB + Mongoose**, not Prisma.
+
+Optional AI assist (draft-and-approve only): set `AI_ASSIST_ENABLED=true` in backend `.env` (optional `OPENAI_API_KEY`; stub drafts when unset).
+
 ### 2) Frontend
 
 ```bash

@@ -7,7 +7,7 @@ One-document overview of architecture, code layout, API, routing, auth, data flo
 | Service            | URL                                         |
 | ------------------ | ------------------------------------------- |
 | Frontend           | <https://hotel-mern-booking.vercel.app>     |
-| Backend API        | <https://hotel-booking-backend.duckdns.org> |
+| Backend API        | <https://hotel-booking-backend.arnobmahmud.com> |
 | API docs (Swagger) | `{BACKEND_URL}/api-docs`                    |
 
 **Local development**
@@ -335,9 +335,9 @@ QueryClientProvider
 **Base URL resolution** (`getApiBaseUrl`):
 
 1. `import.meta.env.VITE_API_BASE_URL` if set
-2. Else Vercel/Netlify host → `https://hotel-booking-backend.duckdns.org`
+2. Else Vercel/Netlify host → `https://hotel-booking-backend.arnobmahmud.com`
 3. Else `localhost` → `http://localhost:5001`
-4. Else production duckdns default
+4. Else production default (`hotel-booking-backend.arnobmahmud.com`)
 
 ### 6.4 Contexts
 
@@ -527,7 +527,7 @@ Template: `.env.local.example`
 - **Config:** `hotel-booking-frontend/vercel.json`
 - Build: `npm run build` → `dist/`
 - SPA rewrite: all routes → `index.html`
-- Env: `VITE_API_BASE_URL=https://hotel-booking-backend.duckdns.org`
+- Env: `VITE_API_BASE_URL=https://hotel-booking-backend.arnobmahmud.com`
 
 ### Backend — Docker / Coolify
 
@@ -597,6 +597,11 @@ npm run dev            # → http://localhost:5174
 
 | File                                          | Topic                               |
 | --------------------------------------------- | ----------------------------------- |
+| `PROJECT_PLAN.md`                             | T1–T5 + post-T5 polish roadmap      |
+| `PROJECT_IDEA.md`                             | Engineering playbook §0 Vite SPA    |
+| `VERCEL_PRODUCTION_GUARDRAILS.md`             | Vercel headers/bots (adapted)       |
+| `SAFE_IMAGE_REUSABLE_COMPONENT.md`            | SafeImage pattern (Vite `<img>`)    |
+| `LLM_MODEL_SELECTION.md` / `IMPLEMENTATION…`  | Groq failover model chain           |
 | `../README.md`                                | Educational project README          |
 | `../SECURITY.md`                              | Private vulnerability reporting     |
 | `../CLAUDE.md` / `../AGENTS.md`               | Agent / Agile V session memory      |
@@ -604,9 +609,11 @@ npm run dev            # → http://localhost:5174
 | `CLERK_AUTH_COMPLETE_IMPLEMENTATION_GUIDE.md` | Clerk migration (not current stack) |
 | `DROPDOWN_TEST_CREDENTIALS_DOCS.md`           | Test credentials                    |
 
-**Deploy note (2026-07):** README Deployment = Optional Diploi launch → Coolify backend → Vercel/Netlify frontend. Production demos remain Coolify + Vercel.
+**Deploy note (2026-07):** README Deployment = Optional Diploi launch → Coolify backend → Vercel/Netlify frontend. API host: `hotel-booking-backend.arnobmahmud.com` (not DuckDNS).
 
-**Env note:** Frontend Stripe pub key env is `VITE_STRIPE_PUB_KEY` (see `AppContext`). Backend still fail-fast on required secrets.
+**UI note:** Hotel media uses `components/ui/safe-image.tsx`; Inter is self-hosted under `public/fonts`; API Docs/Status live in profile menu when logged in.
+
+**Env note:** Frontend Stripe pub key env is `VITE_STRIPE_PUB_KEY` (see `AppContext`). Backend still fail-fast on required secrets. Optional AI: `AI_ASSIST_ENABLED` + `GROQ_API_KEY`.
 
 ---
 
@@ -636,4 +643,4 @@ Shared
 
 ---
 
-_Last aligned with codebase: local backend port **5001**, frontend **5174**, JWT in `localStorage`, production URLs on Vercel + Coolify; README/SECURITY/Diploi optional deploy (2026-07)._
+_Last aligned: ports **5001**/**5174**, JWT localStorage, API **arnobmahmud.com**, T1–T5 + post-T5 polish (SafeImage, Inter fonts, Vercel guardrails)._

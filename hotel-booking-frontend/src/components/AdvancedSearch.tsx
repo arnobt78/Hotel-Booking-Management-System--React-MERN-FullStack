@@ -93,9 +93,9 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               .map((hotel) => hotel.city || hotel.place || hotel.name)
               .filter(
                 (place): place is string =>
-                  typeof place === "string" && place.length > 0
-              )
-          )
+                  typeof place === "string" && place.length > 0,
+              ),
+          ),
         );
 
         // Cache the places data
@@ -124,7 +124,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   useEffect(() => {
     if (searchData.destination.length > 0) {
       const filtered = places.filter((place) =>
-        place.toLowerCase().includes(searchData.destination.toLowerCase())
+        place.toLowerCase().includes(searchData.destination.toLowerCase()),
       );
       setFilteredPlaces(filtered);
       setShowDropdown(filtered.length > 0);
@@ -180,7 +180,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         searchData.checkIn,
         searchData.checkOut,
         searchData.adultCount,
-        searchData.childCount
+        searchData.childCount,
       );
 
       // Close dropdown before navigation
@@ -207,7 +207,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
       if (searchData.radius) searchParams.append("radius", searchData.radius);
       searchData.facilities.forEach((facility) =>
-        searchParams.append("facilities", facility)
+        searchParams.append("facilities", facility),
       );
 
       navigate(`/search?${searchParams.toString()}`);
@@ -249,7 +249,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       searchData.checkIn,
       searchData.checkOut,
       searchData.adultCount,
-      searchData.childCount
+      searchData.childCount,
     );
 
     // Close dropdown before navigation
@@ -276,7 +276,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
     if (searchData.radius) searchParams.append("radius", searchData.radius);
     searchData.facilities.forEach((facility) =>
-      searchParams.append("facilities", facility)
+      searchParams.append("facilities", facility),
     );
 
     navigate(`/search?${searchParams.toString()}`);
@@ -366,7 +366,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {/* Destination */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 flex items-center">
+          <label className="text-sm font-medium text-gray-700 flex items-center">
             <MapPin className="w-4 h-4 mr-2 text-primary-600" />
             Destination
           </label>
@@ -402,7 +402,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
         {/* Check-in Date */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 flex items-center">
+          <label className="text-sm font-medium text-gray-700 flex items-center">
             <Calendar className="w-4 h-4 mr-2 text-primary-600" />
             Check-in
           </label>
@@ -421,7 +421,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
         {/* Check-out Date */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 flex items-center">
+          <label className="text-sm font-medium text-gray-700 flex items-center">
             <Calendar className="w-4 h-4 mr-2 text-primary-600" />
             Check-out
           </label>
@@ -440,7 +440,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
         {/* Guests */}
         <div className="space-y-2">
-          <label className="text-sm font-semibold text-gray-700 flex items-center">
+          <label className="text-sm font-medium text-gray-700 flex items-center">
             <Users className="w-4 h-4 mr-2 text-primary-600" />
             Guests
           </label>
@@ -479,7 +479,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
         <button
           onClick={handleSearch}
-          className="flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-3 rounded-xl font-semibold hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 shadow-medium hover:shadow-large"
+          className="flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-3 rounded-xl font-medium hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 shadow-medium hover:shadow-large"
         >
           <SearchIcon className="w-4 h-4 mr-2" />
           Search Hotels

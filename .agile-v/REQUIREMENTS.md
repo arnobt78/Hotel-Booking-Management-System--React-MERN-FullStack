@@ -20,9 +20,27 @@
 | REQ-0022…0026 | Frontend platform | done [C1] |
 | REQ-0027…0028 | Deployment | done [C1] |
 | REQ-0029…0031 | Types, e2e, docs | done [C1] |
-| REQ-0032 | Reviews + Analytics API | planned [C1] |
+| REQ-0032 | Reviews + Analytics API | done [C1] |
 | REQ-0033 | Educational README + SECURITY.md | done [C1] |
 | REQ-0034 | Health CWE-200 / VulDB fix + RQ invalidation | done [C1] |
+| REQ-0035 | Playbook §0 + PROJECT_PLAN T1–T4 | done [C1] |
+| REQ-0036 | My Hotels booking counts + dynamic rating | done [C1] |
+| REQ-0037 | Review REST API (create/list) + guest form | done [C1] |
+| REQ-0038 | Edit hotel Save / Cancel / Back | done [C1] |
+| REQ-0039 | Skeletons; dropdown scroll; scrollbar-gutter; RQ reviews | done [C1] |
+| REQ-0040 | Persist Stripe PaymentIntent id on booking | done [C1] |
+| REQ-0041 | Cancel API + Stripe full refund + authz | done [C1] |
+| REQ-0042 | Guest/owner cancel UI + invalidateBookingQueries | done [C1] |
+| REQ-0043 | Admin APIs: users/reviews list + Analytics snapshots | done [C1] |
+| REQ-0044 | Admin shell UI `/admin/*` | done [C1] |
+| REQ-0045 | Admin invalidation + T2 cancel-path harden | done [C1] |
+| REQ-0046 | AI suggest API (env-gated) | done [C1] |
+| REQ-0047 | AI draft-and-approve UI | done [C1] |
+| REQ-0048 | Mongoose seed script | done [C1] |
+| REQ-0049 | Multi-provider LLM failover (Groq/OpenAI/OpenRouter/stub) | done [C1] |
+| REQ-0050 | Auth/TLS harden + SECURITY HTTPS note | done [C1] |
+| REQ-0051 | Full-field Mongoose seed | done [C1] |
+| REQ-0052 | Admin role PATCH + hotel isActive toggle | done [C1] |
 
 ---
 
@@ -281,10 +299,10 @@
 ## REQ-0032 — Reviews and Analytics REST surfaces
 
 - **Requirement:** Expose REST APIs for existing `Review` and `Analytics` Mongoose models (currently schema-only), with frontend consumption paths defined in a follow-on UX REQ if needed.
-- **Constraint:** Must not break live insights aggregates; authz for write paths; traceable ART/TC before merge.
+- **Constraint:** Must not break live insights aggregates; authz for write paths; traceable ART/TC before merge. Analytics snapshot endpoints deferred to T3 admin.
 - **Verification Criteria:** CRUD or documented read endpoints return valid JSON; unauthorized writes rejected; Red Team suite green.
-- **Done Criteria:** [ ] Routes · [ ] Tests · [ ] Manifest/ATM updated
-- **Status:** planned [C1]
+- **Done Criteria:** [x] Review routes · [x] FE list/create · [x] Analytics snapshot routes (T3) · [ ] Tests
+- **Status:** done [C1] — Reviews (REQ-0037) + Analytics snapshots (REQ-0043)
 - **Priority:** MEDIUM · **Risk:** R2
 
 ## REQ-0033 — Educational README + SECURITY.md
@@ -304,6 +322,135 @@
 - **Done Criteria:** [x] health.ts hardened · [x] ApiStatus JWT detailed · [x] system-stats/public sanitized · [x] invalidate-queries wired
 - **Status:** done [C1]
 - **Priority:** CRITICAL · **Risk:** R2
+
+## REQ-0035 — Vite SPA playbook + PROJECT_PLAN roadmap
+
+- **Requirement:** Rewrite `docs/PROJECT_IDEA.md` §0 for this Vite SPA monorepo (not Next.js); fill `docs/PROJECT_PLAN.md` with T1–T4 phases, DoD, out-of-scope.
+- **Constraint:** Authority remains `.agile-v/` + CLAUDE.md + §0; no Next migration assumed.
+- **Verification Criteria:** §0 lists Instant UI / invalidation / reuse rules; PLAN has T1–T4 with halt-before-next gates.
+- **Done Criteria:** [x] PROJECT_IDEA §0 · [x] PROJECT_PLAN.md
+- **Status:** done [C1]
+
+## REQ-0036 — My Hotels enrichment (booking counts + rating)
+
+- **Requirement:** Owner My Hotels cards show upcoming / completed / cancelled booking counts and live average rating from Review aggregates (fallback starRating).
+- **Constraint:** Enrich `GET /api/my-hotels`; extend shared `HotelType`.
+- **Verification Criteria:** Response includes count fields; FE cards render without empty flash while loading.
+- **Done Criteria:** [x] Backend aggregate · [x] MyHotels UI · [x] shared types
+- **Status:** done [C1]
+
+## REQ-0037 — Review REST API + consumption
+
+- **Requirement:** `GET/POST /api/reviews` for hotel list/create; public read; JWT write; Detail lists reviews; My Bookings write form; invalidate hotel/review queries.
+- **Constraint:** One review per booking/user; sync hotel.averageRating/reviewCount on create.
+- **Verification Criteria:** Unauth POST → 401; list returns JSON; create updates aggregates; FE invalidation refreshes My Hotels.
+- **Done Criteria:** [x] routes/reviews.ts · [x] api-client · [x] Detail + WriteReviewForm · [x] invalidateReviewQueries
+- **Status:** done [C1]
+
+## REQ-0038 — Edit hotel Save / Cancel / Back
+
+- **Requirement:** ManageHotelForm exposes Save/Update, Cancel (discard + navigate), Back to `/my-hotels`; consistent with AddHotel.
+- **Constraint:** Reuse `components/ui` Button; Cancel only on Edit.
+- **Verification Criteria:** Edit Cancel returns to My Hotels without saving; Back link present on Add/Edit.
+- **Done Criteria:** [x] ManageHotelForm · [x] EditHotel · [x] AddHotel showBack
+- **Status:** done [C1]
+
+## REQ-0039 — Loading skeletons + scroll lock + RQ coverage
+
+- **Requirement:** Skeleton cards on My Hotels / My Bookings / Search / Detail while loading; DropdownMenu `modal={false}` default; `html { scrollbar-gutter: stable }`; document RQ keys including reviews.
+- **Constraint:** No empty-state flash while `isLoading`; no Redis/SSE.
+- **Verification Criteria:** FE lint+build PASS; BE build PASS.
+- **Done Criteria:** [x] skeletons · [x] dropdown modal=false · [x] index.css gutter · [x] invalidate-queries comments
+- **Status:** done [C1]
+
+## REQ-0040 — Persist Stripe PaymentIntent on booking
+
+- **Requirement:** Store `stripePaymentIntentId` on Booking at create time so cancel can refund via Stripe.
+- **Constraint:** Value always from retrieved PaymentIntent server-side; extend shared `BookingType`.
+- **Verification Criteria:** New paid bookings have PI id; legacy without id still cancellable without fake refund.
+- **Done Criteria:** [x] booking model · [x] shared types · [x] hotels book path
+- **Status:** done [C1]
+
+## REQ-0041 — Cancel booking API + Stripe refund
+
+- **Requirement:** `POST /api/bookings/:id/cancel` for guest (own), hotel owner, or admin; upcoming pending/confirmed only; full Stripe refund when paid+PI; harden status/payment/delete authz.
+- **Constraint:** Same `STRIPE_API_KEY`; no secrets in repo; decrement hotel/user analytics when cancelling paid bookings.
+- **Verification Criteria:** Unauth → 401; wrong user → 403; Stripe failure → 502; BE build PASS.
+- **Done Criteria:** [x] routes/bookings.ts cancel · [x] authz · [x] stripe.refunds.create · [x] .env.example note
+- **Status:** done [C1]
+
+## REQ-0042 — Cancel UI + React Query invalidation
+
+- **Requirement:** Cancel control on My Bookings (guest) and Booking Log (owner); call cancel API; `invalidateBookingQueries` so My Hotels counts update without reload; status badge alignment.
+- **Constraint:** Reuse Button/ui; no full page refresh.
+- **Verification Criteria:** FE lint+build PASS; cancellable only for upcoming.
+- **Done Criteria:** [x] CancelBookingButton · [x] MyBookings · [x] BookingLogModal · [x] api-client.cancelBooking
+- **Status:** done [C1]
+
+## REQ-0043 — Admin APIs (users, reviews, analytics snapshots)
+
+- **Requirement:** Admin-only `GET /api/users`, `GET /api/reviews`, `GET/POST /api/analytics/snapshots` with `requireAdmin` middleware; reuse bookings list.
+- **Constraint:** JWT stays userId-only; role from DB; no ERP domains.
+- **Verification Criteria:** Non-admin → 403; snapshot create persists Analytics model; BE build PASS.
+- **Done Criteria:** [x] requireAdmin · [x] users list · [x] reviews list · [x] analytics routes
+- **Status:** done [C1]
+
+## REQ-0044 — Admin shell UI
+
+- **Requirement:** `/admin/*` with AdminLayout sidebar; AdminRoute via `/users/me` role; pages dashboard/hotels/users/reviews/bookings/activity; Admin link for admins only.
+- **Constraint:** Reuse ui components + CancelBookingButton; Instant UI = layout + skeletons.
+- **Verification Criteria:** Non-admin redirected; FE lint+build PASS.
+- **Done Criteria:** [x] AdminLayout · [x] AdminRoute · [x] pages · [x] UsernameMenu Admin link
+- **Status:** done [C1]
+
+## REQ-0045 — Admin invalidation + cancel-path harden
+
+- **Requirement:** invalidateAdminQueries keys; booking cancel invalidates admin bookings/insights; PATCH reject cancelled/refunded; DELETE skip double-decrement.
+- **Done Criteria:** [x] invalidate-queries · [x] bookings PATCH/DELETE
+- **Status:** done [C1]
+
+## REQ-0046 — AI suggest API
+
+- **Requirement:** `POST /api/ai/suggest` with JWT; `AI_ASSIST_ENABLED=true` required; OpenAI when key set else stub; returns `{ draft, provider }` only (no DB write).
+- **Constraint:** Optional env only (not fail-fast); no client secrets.
+- **Done Criteria:** [x] routes/ai.ts · [x] .env.example
+- **Status:** done [C1]
+
+## REQ-0047 — AI draft-and-approve UI
+
+- **Requirement:** ManageHotelForm description Suggest polish + Apply/Discard; Admin Dashboard insights blurb notepad.
+- **Done Criteria:** [x] DetailsSection · [x] AdminDashboard · [x] api-client.suggestAiAssist
+- **Status:** done [C1]
+
+## REQ-0048 — Mongoose wipe + seed
+
+- **Requirement:** `npm run seed` wipes User/Hotel/Booking/Review/Analytics and seeds `test@user.com`/`12345678` as admin plus owner/guest, hotels, booking status matrix, reviews, snapshot. No Prisma.
+- **Done Criteria:** [x] scripts/seed.ts · [x] package.json seed · [x] Analytics byHotelType schema fix
+- **Status:** done [C1]
+
+## REQ-0049 — Multi-provider LLM failover
+
+- **Requirement:** `POST /api/ai/suggest` uses ordered chain Groq → OpenAI → OpenRouter → stub; on 429/5xx/timeout/empty try next immediately; no deprecated Groq llama models; response `{ draft, provider, model?, usedFallback? }` with no DB write.
+- **Done Criteria:** [x] lib/llm.ts · [x] routes/ai.ts · [x] .env.example keys
+- **Status:** done [C1]
+
+## REQ-0050 — Auth / TLS harden
+
+- **Requirement:** `trust proxy`; production cookies `secure` + `sameSite=none`; Mongo TLS when `mongodb+srv`/`tls=true`; SECURITY.md HTTPS + cookie note.
+- **Done Criteria:** [x] index.ts connect · [x] cookie-options · [x] SECURITY.md
+- **Status:** done [C1]
+
+## REQ-0051 — Full-field Mongoose seed
+
+- **Requirement:** Seed populates every documented User/Hotel/Booking/Review/Analytics field (location, contact, policies, amenities, preferences, address, specialRequests, helpfulCount, etc.).
+- **Done Criteria:** [x] scripts/seed.ts full fields
+- **Status:** done [C1]
+
+## REQ-0052 — Admin role + hotel active
+
+- **Requirement:** `PATCH /api/users/:id/role` (admin); `PATCH /api/hotels/:id/active` (admin) + `PATCH /api/my-hotels/:id/active` (owner); Admin Users/Hotels UI + invalidateAdminQueries.
+- **Done Criteria:** [x] users/hotels/my-hotels routes · [x] AdminUsers · [x] AdminHotels · [x] api-client
+- **Status:** done [C1]
 
 ---
 

@@ -11,7 +11,7 @@ const getBaseURL = () => {
     window.location.hostname === "mern-booking-hotel.netlify.app" ||
     window.location.hostname.includes("vercel.app")
   ) {
-    return "https://hotel-booking-backend.duckdns.org";
+    return "https://hotel-booking-backend.arnobmahmud.com";
   }
 
   // Must match hotel-booking-backend PORT (default 5001) when VITE_API_BASE_URL is unset.
@@ -20,7 +20,7 @@ const getBaseURL = () => {
   }
 
   // Default to production (VPS backend)
-  return "https://hotel-booking-backend.duckdns.org";
+  return "https://hotel-booking-backend.arnobmahmud.com";
 };
 
 export const getApiBaseUrl = getBaseURL;
@@ -47,7 +47,6 @@ axiosInstance.interceptors.request.use((config: CustomAxiosRequestConfig) => {
 
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
-    console.log("Using JWT token from localStorage for authentication");
   }
 
   // Add retry count to track retries

@@ -35,8 +35,22 @@
 | ART-0029 | REQ-0029 | C1 | `shared/types.ts` | shipped |
 | ART-0030 | REQ-0030 | C1 | `e2e-tests/tests/*.spec.ts`, `data/*` | shipped |
 | ART-0031 | REQ-0031 | C1 | `docs/PROJECT_WALKTHROUGH.md` | shipped |
-| ART-0032 | REQ-0032 | C1 | `models/review.ts`, `models/analytics.ts` (schema only — routes TBD) | planned |
+| ART-0032 | REQ-0032 | C1 | Review routes done (see ART-0037); Analytics model still T3 | partial |
 | ART-0033 | REQ-0033 | C1 | `README.md` (educational rewrite), `SECURITY.md`, `hotel-booking-frontend/.env.local.example` (Stripe note) | done |
 | ART-0034 | REQ-0034 | C1 | `routes/health.ts`, `business-insights.ts` system-stats, `ApiStatus.tsx`, `invalidate-queries.ts`, Add/Edit hotel + BookingForm | done |
+| ART-0035 | REQ-0035 | C1 | `docs/PROJECT_IDEA.md` §0, `docs/PROJECT_PLAN.md` | done |
+| ART-0036 | REQ-0036 | C1 | `routes/my-hotels.ts` enrichment, `MyHotels.tsx`, `shared/types.ts` | done |
+| ART-0037 | REQ-0037 | C1 | `routes/reviews.ts`, api-client reviews, `Detail.tsx`, `WriteReviewForm.tsx` | done |
+| ART-0038 | REQ-0038 | C1 | `ManageHotelForm.tsx`, `EditHotel.tsx`, `AddHotel.tsx` | done |
+| ART-0039 | REQ-0039 | C1 | MyHotels/MyBookings/Search/Detail skeletons, `dropdown-menu.tsx` modal=false, `index.css` gutter, `invalidate-queries.ts` | done |
+| ART-0040 | REQ-0040 | C1 | `models/booking.ts` stripePaymentIntentId, `shared/types.ts`, `routes/hotels.ts` book path | done |
+| ART-0041 | REQ-0041 | C1 | `routes/bookings.ts` POST cancel + Stripe refund + authz harden | done |
+| ART-0042 | REQ-0042 | C1 | `CancelBookingButton.tsx`, MyBookings, BookingLogModal, `api-client.cancelBooking`, `booking-utils.ts` | done |
+| ART-0043 | REQ-0043 | C1 | `middleware/requireAdmin.ts`, `routes/users.ts` GET /, `routes/reviews.ts` GET /, `routes/analytics.ts` | done |
+| ART-0044 | REQ-0044 | C1 | `AdminLayout`, `AdminRoute`, `pages/admin/*`, App routes, UsernameMenu Admin | done |
+| ART-0045 | REQ-0045 | C1 | `invalidate-queries` admin keys; bookings PATCH/DELETE harden | done |
+| ART-0046 | REQ-0046 | C1 | `routes/ai.ts`, `.env.example` AI keys | done |
+| ART-0047 | REQ-0047 | C1 | DetailsSection Suggest polish, AdminDashboard insights draft | done |
+| ART-0048 | REQ-0048 | C1 | `scripts/seed.ts`, `npm run seed`, analytics schema byHotelType fix | done |
 
 **Rule:** New implementation appends ART-XXXX.N on revision; never orphan code without REQ.

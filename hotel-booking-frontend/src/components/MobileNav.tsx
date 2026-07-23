@@ -16,7 +16,7 @@ const MobileNav = () => {
         <Menu className="h-6 w-6 text-white" />
       </SheetTrigger>
       <SheetContent className="flex flex-col bg-white" side="right">
-        <SheetTitle className="text-left text-gray-900">Menu</SheetTitle>
+        <SheetTitle className="text-left text-gray-700">Menu</SheetTitle>
         <Separator />
         <SheetDescription className="flex-1 pt-4 flex flex-col text-left">
           <MobileNavLinks />

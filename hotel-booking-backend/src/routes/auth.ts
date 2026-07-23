@@ -5,6 +5,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 import verifyToken from "../middleware/auth";
+import { clearAuthCookieOptions } from "../lib/cookie-options";
 
 const router = express.Router();
 
@@ -277,12 +278,12 @@ router.get("/validate-token", verifyToken, (req: Request, res: Response) => {
  */
 router.post("/logout", (req: Request, res: Response) => {
   res.cookie("session_id", "", {
-    expires: new Date(0),
+    ...clearAuthCookieOptions(),
     maxAge: 0,
-    httpOnly: false,
-    secure: true,
-    sameSite: "none",
-    path: "/",
+  });
+  res.cookie("auth_token", "", {
+    ...clearAuthCookieOptions(),
+    maxAge: 0,
   });
   res.send();
 });

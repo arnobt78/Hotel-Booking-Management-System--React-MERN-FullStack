@@ -3,7 +3,7 @@
 **Project:** Hotel Booking Management System (MERN)  
 **Cycle:** C1 active (Gate 1 PENDING)  
 **HEAD:** `408e572` · **Standard:** Agile V 1.4 | Infinity Loop  
-**Live:** Frontend [Vercel](https://hotel-mern-booking.vercel.app) · API Coolify/duckdns
+**Live:** Frontend [Vercel](https://hotel-mern-booking.vercel.app) · API [Coolify](https://hotel-booking-backend.arnobmahmud.com)
 
 ---
 

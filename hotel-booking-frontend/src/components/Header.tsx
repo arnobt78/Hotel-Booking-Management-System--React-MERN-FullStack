@@ -24,8 +24,8 @@ const Header = () => {
             <div className="bg-white p-2 rounded-lg shadow-soft group-hover:shadow-medium transition-all duration-300">
               <Building2 className="w-6 h-6 text-primary-600" />
             </div>
-            <span className="text-2xl font-bold text-white tracking-tight group-hover:text-primary-100 transition-colors">
-              MernHolidays
+            <span className="text-2xl font-medium text-white tracking-tight group-hover:text-primary-100 transition-colors">
+              HolidayHotel
             </span>
           </button>
           <div className="md:hidden">

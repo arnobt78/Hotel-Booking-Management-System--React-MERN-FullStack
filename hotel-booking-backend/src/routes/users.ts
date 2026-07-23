@@ -3,6 +3,8 @@ import User from "../models/user";
 import jwt from "jsonwebtoken";
 import { check, validationResult } from "express-validator";
 import verifyToken from "../middleware/auth";
+import requireAdmin from "../middleware/requireAdmin";
+import { authCookieOptions } from "../lib/cookie-options";
 
 const router = express.Router();
 
@@ -20,6 +22,72 @@ router.get("/me", verifyToken, async (req: Request, res: Response) => {
     res.status(500).json({ message: "something went wrong" });
   }
 });
+
+/**
+ * Admin: list users (no passwords).
+ * GET /api/users
+ */
+router.get(
+  "/",
+  verifyToken,
+  requireAdmin,
+  async (_req: Request, res: Response) => {
+    try {
+      const users = await User.find()
+        .select(
+          "email firstName lastName role isActive totalBookings totalSpent createdAt"
+        )
+        .sort({ createdAt: -1 })
+        .limit(200);
+      res.json(users);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Unable to fetch users" });
+    }
+  }
+);
+
+/**
+ * Admin: update user role.
+ * PATCH /api/users/:id/role
+ * Body: { role: "user" | "admin" | "hotel_owner" }
+ */
+router.patch(
+  "/:id/role",
+  verifyToken,
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    const allowed = ["user", "admin", "hotel_owner"] as const;
+    const role = req.body?.role;
+    if (!allowed.includes(role)) {
+      return res.status(400).json({
+        message: `role must be one of: ${allowed.join(", ")}`,
+      });
+    }
+
+    try {
+      if (req.params.id === req.userId && role !== "admin") {
+        return res.status(400).json({
+          message: "Cannot demote your own admin role",
+        });
+      }
+
+      const user = await User.findByIdAndUpdate(
+        req.params.id,
+        { role, updatedAt: new Date() },
+        { new: true }
+      ).select("-password");
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      res.json(user);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Unable to update role" });
+    }
+  }
+);
 
 router.post(
   "/register",
@@ -57,13 +125,7 @@ router.post(
         }
       );
 
-      res.cookie("auth_token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-        maxAge: 86400000,
-        path: "/",
-      });
+      res.cookie("auth_token", token, authCookieOptions());
       return res.status(200).send({ message: "User registered OK" });
     } catch (error) {
       console.log(error);

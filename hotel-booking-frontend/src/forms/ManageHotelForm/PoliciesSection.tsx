@@ -6,9 +6,9 @@ const PoliciesSection = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-2xl font-bold">Hotel Policies</h2>
+      <h2 className="text-2xl font-medium">Hotel Policies</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           Check-in Time
           <input
             type="text"
@@ -17,7 +17,7 @@ const PoliciesSection = () => {
             {...register("policies.checkInTime")}
           />
         </label>
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           Check-out Time
           <input
             type="text"
@@ -26,7 +26,7 @@ const PoliciesSection = () => {
             {...register("policies.checkOutTime")}
           />
         </label>
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           Cancellation Policy
           <textarea
             placeholder="Describe your cancellation policy..."
@@ -35,7 +35,7 @@ const PoliciesSection = () => {
             {...register("policies.cancellationPolicy")}
           />
         </label>
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           Pet Policy
           <textarea
             placeholder="Describe your pet policy..."
@@ -44,7 +44,7 @@ const PoliciesSection = () => {
             {...register("policies.petPolicy")}
           />
         </label>
-        <label className="text-gray-700 text-sm font-bold flex-1">
+        <label className="text-gray-700 text-sm font-medium flex-1">
           Smoking Policy
           <textarea
             placeholder="Describe your smoking policy..."

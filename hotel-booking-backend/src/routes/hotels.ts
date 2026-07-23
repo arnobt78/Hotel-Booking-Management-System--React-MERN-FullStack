@@ -6,6 +6,7 @@ import { BookingType, HotelSearchResponse } from "../../../shared/types";
 import { param, validationResult } from "express-validator";
 import Stripe from "stripe";
 import verifyToken from "../middleware/auth";
+import requireAdmin from "../middleware/requireAdmin";
 
 const stripe = new Stripe(process.env.STRIPE_API_KEY as string);
 
@@ -66,6 +67,36 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error fetching hotels" });
   }
 });
+
+/**
+ * Admin: toggle hotel isActive.
+ * PATCH /api/hotels/:id/active
+ * Body: { isActive: boolean }
+ */
+router.patch(
+  "/:id/active",
+  verifyToken,
+  requireAdmin,
+  async (req: Request, res: Response) => {
+    if (typeof req.body?.isActive !== "boolean") {
+      return res.status(400).json({ message: "isActive boolean required" });
+    }
+    try {
+      const hotel = await Hotel.findByIdAndUpdate(
+        req.params.id,
+        { isActive: req.body.isActive, lastUpdated: new Date() },
+        { new: true }
+      );
+      if (!hotel) {
+        return res.status(404).json({ message: "Hotel not found" });
+      }
+      res.json(hotel);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Unable to update hotel status" });
+    }
+  }
+);
 
 router.get(
   "/:id",
@@ -160,6 +191,8 @@ router.post(
         createdAt: new Date(), // Add booking creation timestamp
         status: "confirmed", // Set initial status
         paymentStatus: "paid", // Set payment status since payment succeeded
+        // Always from retrieved PI — never trust client-only value for refunds
+        stripePaymentIntentId: paymentIntent.id,
       };
 
       // Create booking in separate collection

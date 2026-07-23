@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { HotelType } from "../../../shared/types";
 import { MapPin, Star, Users } from "lucide-react";
 import { Badge } from "./ui/badge";
+import { SafeImage } from "./ui/safe-image";
 
 type Props = {
   hotel: HotelType;
@@ -15,10 +16,11 @@ const LatestDestinationCard = ({ hotel }: Props) => {
       style={{ minWidth: 320, maxWidth: 500 }}
     >
       <div className="w-full h-full relative">
-        <img
+        <SafeImage
           src={hotel.imageUrls[0]}
-          className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-110"
-          style={{ minHeight: 350, maxHeight: 350 }}
+          alt={hotel.name}
+          fill
+          className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
         />
 
         {/* Overlay Gradient */}
@@ -28,7 +30,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
         <div className="absolute top-4 right-4">
           <div className="bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 flex items-center space-x-1">
             <Star className="w-4 h-4 text-yellow-500 fill-current" />
-            <span className="text-sm font-semibold text-gray-800">
+            <span className="text-sm font-medium text-gray-700">
               {hotel.starRating}
             </span>
           </div>
@@ -37,14 +39,14 @@ const LatestDestinationCard = ({ hotel }: Props) => {
         {/* Price Badge */}
         <div className="absolute top-4 left-4">
           <div className="bg-primary-600 text-white rounded-full px-3 py-1">
-            <span className="text-sm font-bold">£{hotel.pricePerNight}</span>
+            <span className="text-sm font-medium">£{hotel.pricePerNight}</span>
           </div>
         </div>
       </div>
 
       <div className="absolute bottom-0 p-6 w-full">
         <div className="space-y-2">
-          <h3 className="text-white font-bold text-2xl tracking-tight group-hover:text-primary-200 transition-colors">
+          <h3 className="text-white font-medium text-2xl tracking-tight group-hover:text-primary-200 transition-colors">
             {hotel.name}
           </h3>
 
@@ -97,7 +99,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
             </div>
 
             <div className="bg-white/20 backdrop-blur-sm rounded-lg px-3 py-1 hover:bg-white/30 transition-colors">
-              <span className="text-sm font-semibold text-white">
+              <span className="text-sm font-medium text-white">
                 View Details
               </span>
             </div>
