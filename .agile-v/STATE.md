@@ -8,8 +8,9 @@
 |-------|-------|
 | **Cycle** | **C1** |
 | **Phase** | Stage 3–4 — T5 + post-T5 polish ready to ship |
-| **Status** | T1→T5 + polish; commit/push then Vercel redeploy |
+| **Status** | T1→T5 + polish **pushed** `8dda64b` — redeploy Vercel |
 | **Last REQ** | **REQ-0052** |
+| **HEAD** | `8dda64b` on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
