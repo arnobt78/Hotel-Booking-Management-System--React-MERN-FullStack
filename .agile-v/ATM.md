@@ -35,5 +35,6 @@
 | REQ-0031 | ART-0031 | — | VER-0009 | baseline done |
 | REQ-0032 | ART-0032 | TC-0005 (TBD) | VER-0010 (TBD) | planned |
 | REQ-0033 | ART-0033 | — (docs) | VER-0011 | done locally |
+| REQ-0034 | ART-0034 | — | VER-0012 | done |
 
 **Auditor note:** C1 baseline VER rows = sync acceptance (code + walkthrough + live demos). Full Red Team suite opens after Gate 1 for new work.

@@ -4,65 +4,43 @@ import {
   Activity,
   Server,
   Database,
-  Cpu,
   HardDrive,
   Clock,
   AlertCircle,
   CheckCircle,
   XCircle,
 } from "lucide-react";
+import useAppContext from "../hooks/useAppContext";
 
+/** Public liveness shape from GET /api/health (minimal — no infra recon data) */
 interface HealthData {
   status: string;
   timestamp: string;
-  uptime: number;
-  database: {
+  database?: {
     status: string;
-    collections: number;
-    name: string;
   };
-  memory: {
-    used: number;
-    total: number;
-    percentage: number;
-  };
-  environment: string;
-  version: string;
 }
 
+/** Auth-only sanitized metrics from GET /api/health/detailed */
 interface DetailedHealthData {
   status: string;
   timestamp: string;
-  system: {
-    platform: string;
-    arch: string;
-    nodeVersion: string;
-    pid: number;
-  };
   performance: {
     memory: {
-      heapUsed: number;
-      heapTotal: number;
-      external: number;
-      rss: number;
-    };
-    cpu: {
-      user: number;
-      system: number;
+      usedMb: number;
+      totalMb: number;
+      percentage: number;
     };
     uptime: number;
   };
   database: {
     status: string;
-    readyState: number;
-    host: string;
-    port: number;
-    name: string;
   };
 }
 
 const ApiStatus = () => {
   const [isDetailed, setIsDetailed] = useState(false);
+  const { isLoggedIn } = useAppContext();
   const apiBaseUrl =
     import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
 
@@ -81,32 +59,46 @@ const ApiStatus = () => {
       return response.json();
     },
     {
-      refetchInterval: 30000, // Refresh every 30 seconds
+      refetchInterval: 30000,
       retry: 3,
       retryDelay: 1000,
     }
   );
 
-  const { data: detailedData } = useQuery<DetailedHealthData>(
+  // Detailed requires JWT — Bearer from localStorage (same as axios interceptor)
+  const {
+    data: detailedData,
+    error: detailedError,
+    isError: isDetailedError,
+  } = useQuery<DetailedHealthData>(
     "detailedHealth",
     async () => {
-      const response = await fetch(`${apiBaseUrl}/api/health/detailed`);
+      const token = localStorage.getItem("session_id");
+      const response = await fetch(`${apiBaseUrl}/api/health/detailed`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (response.status === 401) {
+        throw new Error("SIGN_IN_REQUIRED");
+      }
       if (!response.ok) {
         throw new Error("Detailed health check failed");
       }
       return response.json();
     },
     {
-      enabled: isDetailed,
-      refetchInterval: isDetailed ? 30000 : false,
+      enabled: isDetailed && isLoggedIn,
+      refetchInterval: isDetailed && isLoggedIn ? 30000 : false,
+      retry: false,
     }
   );
 
   const getStatusIcon = (status: string) => {
     switch (status) {
       case "healthy":
+      case "connected":
         return <CheckCircle className="w-5 h-5 text-green-500" />;
       case "unhealthy":
+      case "disconnected":
         return <XCircle className="w-5 h-5 text-red-500" />;
       default:
         return <AlertCircle className="w-5 h-5 text-yellow-500" />;
@@ -116,8 +108,10 @@ const ApiStatus = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "healthy":
+      case "connected":
         return "bg-green-100 text-green-800";
       case "unhealthy":
+      case "disconnected":
         return "bg-red-100 text-red-800";
       default:
         return "bg-yellow-100 text-yellow-800";
@@ -136,11 +130,6 @@ const ApiStatus = () => {
     } else {
       return `${minutes}m`;
     }
-  };
-
-  const formatBytes = (bytes: number) => {
-    const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(1)} MB`;
   };
 
   if (isLoading) {
@@ -176,10 +165,16 @@ const ApiStatus = () => {
     );
   }
 
+  const needsSignInForDetails =
+    isDetailed &&
+    (!isLoggedIn ||
+      (isDetailedError &&
+        detailedError instanceof Error &&
+        detailedError.message === "SIGN_IN_REQUIRED"));
+
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">API Status</h1>
           <p className="text-xl text-gray-600">
@@ -187,7 +182,6 @@ const ApiStatus = () => {
           </p>
         </div>
 
-        {/* Overall Status */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
@@ -212,8 +206,7 @@ const ApiStatus = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* API Status */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">
@@ -230,91 +223,57 @@ const ApiStatus = () => {
               </span>
             </div>
 
-            {/* Database Status */}
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">
                   Database
                 </span>
-                {getStatusIcon(healthData?.database.status || "unknown")}
+                {getStatusIcon(healthData?.database?.status || "unknown")}
               </div>
               <span
                 className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                  healthData?.database.status || "unknown"
+                  healthData?.database?.status || "unknown"
                 )}`}
               >
-                {healthData?.database.status || "Unknown"}
+                {healthData?.database?.status || "Unknown"}
               </span>
             </div>
 
-            {/* Uptime */}
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-600">
-                  Uptime
+                  Probe time
                 </span>
                 <Clock className="w-4 h-4 text-gray-400" />
               </div>
-              <span className="text-lg font-semibold text-gray-900">
-                {healthData?.uptime ? formatUptime(healthData.uptime) : "N/A"}
-              </span>
-            </div>
-
-            {/* Memory Usage */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-medium text-gray-600">
-                  Memory Usage
-                </span>
-                <HardDrive className="w-4 h-4 text-gray-400" />
-              </div>
-              <span className="text-lg font-semibold text-gray-900">
-                {healthData?.memory.percentage || 0}%
+              <span className="text-sm font-semibold text-gray-900">
+                {healthData?.timestamp
+                  ? new Date(healthData.timestamp).toLocaleTimeString()
+                  : "N/A"}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Detailed Metrics */}
+        {needsSignInForDetails && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-6 mb-8 text-center">
+            <AlertCircle className="w-8 h-8 text-amber-600 mx-auto mb-2" />
+            <p className="text-amber-900 font-medium">
+              Sign in to view detailed status
+            </p>
+            <p className="text-sm text-amber-800 mt-1">
+              Detailed metrics require authentication and no longer expose
+              infrastructure identifiers.
+            </p>
+          </div>
+        )}
+
         {isDetailed && detailedData && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* System Information */}
-            <div className="bg-white rounded-lg shadow-sm border p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                <Cpu className="w-5 h-5 text-blue-600 mr-2" />
-                System Information
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Platform:</span>
-                  <span className="font-medium">
-                    {detailedData.system.platform}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Architecture:</span>
-                  <span className="font-medium">
-                    {detailedData.system.arch}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Node.js Version:</span>
-                  <span className="font-medium">
-                    {detailedData.system.nodeVersion}
-                  </span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Process ID:</span>
-                  <span className="font-medium">{detailedData.system.pid}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Database Information */}
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <Database className="w-5 h-5 text-green-600 mr-2" />
-                Database Information
+                Database
               </h3>
               <div className="space-y-3">
                 <div className="flex justify-between">
@@ -329,22 +288,31 @@ const ApiStatus = () => {
                     {detailedData.database.status}
                   </span>
                 </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg shadow-sm border p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <HardDrive className="w-5 h-5 text-blue-600 mr-2" />
+                Memory (rounded MB)
+              </h3>
+              <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Host:</span>
+                  <span className="text-gray-600">Used:</span>
                   <span className="font-medium">
-                    {detailedData.database.host}
+                    {detailedData.performance.memory.usedMb} MB
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Port:</span>
+                  <span className="text-gray-600">Total:</span>
                   <span className="font-medium">
-                    {detailedData.database.port}
+                    {detailedData.performance.memory.totalMb} MB
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">Database:</span>
+                  <span className="text-gray-600">Usage:</span>
                   <span className="font-medium">
-                    {detailedData.database.name}
+                    {detailedData.performance.memory.percentage}%
                   </span>
                 </div>
               </div>
@@ -352,31 +320,18 @@ const ApiStatus = () => {
           </div>
         )}
 
-        {/* Performance Metrics */}
         {isDetailed && detailedData && (
           <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <Activity className="w-5 h-5 text-purple-600 mr-2" />
-              Performance Metrics
+              Performance
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
-                  {formatBytes(detailedData.performance.memory.heapUsed)}
+                  {detailedData.performance.memory.percentage}%
                 </div>
-                <div className="text-sm text-gray-600">Heap Used</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">
-                  {formatBytes(detailedData.performance.memory.heapTotal)}
-                </div>
-                <div className="text-sm text-gray-600">Heap Total</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">
-                  {formatBytes(detailedData.performance.memory.rss)}
-                </div>
-                <div className="text-sm text-gray-600">RSS</div>
+                <div className="text-sm text-gray-600">Heap usage</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-orange-600">
@@ -388,7 +343,6 @@ const ApiStatus = () => {
           </div>
         )}
 
-        {/* Last Updated */}
         <div className="text-center text-gray-500 text-sm">
           Last updated:{" "}
           {healthData?.timestamp

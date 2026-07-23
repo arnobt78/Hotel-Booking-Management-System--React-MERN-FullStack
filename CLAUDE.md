@@ -4,6 +4,11 @@
 **Ports:** API `5001` · SPA `5174` · Live: Vercel FE + Coolify BE  
 **No:** Next.js SSR · Redis · Python · Clerk (docs-only guide)
 
+## Security (REQ-0034)
+- Public `GET /api/health` → status + timestamp + db.status only  
+- `GET /api/health/detailed` → JWT; memory MB + uptime only (no host/PID/Node)  
+- VulDB #c891c0 ACCEPT · CAPA-0001
+
 ## Agile V
 - Load: `agile-v-core` → `pipeline` → role · State: `.agile-v/STATE.md` first  
 - Cycle **C1** · Gate 1 PENDING (`c1-gate1-baseline-blueprint`) · REQ-0033 docs done · next planned **REQ-0032** (Review/Analytics routes)  

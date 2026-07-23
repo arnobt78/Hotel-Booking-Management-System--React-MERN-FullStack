@@ -44,3 +44,10 @@
 - **Decision:** Pre-commit audit: docs/AQMS OK; FE lint + BE build PASS. No Redis/SSR/global invalidation work claimed — gaps pre-existing, not regressions from REQ-0033.
 - **Rationale:** Session deliverables were documentation + Agile V bootstrap only.
 - **Linked REQ:** REQ-0033
+
+## [C1] 2026-07-23T14:05:00Z | SECURITY | REQ-0034_VULDB_HEALTH
+
+- **Decision:** ACCEPT VulDB #c891c0. Harden `/api/health` (minimal public) + JWT `/detailed` without host/port/pid/Node/platform; sanitize `system-stats/public`; wire React Query invalidation for hotel/booking CRUD.
+- **Rationale:** Confirmed CWE-200 information disclosure; coordinated disclosure with CNA.
+- **Linked REQ:** REQ-0034 · CAPA-0001
+- **VulDB reply stance:** ACCEPT — patch on main; disclosure OK after release.

@@ -1,13 +1,15 @@
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams, useNavigate } from "react-router-dom";
 import * as apiClient from "../api-client";
 import ManageHotelForm from "../forms/ManageHotelForm/ManageHotelForm";
 import useAppContext from "../hooks/useAppContext";
+import { invalidateHotelQueries } from "../lib/invalidate-queries";
 
 const EditHotel = () => {
   const { hotelId } = useParams();
   const { showToast } = useAppContext();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const { data: hotel } = useQuery(
     "fetchMyHotelById",
@@ -18,17 +20,17 @@ const EditHotel = () => {
   );
 
   const { mutate, isLoading } = useMutation(apiClient.updateMyHotelById, {
-    onSuccess: () => {
+    onSuccess: async () => {
+      await invalidateHotelQueries(queryClient);
       showToast({
         title: "Hotel Updated Successfully",
         description:
           "Your hotel details have been updated successfully! Redirecting to My Hotels...",
         type: "SUCCESS",
       });
-      // Redirect to My Hotels page after successful update
       setTimeout(() => {
         navigate("/my-hotels");
-      }, 1500); // Give user time to see the success message
+      }, 1500);
     },
     onError: () => {
       showToast({

@@ -237,10 +237,12 @@ Attaches `req.userId` for downstream handlers. Returns **401** if missing/invali
 
 #### Health — `/api/health`
 
-| Method | Path        | Description           |
-| ------ | ----------- | --------------------- |
-| GET    | `/`         | DB + memory status    |
-| GET    | `/detailed` | Extended system stats |
+| Method | Path        | Auth | Description                                      |
+| ------ | ----------- | ---- | ------------------------------------------------ |
+| GET    | `/`         | —    | Minimal liveness (`status`, `timestamp`, db.status) |
+| GET    | `/detailed` | JWT  | Sanitized uptime/memory MB only (no host/PID/Node) |
+
+> **Security (REQ-0034 / VulDB CWE-200):** Detailed health never returns Mongo host/port, PID, platform, or Node version. Docker/Coolify probes use public `/`.
 
 #### Business insights — `/api/business-insights`
 

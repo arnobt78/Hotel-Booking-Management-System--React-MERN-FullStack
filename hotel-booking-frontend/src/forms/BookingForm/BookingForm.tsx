@@ -4,7 +4,7 @@ import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { StripeCardElement } from "@stripe/stripe-js";
 import useSearchContext from "../../hooks/useSearchContext";
 import { useParams, useNavigate } from "react-router-dom";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../../api-client";
 import useAppContext from "../../hooks/useAppContext";
 import { Button } from "../../components/ui/button";
@@ -23,6 +23,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useState } from "react";
+import { invalidateBookingQueries } from "../../lib/invalidate-queries";
 
 type Props = {
   currentUser: UserType;
@@ -53,6 +54,7 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
   const navigate = useNavigate();
 
   const { showToast } = useAppContext();
+  const queryClient = useQueryClient();
 
   // Use local state for form fields to prevent losing data
   const [phone, setPhone] = useState<string>("");
@@ -62,14 +64,15 @@ const BookingForm = ({ currentUser, paymentIntent }: Props) => {
   const { mutate: bookRoom, isLoading } = useMutation(
     apiClient.createRoomBooking,
     {
-      onSuccess: () => {
+      onSuccess: async () => {
+        // My Bookings + hotel lists update immediately without full page refresh
+        await invalidateBookingQueries(queryClient);
         showToast({
           title: "Booking Successful",
           description: "Your hotel booking has been confirmed successfully!",
           type: "SUCCESS",
         });
 
-        // Navigate to My Bookings page after a short delay
         setTimeout(() => {
           navigate("/my-bookings");
         }, 1500);

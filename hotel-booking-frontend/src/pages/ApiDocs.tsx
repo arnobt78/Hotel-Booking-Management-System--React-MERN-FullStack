@@ -106,12 +106,12 @@ const ApiDocs = () => {
         {
           method: "GET",
           path: "/api/health",
-          description: "API health status",
+          description: "Public liveness probe (minimal payload)",
         },
         {
           method: "GET",
           path: "/api/health/detailed",
-          description: "Detailed health info",
+          description: "Sanitized metrics (JWT required)",
         },
         {
           method: "GET",

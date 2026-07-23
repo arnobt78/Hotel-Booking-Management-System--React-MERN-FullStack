@@ -22,6 +22,7 @@
 | REQ-0029…0031 | Types, e2e, docs | done [C1] |
 | REQ-0032 | Reviews + Analytics API | planned [C1] |
 | REQ-0033 | Educational README + SECURITY.md | done [C1] |
+| REQ-0034 | Health CWE-200 / VulDB fix + RQ invalidation | done [C1] |
 
 ---
 
@@ -294,6 +295,15 @@
 - **Done Criteria:** [x] README rewritten · [x] SECURITY.md · [x] Linked from README
 - **Status:** done [C1]
 - **Priority:** HIGH · **Risk:** R0
+
+## REQ-0034 — Health endpoint information disclosure (VulDB / CWE-200)
+
+- **Requirement:** Close unauthenticated disclosure of infrastructure details via `/api/health` and `/api/health/detailed` (VulDB #c891c0 / PoC sensitive-information-disclosure). Public probe must stay load-balancer safe; detailed metrics require JWT and must not return host/port/pid/Node/platform/raw CPU.
+- **Constraint:** Docker/Coolify healthcheck continues to use public `GET /api/health`. Do not remove ApiStatus UI — adapt to sanitized shapes. Public `system-stats` must not leak process telemetry.
+- **Verification Criteria:** Unauth `GET /api/health/detailed` → 401; unauth `/api/health` returns only status/timestamp/db.status; lint + FE/BE build PASS; hotel/booking mutations invalidate React Query keys.
+- **Done Criteria:** [x] health.ts hardened · [x] ApiStatus JWT detailed · [x] system-stats/public sanitized · [x] invalidate-queries wired
+- **Status:** done [C1]
+- **Priority:** CRITICAL · **Risk:** R2
 
 ---
 

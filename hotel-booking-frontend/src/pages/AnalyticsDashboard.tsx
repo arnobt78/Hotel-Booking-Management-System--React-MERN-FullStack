@@ -87,20 +87,17 @@ interface ForecastData {
 }
 
 interface PerformanceData {
-  system: {
+  /** Present on auth /system-stats only — omitted from public (CWE-200) */
+  system?: {
     memory: {
       used: number;
       total: number;
       percentage: number;
     };
-    cpu: {
-      user: number;
-      system: number;
-    };
     uptime: number;
   };
   database: {
-    collections: number;
+    collections?: number;
     totalHotels: number;
     totalBookings: number;
     totalRevenue: number;
@@ -648,11 +645,13 @@ const AnalyticsDashboard = () => {
                       Memory Usage
                     </p>
                     <p className="text-2xl font-bold text-gray-900">
-                      {performanceData.system.memory.percentage}%
+                      {performanceData.system?.memory.percentage ?? "—"}
+                      {performanceData.system?.memory != null ? "%" : ""}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {performanceData.system.memory.used}MB /{" "}
-                      {performanceData.system.memory.total}MB
+                      {performanceData.system?.memory != null
+                        ? `${performanceData.system.memory.used}MB / ${performanceData.system.memory.total}MB`
+                        : "Sign in for process metrics"}
                     </p>
                   </div>
                 </div>
@@ -669,8 +668,9 @@ const AnalyticsDashboard = () => {
                       {performanceData.application.uptime}
                     </p>
                     <p className="text-sm text-gray-500">
-                      {Math.round(performanceData.system.uptime / 3600)}h{" "}
-                      {Math.round((performanceData.system.uptime % 3600) / 60)}m
+                      {performanceData.system?.uptime != null
+                        ? `${Math.round(performanceData.system.uptime / 3600)}h ${Math.round((performanceData.system.uptime % 3600) / 60)}m`
+                        : "Availability SLA"}
                     </p>
                   </div>
                 </div>
@@ -725,7 +725,7 @@ const AnalyticsDashboard = () => {
                   <div className="flex justify-between items-center">
                     <span className="text-gray-600">Collections</span>
                     <span className="font-semibold">
-                      {performanceData.database.collections}
+                      {performanceData.database.collections ?? "—"}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -764,18 +764,6 @@ const AnalyticsDashboard = () => {
                     <span className="text-gray-600">This Week's Bookings</span>
                     <span className="font-semibold">
                       {performanceData.application.thisWeekBookings}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">CPU Usage (User)</span>
-                    <span className="font-semibold">
-                      {Math.round(performanceData.system.cpu.user / 1000)}ms
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-gray-600">CPU Usage (System)</span>
-                    <span className="font-semibold">
-                      {Math.round(performanceData.system.cpu.system / 1000)}ms
                     </span>
                   </div>
                 </div>

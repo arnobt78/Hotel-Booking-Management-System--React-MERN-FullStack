@@ -307,38 +307,69 @@ router.get("/forecast", verifyToken, async (req: Request, res: Response) => {
   }
 });
 
-// Shared system stats handler
-const getSystemStatsData = async () => {
-  const memUsage = process.memoryUsage();
-  const cpuUsage = process.cpuUsage();
+// Business aggregates only (safe for public dashboard charts)
+const getBusinessStatsData = async () => {
   const allHotels = await Hotel.find();
   const allBookings = await Booking.find();
   const totalBookings = allBookings.length;
-  const totalRevenue = allBookings.reduce((sum, booking) => sum + (booking.totalCost || 0), 0);
+  const totalRevenue = allBookings.reduce(
+    (sum, booking) => sum + (booking.totalCost || 0),
+    0
+  );
   const today = new Date();
-  const todayBookings = allBookings.filter((booking) => new Date(booking.createdAt).toDateString() === today.toDateString()).length;
+  const todayBookings = allBookings.filter(
+    (booking) =>
+      new Date(booking.createdAt).toDateString() === today.toDateString()
+  ).length;
   const thisWeekBookings = allBookings.filter((booking) => {
     const bookingDate = new Date(booking.createdAt);
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
     return bookingDate >= weekAgo;
   }).length;
-  const avgResponseTime = Math.random() * 100 + 50; // 50-150ms
+  const avgResponseTime = Math.random() * 100 + 50; // illustrative demo metric
 
   return {
-    system: {
-      memory: { used: Math.round(memUsage.heapUsed / 1024 / 1024), total: Math.round(memUsage.heapTotal / 1024 / 1024), percentage: Math.round((memUsage.heapUsed / memUsage.heapTotal) * 100) },
-      cpu: { user: cpuUsage.user, system: cpuUsage.system },
-      uptime: process.uptime(),
+    database: {
+      totalHotels: allHotels.length,
+      totalBookings,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
     },
-    database: { collections: 3, totalHotels: allHotels.length, totalBookings, totalRevenue: Math.round(totalRevenue * 100) / 100 },
-    application: { avgResponseTime: Math.round(avgResponseTime), requestsPerMinute: Math.round(Math.random() * 50 + 20), errorRate: Math.round(Math.random() * 5) / 100, uptime: "99.9%", todayBookings, thisWeekBookings },
+    application: {
+      avgResponseTime: Math.round(avgResponseTime),
+      requestsPerMinute: Math.round(Math.random() * 50 + 20),
+      errorRate: Math.round(Math.random() * 5) / 100,
+      uptime: "99.9%",
+      todayBookings,
+      thisWeekBookings,
+    },
     lastUpdated: new Date().toISOString(),
   };
 };
 
-router.get("/system-stats/public", async (req: Request, res: Response) => {
+// Auth-only: coarse process memory % — never host/pid/raw CPU micros
+const getSystemStatsData = async () => {
+  const memUsage = process.memoryUsage();
+  const used = Math.round(memUsage.heapUsed / 1024 / 1024);
+  const total = Math.round(memUsage.heapTotal / 1024 / 1024);
+  const business = await getBusinessStatsData();
+
+  return {
+    ...business,
+    system: {
+      memory: {
+        used,
+        total,
+        percentage: total > 0 ? Math.round((used / total) * 100) : 0,
+      },
+      uptime: Math.round(process.uptime()),
+    },
+  };
+};
+
+// Public: business metrics only (no process telemetry — same CWE class as health leak)
+router.get("/system-stats/public", async (_req: Request, res: Response) => {
   try {
-    const performanceData = await getSystemStatsData();
+    const performanceData = await getBusinessStatsData();
     res.status(200).json(performanceData);
   } catch (error) {
     res.status(500).json({
@@ -348,7 +379,7 @@ router.get("/system-stats/public", async (req: Request, res: Response) => {
   }
 });
 
-router.get("/system-stats", verifyToken, async (req: Request, res: Response) => {
+router.get("/system-stats", verifyToken, async (_req: Request, res: Response) => {
   try {
     const performanceData = await getSystemStatsData();
     res.status(200).json(performanceData);

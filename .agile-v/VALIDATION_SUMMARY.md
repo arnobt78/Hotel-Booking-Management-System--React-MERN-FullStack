@@ -26,14 +26,15 @@
 | VER-0009 | Docs | PASS (sync) | PROJECT_WALKTHROUGH.md @ 408e572 |
 | VER-0010 | REQ-0032 | NOT RUN | planned |
 | VER-0011 | REQ-0033 | PASS (docs) | README badges/sections/License/Happy Coding; SECURITY.md + link; Diploi optional deploy; env fail-fast documented |
+| VER-0012 | REQ-0034 | PASS | health detailed JWT; public probe minimal; lint+build; invalidate hotel/booking |
 
 ## Findings
 
 | Type | Count | Notes |
 |------|-------|-------|
-| PASS | 10 | Baseline sync + REQ-0033 docs |
+| PASS | 11 | Baseline + REQ-0033 + REQ-0034 |
 | FAIL | 0 | — |
-| FLAG | 2 | (1) Review/Analytics models without routes — REQ-0032 · (2) README backend URL vs walkthrough duckdns — clarify if needed |
+| FLAG | 1 | Review/Analytics models without routes — REQ-0032 |
 
 ## Red Team notes
 

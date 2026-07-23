@@ -37,5 +37,6 @@
 | ART-0031 | REQ-0031 | C1 | `docs/PROJECT_WALKTHROUGH.md` | shipped |
 | ART-0032 | REQ-0032 | C1 | `models/review.ts`, `models/analytics.ts` (schema only — routes TBD) | planned |
 | ART-0033 | REQ-0033 | C1 | `README.md` (educational rewrite), `SECURITY.md`, `hotel-booking-frontend/.env.local.example` (Stripe note) | done |
+| ART-0034 | REQ-0034 | C1 | `routes/health.ts`, `business-insights.ts` system-stats, `ApiStatus.tsx`, `invalidate-queries.ts`, Add/Edit hotel + BookingForm | done |
 
 **Rule:** New implementation appends ART-XXXX.N on revision; never orphan code without REQ.
