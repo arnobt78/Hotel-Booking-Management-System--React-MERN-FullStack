@@ -8,8 +8,9 @@
 |-------|-------|
 | **Cycle** | **C1** |
 | **Phase** | Stage 3–4 — UI polish + rollups path shipped |
-| **Status** | Gutter/focus/rollups/insights-shell ready — push + redeploy BE+FE |
+| **Status** | Gutter/focus/rollups/insights-shell **pushed** `2b86f37` — redeploy Coolify BE + Vercel FE |
 | **Last REQ** | **REQ-0052** |
+| **HEAD** | `2b86f37` on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
