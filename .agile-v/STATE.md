@@ -7,10 +7,10 @@
 | Field | Value |
 |-------|-------|
 | **Cycle** | **C1** |
-| **Phase** | Stage 3–4 — UX polish pending push |
-| **Status** | Sonner · stagger · auth nav · Home skeletons — commit next |
+| **Phase** | Stage 3–4 — UX polish shipped |
+| **Status** | Sonner · stagger · auth nav · Home skeletons **pushed** `0d2df89` — redeploy Vercel FE |
 | **Last REQ** | **REQ-0052** |
-| **HEAD** | (update after push) |
+| **HEAD** | `0d2df89` on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
@@ -22,9 +22,9 @@
 | ui-2026-07-23 | gutter · rollups · insights shell |
 | ui-2026-07-24 | PageContainer · shadcn · DataTable · city chips |
 | ui-2026-07-24b | SelectOptionLabel · scroll-lock · hotel-places |
-| ux-2026-07-24c | Sonner · content stagger · static nav/hero bg · optimistic auth · dest skeletons |
+| ux-2026-07-24c | Sonner · content stagger · static nav/hero · optimistic auth · dest skeletons |
 
 ## Next
 
-1. Push → Vercel FE
+1. Redeploy Vercel FE
 2. Gate 1 (INT-0001)
