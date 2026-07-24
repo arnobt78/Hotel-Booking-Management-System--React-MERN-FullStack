@@ -8,8 +8,9 @@
 |-------|-------|
 | **Cycle** | **C1** |
 | **Phase** | Stage 3–4 — UI shell + DataTable ready to ship |
-| **Status** | PageContainer/shadcn/DataTable/native-select cleanup — push next |
+| **Status** | PageContainer/shadcn/DataTable **pushed** `cbce41d` — redeploy Vercel FE |
 | **Last REQ** | **REQ-0052** |
+| **HEAD** | `cbce41d` on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
