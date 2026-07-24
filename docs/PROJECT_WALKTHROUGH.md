@@ -456,7 +456,13 @@ Authorization: Bearer ${localStorage.getItem("session_id")}
 
 ### 8.4 Business insights
 
-`/business-insights` → `AnalyticsDashboard` → public insight endpoints + Recharts charts.
+`/business-insights` → `AnalyticsDashboard` (public showcase nav) → `GET .../dashboard|forecast|system-stats` public + Recharts.
+
+- Tabs: Overview · Forecasting · Quality · Ops
+- KPIs via `components/insights/MetricStatCard` (value right; MoM footer same row left)
+- BE denser overview: LOS/ADR/party · cancel/refund · reviews/categories · payment/status breakdowns · hotelsByStar
+- Instant UX: Layout shell always · `keepPreviousData` · pulse only if `!data` · nav hover prefetch
+- CRUD: `invalidateBusinessInsightsQueries` only inside `invalidateHotelQueries` (booking/review/admin chain once)
 
 ---
 
@@ -471,7 +477,9 @@ Authorization: Bearer ${localStorage.getItem("session_id")}
 | `fetchMyBookings` | `MyBookings`         | guest bookings                 |
 | `fetchMyHotels`   | `MyHotels`           | owner hotels                   |
 | hotel id          | `EditHotel`          | owner hotel                    |
-| insight keys      | `AnalyticsDashboard` | business-insights (shell + inline pulse) |
+| `business-insights-dashboard` | `AnalyticsDashboard` | dashboard/public (KPIs/charts) |
+| `business-insights-forecast` | `AnalyticsDashboard` | forecast/public |
+| `business-insights-ops` | `AnalyticsDashboard` | system-stats/public |
 | `fetchBusinessInsightsRollups` | `AdminDashboard` | `GET /api/business-insights/rollups` |
 | health            | `ApiStatus`          | `/api/health`                  |
 
@@ -484,7 +492,7 @@ Authorization: Bearer ${localStorage.getItem("session_id")}
 | Google OAuth | `AuthCallback.tsx`  | `invalidateQueries("validateToken")`                   |
 | Sign out     | `SignOutButton.tsx` | `invalidateQueries("validateToken")`                   |
 
-CRUD invalidation is centralized in `lib/invalidate-queries.ts` (hotels, bookings, reviews, admin + `fetchBusinessInsightsRollups`). Vite SPA — no Next SSR/Redis.
+CRUD invalidation centralized in `lib/invalidate-queries.ts`: hotel → insights (+ places); booking/review/admin → hotel (insights once). Prefetch: `prefetchBusinessInsightsQueries`. Vite SPA — no Next SSR/Redis.
 
 `AppContext` derives `isLoggedIn` from `validateToken` success + optional localStorage JWT fallback.
 

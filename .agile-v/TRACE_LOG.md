@@ -25,3 +25,4 @@
 | 2026-07-24T13:20:00Z | BUILD | PageContainer + shadcn + DataTable + zero native select | OK | resume `c1-t5-ai-auth-seed` |
 | 2026-07-24T12:57:00Z | BUILD | UI polish: Select/menu center · scroll-lock · hotel-places · AdvancedSearch | OK | resume `c1-t5-ai-auth-seed` |
 | 2026-07-24T13:40:00Z | BUILD | Sonner · stagger · static hero/nav · optimistic auth · Home dest skeletons | OK | resume `c1-t5-ai-auth-seed` |
+| 2026-07-24T14:45:00Z | BUILD | Insights denser KPIs/Quality · invalidate once via hotel · prefetch · MetricStatCard align | OK | `/business-insights` |

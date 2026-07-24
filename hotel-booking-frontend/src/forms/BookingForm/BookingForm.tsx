@@ -302,7 +302,7 @@ MM/YY: 12/35 CVC: 123`;
           <div className="space-y-4">
             <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
               <div className="flex items-start gap-3">
-                <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                <AlertTriangle className="h-5 w-5 text-yellow-600  flex-shrink-0" />
                 <div className="flex-1">
                   <h4 className="text-sm font-medium text-yellow-800 mb-2">
                     For Testing Purpose
@@ -347,7 +347,7 @@ MM/YY: 12/35 CVC: 123`;
             <Button
               disabled={isLoading}
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl shadow-xl transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <div className="flex items-center gap-2">

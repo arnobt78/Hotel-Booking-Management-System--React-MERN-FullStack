@@ -4,6 +4,8 @@ import { Building2, Calendar, BarChart3, LogIn, Hotel } from "lucide-react";
 import UsernameMenu from "./UsernameMenu";
 import useAppContext from "../hooks/useAppContext";
 import { getHotelsSearchUrl } from "../lib/nav-utils";
+import { prefetchBusinessInsightsQueries } from "../lib/invalidate-queries";
+import { queryClient } from "../main";
 
 const linkClass =
   "flex items-center gap-2 w-full py-3 text-sm font-normal text-gray-700 hover:text-primary-600 transition-colors";
@@ -22,7 +24,11 @@ const MobileNavLinks = () => {
         <Calendar className="h-4 w-4" />
         My Bookings
       </Link>
-      <Link to="/business-insights" className={linkClass}>
+      <Link
+        to="/business-insights"
+        className={linkClass}
+        onMouseEnter={() => prefetchBusinessInsightsQueries(queryClient)}
+      >
         <BarChart3 className="h-4 w-4" />
         Business Insights
       </Link>

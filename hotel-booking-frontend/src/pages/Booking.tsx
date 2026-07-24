@@ -106,7 +106,7 @@ const Booking = () => {
       <div className="grid lg:grid-cols-[1fr_2fr] gap-8">
         {/* Booking Summary */}
         <div className="space-y-6">
-          <Card className="shadow-lg border-0 bg-white">
+          <Card className="shadow-xl border-0 bg-white">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg font-medium">
                 <Calendar className="h-5 w-5 text-blue-600" />
@@ -126,7 +126,7 @@ const Booking = () => {
           </Card>
 
           {/* Hotel Info Card */}
-          <Card className="shadow-lg border-0 bg-white">
+          <Card className="shadow-xl border-0 bg-white">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-2 text-lg font-medium">
                 <Users className="h-5 w-5 text-blue-600" />
@@ -164,7 +164,7 @@ const Booking = () => {
         {/* Booking Form */}
         <div className="space-y-6">
           {isLoadingPayment ? (
-            <Card className="shadow-lg border-0 bg-white">
+            <Card className="shadow-xl border-0 bg-white">
               <CardContent className="flex items-center justify-center py-12">
                 <div className="flex items-center gap-3">
                   <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
@@ -173,7 +173,7 @@ const Booking = () => {
               </CardContent>
             </Card>
           ) : currentUser && paymentIntentData ? (
-            <Card className="shadow-lg border-0 bg-white">
+            <Card className="shadow-xl border-0 bg-white">
               <CardContent className="p-0">
                 <Elements
                   stripe={stripePromise}
@@ -190,7 +190,7 @@ const Booking = () => {
               </CardContent>
             </Card>
           ) : (
-            <Card className="shadow-lg border-0 bg-white">
+            <Card className="shadow-xl border-0 bg-white">
               <CardContent className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-3" />

@@ -13,10 +13,10 @@ import {
   Star,
   Building2,
   Calendar,
-  LogIn,
   UserCircle,
   CreditCard,
   Power,
+  Sparkles,
 } from "lucide-react";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
@@ -84,8 +84,10 @@ const MyHotels = () => {
                 <Building2 className="h-8 w-8 text-primary-600" />
               </div>
               <div>
-                <CardTitle className="text-xl">My Hotels</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
+                <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
+                  My Hotels
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
                   Manage your hotel listings and bookings
                 </p>
               </div>
@@ -99,16 +101,20 @@ const MyHotels = () => {
             <div className="flex flex-col gap-2 text-sm mb-4">
               <div className="flex items-center gap-2">
                 <UserCircle className="h-4 w-4 text-primary-600" />
-                <span>Test credentials: test@user.com / 12345678</span>
+                <span className="text-sm font-normal text-gray-700">
+                  Test credentials: test@user.com / 12345678
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-primary-600" />
-                <span>Or use your own registered account</span>
+                <span className="text-sm font-normal text-gray-700">
+                  Or use your own registered account
+                </span>
               </div>
             </div>
             <Link to="/sign-in">
               <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700 mt-4">
-                <LogIn className="h-4 w-4  text-white" />
+                <Sparkles className="h-4 w-4 mr-2 text-white" />
                 Sign In to View My Hotels
               </Button>
             </Link>
@@ -181,10 +187,10 @@ const MyHotels = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-sm md:text-lg font-medium text-gray-700">
+          <h1 className="text-lg md:text-2xl font-medium text-gray-700">
             My Hotels
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="text-sm md:text-lg text-gray-600 tracking-tight leading-relaxed font-normal">
             Manage your hotel listings and bookings
           </p>
         </div>
@@ -192,7 +198,7 @@ const MyHotels = () => {
           to="/add-hotel"
           className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-3 rounded-xl font-medium hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 shadow-medium"
         >
-          <Plus className="w-5 h-5 " />
+          <Plus className="w-5 h-5 mr-2" />
           Add Hotel
         </Link>
       </div>

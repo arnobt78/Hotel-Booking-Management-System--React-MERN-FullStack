@@ -178,7 +178,7 @@ const SearchBar = () => {
               onBlur={() => setShowDropdown(false)}
             />
             {showDropdown && !isInitialMount && (
-              <ul className="absolute top-full left-0 w-full bg-white p-2 border border-input rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto">
+              <ul className="absolute top-full left-0 w-full bg-white p-2 border border-input rounded-xl shadow-xl z-10 max-h-40 overflow-y-auto">
                 {filteredPlaces.map((place) => (
                   <li
                     key={place}

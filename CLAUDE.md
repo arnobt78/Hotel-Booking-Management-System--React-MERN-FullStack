@@ -11,6 +11,7 @@
 - UI shell 2026-07-24: `PageContainer` · shadcn Select/Checkbox · `DataTable` · city chips · pagination · no native `<select>`
 - UI polish 2026-07-24b: SelectOptionLabel · menu py-2 · scroll-lock · AdvancedSearch · useHotelPlaces
 - UX 2026-07-24c: Sonner (`showToast`) · auth welcome/goodbye · content-only stagger · static Header/hero bg · optimistic `isLoggedIn` · Home dest skeletons
+- Insights 2026-07-24d: denser BE KPIs (LOS/ADR/cancel/refund/reviews) · Quality tab · `MetricStatCard`/`InsightsCardHeader` · value right + MoM left · public nav · `invalidateBusinessInsightsQueries` via hotel chain · nav prefetch · `keepPreviousData`
 
 ## Security (REQ-0034)
 - Public `GET /api/health` minimal · `/detailed` JWT
@@ -21,7 +22,9 @@
 
 ## Invariants
 - JWT `localStorage.session_id` → Bearer  
-- CRUD → `lib/invalidate-queries.ts`  
+- CRUD → `lib/invalidate-queries.ts` (insights once via `invalidateHotelQueries`)  
+- Insights keys: `business-insights-dashboard` | `-forecast` | `-ops` · prefetch on nav hover  
+
 - Layout: `PageContainer` · Lists: `ui/data-table.tsx` · Select opts: `SelectOptionLabel` + `lib/select-option-maps.ts`  
 - Scroll lock: `lib/scroll-lock-fix.ts` · Toasts: Sonner + `lib/toast-messages.ts`  
 - Auth chrome: `session_id` → optimistic logged-in nav until validate fails  

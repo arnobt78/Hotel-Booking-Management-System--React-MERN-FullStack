@@ -1,5 +1,10 @@
 import { QueryClient } from "react-query";
 import {
+  fetchBusinessInsightsDashboard,
+  fetchBusinessInsightsForecast,
+  fetchBusinessInsightsSystemStats,
+} from "../api-client";
+import {
   HOTEL_PLACES_QUERY_KEY,
   clearHotelPlacesCache,
 } from "./hotel-places";
@@ -15,9 +20,43 @@ import {
  * - hotelPlaces — destination typeahead / Popular Destinations (also clears localStorage)
  * - fetchMyBookings, fetchHotelBookings, fetchAdminBookings — booking lists
  * - fetchHotelReviews, fetchAdminReviews — reviews
- * - fetchAdminUsers, fetchBusinessInsightsRollups, fetchBusinessInsightsDashboard
+ * - fetchAdminUsers, fetchBusinessInsightsRollups, fetchAdminBusinessInsightsDashboard
+ * - business-insights-dashboard | -forecast | -ops — AnalyticsDashboard page keys
  * - fetchCurrentUser — profile role / AdminRoute (invalidate on role PATCH)
+ *
+ * Insights invalidation lives only in invalidateHotelQueries; booking/review/admin
+ * chain through hotel so Insights refreshes once per CRUD (no double invalidate).
  */
+
+/** AnalyticsDashboard + admin insights rollups — called from invalidateHotelQueries */
+export const invalidateBusinessInsightsQueries = async (
+  queryClient: QueryClient,
+) => {
+  await Promise.all([
+    queryClient.invalidateQueries("business-insights-dashboard"),
+    queryClient.invalidateQueries("business-insights-forecast"),
+    queryClient.invalidateQueries("business-insights-ops"),
+    queryClient.invalidateQueries("fetchAdminBusinessInsightsDashboard"),
+    queryClient.invalidateQueries("fetchBusinessInsightsRollups"),
+  ]);
+};
+
+/** Prefetch Insights tabs on nav hover (MainNav / MobileNavLinks) */
+export const prefetchBusinessInsightsQueries = (queryClient: QueryClient) => {
+  void queryClient.prefetchQuery(
+    "business-insights-dashboard",
+    fetchBusinessInsightsDashboard,
+  );
+  void queryClient.prefetchQuery(
+    "business-insights-forecast",
+    fetchBusinessInsightsForecast,
+  );
+  void queryClient.prefetchQuery(
+    "business-insights-ops",
+    fetchBusinessInsightsSystemStats,
+  );
+};
+
 export const invalidateHotelQueries = async (queryClient: QueryClient) => {
   // Soft LS cache must drop before RQ refetch or AdvancedSearch/SearchBar stay stale
   clearHotelPlacesCache();
@@ -30,6 +69,7 @@ export const invalidateHotelQueries = async (queryClient: QueryClient) => {
     queryClient.invalidateQueries("fetchHotelById"),
     queryClient.invalidateQueries("fetchHotelByID"),
     queryClient.invalidateQueries(HOTEL_PLACES_QUERY_KEY),
+    invalidateBusinessInsightsQueries(queryClient),
   ]);
 };
 
@@ -38,8 +78,6 @@ export const invalidateBookingQueries = async (queryClient: QueryClient) => {
     queryClient.invalidateQueries("fetchMyBookings"),
     queryClient.invalidateQueries("fetchHotelBookings"),
     queryClient.invalidateQueries("fetchAdminBookings"),
-    queryClient.invalidateQueries("fetchBusinessInsightsDashboard"),
-    queryClient.invalidateQueries("fetchAdminBusinessInsightsDashboard"),
     invalidateHotelQueries(queryClient),
   ]);
 };
@@ -59,9 +97,6 @@ export const invalidateAdminQueries = async (queryClient: QueryClient) => {
     queryClient.invalidateQueries("fetchAdminUsers"),
     queryClient.invalidateQueries("fetchAdminReviews"),
     queryClient.invalidateQueries("fetchAdminBookings"),
-    queryClient.invalidateQueries("fetchBusinessInsightsRollups"),
-    queryClient.invalidateQueries("fetchBusinessInsightsDashboard"),
-    queryClient.invalidateQueries("fetchAdminBusinessInsightsDashboard"),
     queryClient.invalidateQueries("fetchCurrentUser"),
     invalidateHotelQueries(queryClient),
   ]);

@@ -142,7 +142,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
           }
         `}
       </style>
-      <Card className="w-full shadow-lg border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
+      <Card className="w-full shadow-xl border-0 bg-gradient-to-br from-blue-50 to-indigo-50">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center justify-between text-lg font-medium">
             <div className="flex items-center gap-2">
@@ -157,7 +157,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
 
         <CardContent className="space-y-6">
           {/* Price Display */}
-          <div className="flex justify-between items-center p-4 bg-white rounded-xl border border-gray-100 shadow-sm">
+          <div className="flex justify-between items-center p-4 bg-white rounded-xl border border-gray-100 shadow-xl">
             <div className="flex items-center gap-2">
               <span className="text-gray-600">
                 £{pricePerNight} × {numberOfNights} night
@@ -275,7 +275,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
             {/* Action Button */}
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium py-3 px-6 rounded-xl shadow-xl transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
             >
               {isLoggedIn ? (
                 <div className="flex items-center gap-2">

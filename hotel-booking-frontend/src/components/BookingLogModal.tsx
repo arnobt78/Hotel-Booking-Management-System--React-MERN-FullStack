@@ -231,7 +231,9 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                 </SelectOptionLabel>
               </SelectItem>
               <SelectItem value="future">
-                <SelectOptionLabel icon={CalendarPlus}>Future</SelectOptionLabel>
+                <SelectOptionLabel icon={CalendarPlus}>
+                  Future
+                </SelectOptionLabel>
               </SelectItem>
               <SelectItem value="past">
                 <SelectOptionLabel icon={History}>Past</SelectOptionLabel>
@@ -434,7 +436,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                       {categoryBookings.map((booking: BookingType) => (
                         <Card
                           key={booking._id}
-                          className="hover:shadow-md transition-shadow"
+                          className="hover:shadow-xl transition-shadow"
                         >
                           <CardHeader className="pb-3">
                             <div className="flex items-center justify-between">
@@ -553,7 +555,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                             {booking.specialRequests && (
                               <div className="mt-4 p-3 bg-blue-50 rounded-xl">
                                 <div className="flex items-start space-x-2">
-                                  <FileText className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                                  <FileText className="w-4 h-4 text-blue-600  flex-shrink-0" />
                                   <div>
                                     <p className="text-sm font-medium text-blue-800 mb-1">
                                       Special Requests:

@@ -12,7 +12,7 @@ export function Toaster() {
       closeButton
       toastOptions={{
         classNames: {
-          toast: "rounded-xl border shadow-lg font-sans",
+          toast: "rounded-xl border shadow-xl font-sans",
           title: "text-sm font-medium",
           description: "text-sm opacity-90",
         },

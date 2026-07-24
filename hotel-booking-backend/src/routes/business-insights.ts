@@ -2,26 +2,10 @@ import express, { Request, Response } from "express";
 import Hotel from "../models/hotel";
 import User from "../models/user";
 import Booking from "../models/booking";
-import mongoose from "mongoose";
+import Review from "../models/review";
 import verifyToken from "../middleware/auth";
 
 const router = express.Router();
-
-interface BookingDocument {
-  _id: string;
-  userId: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  adultCount: number;
-  childCount: number;
-  checkIn: Date;
-  checkOut: Date;
-  totalCost: number;
-  hotelId: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 /**
  * @swagger
@@ -38,7 +22,6 @@ interface BookingDocument {
 const getDashboardData = async () => {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const lastMonth = new Date(now.getTime() - 60 * 24 * 60 * 60 * 1000);
 
   const totalHotels = await Hotel.countDocuments();
   const totalUsers = await User.countDocuments();
@@ -56,13 +39,6 @@ const getDashboardData = async () => {
 
   const recentRevenue = allBookings
     .filter((booking: any) => new Date(booking.createdAt) >= thirtyDaysAgo)
-    .reduce((sum: number, booking: any) => sum + (booking.totalCost || 0), 0);
-
-  const lastMonthRevenue = allBookings
-    .filter((booking: any) => {
-      const bookingDate = new Date(booking.createdAt);
-      return bookingDate >= lastMonth && bookingDate < thirtyDaysAgo;
-    })
     .reduce((sum: number, booking: any) => sum + (booking.totalCost || 0), 0);
 
   const currentMonthRevenue = allBookings
@@ -158,19 +134,134 @@ const getDashboardData = async () => {
     hotelPerformance.push(...fallbackPerformance);
   }
 
+  // Status / payment / refund KPIs for overview + Quality tab
+  const cancelledBookings = allBookings.filter(
+    (b: any) => b.status === "cancelled"
+  ).length;
+  const confirmedBookings = allBookings.filter(
+    (b: any) => b.status === "confirmed" || b.status === "completed"
+  ).length;
+  const pendingBookings = allBookings.filter(
+    (b: any) => b.status === "pending"
+  ).length;
+  const refundedBookings = allBookings.filter(
+    (b: any) =>
+      b.status === "refunded" || b.paymentStatus === "refunded"
+  ).length;
+  const totalRefundAmount = allBookings.reduce(
+    (sum: number, b: any) => sum + (Number(b.refundAmount) || 0),
+    0
+  );
+  const cancellationRate =
+    totalBookings > 0
+      ? Math.round((cancelledBookings / totalBookings) * 10000) / 100
+      : 0;
+
+  const totalReviews = await Review.countDocuments();
+  const verifiedReviewCount = await Review.countDocuments({ isVerified: true });
+  const ratingAgg = await Review.aggregate([
+    {
+      $group: {
+        _id: null,
+        avgRating: { $avg: "$rating" },
+        cleanliness: { $avg: "$categories.cleanliness" },
+        service: { $avg: "$categories.service" },
+        location: { $avg: "$categories.location" },
+        value: { $avg: "$categories.value" },
+        amenities: { $avg: "$categories.amenities" },
+      },
+    },
+  ]);
+  const avgReviewRating =
+    ratingAgg.length > 0
+      ? Math.round((ratingAgg[0].avgRating || 0) * 100) / 100
+      : 0;
+  const round2 = (n: number) => Math.round((n || 0) * 100) / 100;
+  const reviewCategoryAverages = {
+    cleanliness: ratingAgg.length ? round2(ratingAgg[0].cleanliness) : 0,
+    service: ratingAgg.length ? round2(ratingAgg[0].service) : 0,
+    location: ratingAgg.length ? round2(ratingAgg[0].location) : 0,
+    value: ratingAgg.length ? round2(ratingAgg[0].value) : 0,
+    amenities: ratingAgg.length ? round2(ratingAgg[0].amenities) : 0,
+  };
+
+  // LOS / ADR / party mix from booking stay + guest fields
+  const dayMs = 24 * 60 * 60 * 1000;
+  let totalNights = 0;
+  let totalAdults = 0;
+  let totalChildren = 0;
+  for (const b of allBookings as any[]) {
+    const inMs = new Date(b.checkIn).getTime();
+    const outMs = new Date(b.checkOut).getTime();
+    const nights =
+      Number.isFinite(inMs) && Number.isFinite(outMs) && outMs > inMs
+        ? Math.max(1, Math.round((outMs - inMs) / dayMs))
+        : 1;
+    totalNights += nights;
+    totalAdults += Number(b.adultCount) || 0;
+    totalChildren += Number(b.childCount) || 0;
+  }
+  const avgLos =
+    totalBookings > 0 ? round2(totalNights / totalBookings) : 0;
+  const adr = totalNights > 0 ? round2(totalRevenue / totalNights) : 0;
+  const avgPartySize =
+    totalBookings > 0
+      ? round2((totalAdults + totalChildren) / totalBookings)
+      : 0;
+  const guestMix = { adults: totalAdults, children: totalChildren };
+
+  const countBy = (field: string) => {
+    const map: Record<string, number> = {};
+    for (const b of allBookings as any[]) {
+      const key = String(b[field] || "unknown");
+      map[key] = (map[key] || 0) + 1;
+    }
+    return Object.entries(map)
+      .map(([status, count]) => ({ status, count }))
+      .sort((a, b) => b.count - a.count);
+  };
+  const bookingStatusBreakdown = countBy("status");
+  const paymentStatusBreakdown = countBy("paymentStatus");
+
+  const hotelsByStarAgg = await Hotel.aggregate([
+    { $group: { _id: "$starRating", count: { $sum: 1 } } },
+    { $sort: { _id: 1 } },
+  ]);
+  const hotelsByStar = hotelsByStarAgg.map((h: any) => ({
+    starRating: h._id ?? 0,
+    count: h.count,
+  }));
+
   return {
     overview: {
       totalHotels,
       totalUsers,
       totalBookings,
       recentBookings,
-      totalRevenue: Math.round(totalRevenue * 100) / 100,
-      recentRevenue: Math.round(recentRevenue * 100) / 100,
-      revenueGrowth: Math.round(revenueGrowth * 100) / 100,
+      totalRevenue: round2(totalRevenue),
+      recentRevenue: round2(recentRevenue),
+      revenueGrowth: round2(revenueGrowth),
+      cancelledBookings,
+      confirmedBookings,
+      pendingBookings,
+      refundedBookings,
+      totalRefundAmount: round2(totalRefundAmount),
+      cancellationRate,
+      totalReviews,
+      avgReviewRating,
+      avgLos,
+      adr,
+      avgPartySize,
+      verifiedReviewCount,
     },
     popularDestinations,
     dailyBookings,
     hotelPerformance,
+    bookingStatusBreakdown,
+    paymentStatusBreakdown,
+    guestMix,
+    reviewCategoryAverages,
+    hotelsByStar,
     lastUpdated: now.toISOString(),
   };
 };

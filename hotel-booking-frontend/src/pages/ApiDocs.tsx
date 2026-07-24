@@ -161,7 +161,7 @@ const ApiDocs = () => {
       </div>
 
       {/* API Base URL */}
-      <div className="bg-white rounded-xl shadow-sm border p-6 pb-6">
+      <div className="bg-white rounded-xl shadow-xl border p-6 pb-6">
         <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
           Base URL
         </h2>
@@ -203,7 +203,7 @@ const ApiDocs = () => {
         {apiEndpoints.map((category) => (
           <div
             key={category.category}
-            className="bg-white rounded-xl shadow-sm border"
+            className="bg-white rounded-xl shadow-xl border"
           >
             <div className="border-b border-gray-200 px-6 py-4">
               <div className="flex items-center">
@@ -241,7 +241,7 @@ const ApiDocs = () => {
       </div>
 
       {/* Authentication Section */}
-      <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+      <div className="bg-white rounded-xl shadow-xl border p-6 mt-8">
         <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
           Authentication
         </h2>
@@ -265,7 +265,7 @@ const ApiDocs = () => {
       </div>
 
       {/* Rate Limiting */}
-      <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+      <div className="bg-white rounded-xl shadow-xl border p-6 mt-8">
         <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
           Rate Limiting
         </h2>
@@ -282,7 +282,7 @@ const ApiDocs = () => {
       </div>
 
       {/* Error Handling */}
-      <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+      <div className="bg-white rounded-xl shadow-xl border p-6 mt-8">
         <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
           Error Handling
         </h2>

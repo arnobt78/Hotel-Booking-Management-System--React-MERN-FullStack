@@ -366,7 +366,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             />
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             {showDropdown && (
-              <ul className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto mt-1">
+              <ul className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-xl z-10 max-h-40 overflow-y-auto mt-1">
                 {filteredPlaces.length === 0 ? (
                   <li className="px-4 py-2 text-sm text-gray-500">
                     No destination found in our hotel locations

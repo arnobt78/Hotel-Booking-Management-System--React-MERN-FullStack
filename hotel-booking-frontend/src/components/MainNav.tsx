@@ -3,6 +3,7 @@ import UsernameMenu from "./UsernameMenu";
 import { Link } from "react-router-dom";
 import useAppContext from "../hooks/useAppContext";
 import { getHotelsSearchUrl } from "../lib/nav-utils";
+import { prefetchBusinessInsightsQueries } from "../lib/invalidate-queries";
 import { queryClient } from "../main";
 import * as apiClient from "../api-client";
 
@@ -39,7 +40,11 @@ const MainNav = () => {
       >
         My Bookings
       </Link>
-      <Link to="/business-insights" className={navLinkClass}>
+      <Link
+        to="/business-insights"
+        className={navLinkClass}
+        onMouseEnter={() => prefetchBusinessInsightsQueries(queryClient)}
+      >
         Business Insights
       </Link>
       <Link

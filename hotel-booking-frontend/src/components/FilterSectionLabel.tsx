@@ -17,13 +17,13 @@ const FilterSectionLabel = ({
 }: FilterSectionLabelProps) => {
   return (
     <div className={cn("flex items-start gap-2 mb-2", className)}>
-      <Icon className="w-4 h-4 text-primary-600 mt-0.5 shrink-0" />
+      <Icon className="w-4 h-4 text-primary-600  shrink-0" />
       <div className="min-w-0">
         <p className="text-sm font-medium text-gray-700 leading-tight">
           {title}
         </p>
         {subtitle ? (
-          <p className="text-xs text-gray-500 mt-0.5 leading-snug">{subtitle}</p>
+          <p className="text-xs text-gray-500  leading-snug">{subtitle}</p>
         ) : null}
       </div>
     </div>

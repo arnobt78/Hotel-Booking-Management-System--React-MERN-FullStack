@@ -61,7 +61,7 @@ const Detail = () => {
 
   if (!hotel) {
     return (
-      <div className="text-center text-lg text-gray-500 py-10">
+      <div className="text-center text-lg text-gray-500 py-8">
         No hotel found.
       </div>
     );

@@ -104,3 +104,9 @@
 - **Decision:** Shared `PageContainer` (max-w-9xl); shadcn Select/Checkbox/Input across search+admin; TanStack `DataTable` for admin lists; Popular Destinations from hotel cities; Prev/Next pagination; remove all native `<select>` (WriteReview + DetailsSection Controller).
 - **Rationale:** Align Header/content/Footer; replace browser selects; scalable list UI. Vite SPA — no Next SSR/Redis.
 - **Resume:** `c1-t5-ai-auth-seed`
+
+## [C1] 2026-07-24T14:45:00Z | PRODUCT | INSIGHTS_DENSER_PUBLIC
+
+- **Decision:** Keep `/business-insights` public nav (showcase); denser dashboard KPIs from Booking/Review aggregates; insights invalidate once via hotel chain; nav prefetch; KPI value right / MoM left same row. No Next SSR/Redis/fake AI APIs.
+- **Rationale:** Demo transparency + RQ instant CRUD sync; Vite SPA shell + keepPreviousData.
+- **Resume:** `c1-t5-ai-auth-seed`

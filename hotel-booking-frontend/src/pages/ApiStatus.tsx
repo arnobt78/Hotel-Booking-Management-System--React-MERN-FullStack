@@ -183,7 +183,7 @@ const ApiStatus = () => {
         </p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border p-6 pb-6">
+      <div className="bg-white rounded-xl shadow-xl border p-6 pb-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center">
             <Server className="w-8 h-8 text-blue-600 mr-3" />
@@ -271,7 +271,7 @@ const ApiStatus = () => {
 
       {isDetailed && detailedData && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 pb-6">
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="bg-white rounded-xl shadow-xl border p-6">
             <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
               <Database className="w-5 h-5 text-green-600 " />
               Database
@@ -292,7 +292,7 @@ const ApiStatus = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="bg-white rounded-xl shadow-xl border p-6">
             <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
               <HardDrive className="w-5 h-5 text-blue-600 " />
               Memory (rounded MB)
@@ -322,7 +322,7 @@ const ApiStatus = () => {
       )}
 
       {isDetailed && detailedData && (
-        <div className="bg-white rounded-xl shadow-sm border p-6 pb-6">
+        <div className="bg-white rounded-xl shadow-xl border p-6 pb-6">
           <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
             <Activity className="w-5 h-5 text-purple-600 " />
             Performance

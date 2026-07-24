@@ -84,7 +84,7 @@ const UsernameMenu = () => {
           />
         </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56 bg-white p-2 shadow-lg">
+      <DropdownMenuContent align="end" className="w-56 bg-white p-2 shadow-xl">
         <div className="px-2 py-1">
           <p className="text-sm font-normal text-gray-700">{name || "User"}</p>
           <p className="text-xs text-muted-foreground truncate">{email}</p>

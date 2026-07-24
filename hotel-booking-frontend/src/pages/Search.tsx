@@ -105,7 +105,7 @@ const Search = () => {
   return (
     <div className="space-y-6">
       {/* Search Bar */}
-      <div className="bg-white rounded-xl shadow-sm border p-4">
+      <div className="bg-white rounded-xl shadow-xl border p-4">
         <h2 className="text-lg font-medium text-gray-700 mb-4">
           Modify Your Search
         </h2>
@@ -155,7 +155,9 @@ const Search = () => {
               <SelectContent>
                 {SEARCH_PAGE_SORT_OPTIONS.map((o) => (
                   <SelectItem key={o.value} value={o.value}>
-                    <SelectOptionLabel icon={o.icon}>{o.label}</SelectOptionLabel>
+                    <SelectOptionLabel icon={o.icon}>
+                      {o.label}
+                    </SelectOptionLabel>
                   </SelectItem>
                 ))}
               </SelectContent>

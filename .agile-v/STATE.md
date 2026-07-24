@@ -7,10 +7,10 @@
 | Field | Value |
 |-------|-------|
 | **Cycle** | **C1** |
-| **Phase** | Stage 3–4 — UX polish shipped |
-| **Status** | Sonner · stagger · auth nav · Home skeletons **pushed** `0d2df89` — redeploy Vercel FE |
+| **Phase** | Stage 3–4 — Insights denser shipped |
+| **Status** | Insights KPIs/Quality/invalidate/prefetch · redeploy Vercel FE |
 | **Last REQ** | **REQ-0052** |
-| **HEAD** | `0d2df89` on origin/main |
+| **HEAD** | (push after commit) on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
@@ -23,6 +23,7 @@
 | ui-2026-07-24 | PageContainer · shadcn · DataTable · city chips |
 | ui-2026-07-24b | SelectOptionLabel · scroll-lock · hotel-places |
 | ux-2026-07-24c | Sonner · content stagger · static nav/hero · optimistic auth · dest skeletons |
+| insights-2026-07-24d | denser dashboard · Quality · RQ once · prefetch · KPI align |
 
 ## Next
 
