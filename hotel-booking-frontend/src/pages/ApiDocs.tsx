@@ -148,11 +148,10 @@ const ApiDocs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
+    <div>
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-medium text-gray-700 mb-4">
+          <h1 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
             API Documentation
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
@@ -164,7 +163,9 @@ const ApiDocs = () => {
 
         {/* API Base URL */}
         <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-          <h2 className="text-2xl font-medium text-gray-700 mb-4">Base URL</h2>
+          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
+            Base URL
+          </h2>
           <div className="bg-gray-100 rounded-xl p-4">
             <code className="text-lg font-mono text-gray-700">
               {apiBaseUrl}
@@ -194,7 +195,7 @@ const ApiDocs = () => {
               rel="noopener noreferrer"
               className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
             >
-              <ExternalLink className="w-4 h-4 mr-2" />
+              <ExternalLink className="w-4 h-4 " />
               Open Swagger UI
             </a>
           </div>
@@ -244,7 +245,7 @@ const ApiDocs = () => {
 
         {/* Authentication Section */}
         <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
-          <h2 className="text-2xl font-medium text-gray-700 mb-4">
+          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
             Authentication
           </h2>
           <div className="prose max-w-none">
@@ -268,7 +269,7 @@ const ApiDocs = () => {
 
         {/* Rate Limiting */}
         <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
-          <h2 className="text-2xl font-medium text-gray-700 mb-4">
+          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
             Rate Limiting
           </h2>
           <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
@@ -285,7 +286,7 @@ const ApiDocs = () => {
 
         {/* Error Handling */}
         <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
-          <h2 className="text-2xl font-medium text-gray-700 mb-4">
+          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
             Error Handling
           </h2>
           <div className="space-y-4">
@@ -339,7 +340,6 @@ const ApiDocs = () => {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 };

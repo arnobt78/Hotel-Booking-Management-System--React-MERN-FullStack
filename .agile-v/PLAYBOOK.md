@@ -3,6 +3,7 @@
 **Project:** Hotel Booking Management System (MERN)  
 **Cycle:** C1 active (Gate 1 PENDING)  
 **Stack:** Vite SPA + Express (no Next/Redis) · **Resume:** `c1-t5-ai-auth-seed`  
+**UI:** PageContainer · shadcn Select · DataTable · city Badge chips  
 **Live:** Frontend [Vercel](https://hotel-mern-booking.vercel.app) · API [Coolify](https://hotel-booking-backend.arnobmahmud.com)
 
 ---

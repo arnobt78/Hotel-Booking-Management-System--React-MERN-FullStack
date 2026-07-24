@@ -109,7 +109,7 @@ const SearchResultsCard = ({ hotel }: Props) => {
 
               <Link
                 to={`/detail/${hotel._id}`}
-                className="text-2xl font-medium text-gray-700 hover:text-primary-600 transition-colors cursor-pointer"
+                className="text-lg md:text-2xl font-medium text-gray-700 hover:text-primary-600 transition-colors cursor-pointer"
               >
                 {hotel.name}
               </Link>

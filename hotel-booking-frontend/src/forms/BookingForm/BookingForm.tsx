@@ -147,7 +147,7 @@ MM/YY: 12/35 CVC: 123`;
   return (
     <div className="p-6">
       <CardHeader className="pb-6">
-        <CardTitle className="flex items-center gap-2 text-2xl font-medium text-gray-700">
+        <CardTitle className="flex items-center gap-2 text-lg md:text-2xl font-medium text-gray-700">
           <User className="h-6 w-6 text-blue-600" />
           Confirm Your Details
         </CardTitle>
@@ -253,7 +253,7 @@ MM/YY: 12/35 CVC: 123`;
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl border border-blue-100">
               <div className="flex justify-between items-center mb-2">
                 <span className="text-gray-700 font-medium">Total Cost</span>
-                <span className="text-2xl font-medium text-blue-600">
+                <span className="text-lg md:text-2xl font-medium text-blue-600">
                   £{paymentIntent.totalCost.toFixed(2)}
                 </span>
               </div>

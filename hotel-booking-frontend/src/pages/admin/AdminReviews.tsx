@@ -1,8 +1,11 @@
+import { useMemo } from "react";
 import { useQuery } from "react-query";
+import type { ColumnDef } from "@tanstack/react-table";
+import { Link } from "react-router-dom";
 import * as apiClient from "../../api-client";
 import type { ReviewType } from "../../../../shared/types";
 import { Badge } from "../../components/ui/badge";
-import { Link } from "react-router-dom";
+import { DataTable } from "../../components/ui/data-table";
 
 const AdminReviews = () => {
   const { data: reviews, isLoading } = useQuery(
@@ -10,11 +13,65 @@ const AdminReviews = () => {
     apiClient.fetchAdminReviews,
   );
 
+  const columns = useMemo<ColumnDef<ReviewType, unknown>[]>(
+    () => [
+      {
+        accessorKey: "rating",
+        header: "Rating",
+        cell: ({ row }) => (
+          <Badge variant="outline">{row.original.rating}★</Badge>
+        ),
+      },
+      {
+        id: "verified",
+        accessorFn: (r) => (r.isVerified ? "Verified" : ""),
+        header: "Verified",
+        cell: ({ row }) =>
+          row.original.isVerified ? (
+            <Badge className="bg-green-100 text-green-800">Verified</Badge>
+          ) : (
+            "—"
+          ),
+      },
+      {
+        accessorKey: "comment",
+        header: "Comment",
+        cell: ({ row }) => (
+          <p className="text-sm text-gray-700 max-w-md whitespace-pre-line line-clamp-3">
+            {row.original.comment}
+          </p>
+        ),
+      },
+      {
+        id: "hotel",
+        accessorKey: "hotelId",
+        header: "Hotel",
+        cell: ({ row }) => (
+          <Link
+            to={`/detail/${row.original.hotelId}`}
+            className="text-xs text-primary-600 hover:underline"
+          >
+            Hotel {row.original.hotelId.slice(-6)}
+          </Link>
+        ),
+      },
+      {
+        id: "date",
+        accessorFn: (r) =>
+          r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "",
+        header: "Date",
+      },
+    ],
+    [],
+  );
+
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-medium text-slate-900">Reviews</h1>
-        <p className="text-sm text-slate-500">Guest feedback across hotels</p>
+        <h1 className="text-lg md:text-2xl font-medium text-gray-700">
+          Reviews
+        </h1>
+        <p className="text-sm text-gray-500">Guest feedback across hotels</p>
       </div>
       {isLoading ? (
         <div className="space-y-2">
@@ -25,37 +82,12 @@ const AdminReviews = () => {
             />
           ))}
         </div>
-      ) : !reviews?.length ? (
-        <p className="text-sm text-slate-500">No reviews yet.</p>
       ) : (
-        <ul className="bg-white border border-slate-200 rounded-xl divide-y divide-slate-100">
-          {(reviews as ReviewType[]).map((r) => (
-            <li key={r._id} className="p-4 space-y-1">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="outline">{r.rating}★</Badge>
-                {r.isVerified && (
-                  <Badge className="bg-green-100 text-green-800">
-                    Verified
-                  </Badge>
-                )}
-                <Link
-                  to={`/detail/${r.hotelId}`}
-                  className="text-xs text-primary-600 hover:underline"
-                >
-                  Hotel {r.hotelId.slice(-6)}
-                </Link>
-                {r.createdAt && (
-                  <span className="text-xs text-slate-400">
-                    {new Date(r.createdAt).toLocaleDateString()}
-                  </span>
-                )}
-              </div>
-              <p className="text-sm text-slate-700 whitespace-pre-line">
-                {r.comment}
-              </p>
-            </li>
-          ))}
-        </ul>
+        <DataTable
+          columns={columns}
+          data={(reviews as ReviewType[]) || []}
+          searchPlaceholder="Search reviews…"
+        />
       )}
     </div>
   );

@@ -1,7 +1,10 @@
+import { useMemo } from "react";
 import { useQuery } from "react-query";
+import type { ColumnDef } from "@tanstack/react-table";
 import * as apiClient from "../../api-client";
 import type { BookingType } from "../../../../shared/types";
 import { Badge } from "../../components/ui/badge";
+import { DataTable } from "../../components/ui/data-table";
 import CancelBookingButton from "../../components/CancelBookingButton";
 
 const statusClass = (status?: string) => {
@@ -27,11 +30,64 @@ const AdminBookings = () => {
     apiClient.fetchAdminBookings,
   );
 
+  const columns = useMemo<ColumnDef<BookingType, unknown>[]>(
+    () => [
+      {
+        id: "guest",
+        accessorFn: (b) => `${b.firstName} ${b.lastName}`,
+        header: "Guest",
+        cell: ({ row }) => (
+          <span className="font-medium text-gray-700">
+            {row.original.firstName} {row.original.lastName}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "status",
+        header: "Status",
+        cell: ({ row }) => (
+          <Badge className={statusClass(row.original.status)}>
+            {row.original.status || "pending"}
+          </Badge>
+        ),
+      },
+      {
+        accessorKey: "paymentStatus",
+        header: "Payment",
+        cell: ({ row }) => (
+          <Badge variant="outline">
+            {row.original.paymentStatus || "pending"}
+          </Badge>
+        ),
+      },
+      {
+        id: "dates",
+        accessorFn: (b) =>
+          `${new Date(b.checkIn).toLocaleDateString()} → ${new Date(b.checkOut).toLocaleDateString()}`,
+        header: "Dates",
+      },
+      {
+        accessorKey: "totalCost",
+        header: "Total",
+        cell: ({ row }) =>
+          `£${row.original.totalCost?.toLocaleString() ?? 0}`,
+      },
+      {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => <CancelBookingButton booking={row.original} />,
+      },
+    ],
+    [],
+  );
+
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-medium text-slate-900">Bookings</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-lg md:text-2xl font-medium text-gray-700">
+          Bookings
+        </h1>
+        <p className="text-sm text-gray-500">
           All reservations — cancel upcoming stays with Stripe refund when paid
         </p>
       </div>
@@ -44,36 +100,12 @@ const AdminBookings = () => {
             />
           ))}
         </div>
-      ) : !bookings?.length ? (
-        <p className="text-sm text-slate-500">No bookings found.</p>
       ) : (
-        <ul className="space-y-3">
-          {(bookings as BookingType[]).map((b) => (
-            <li
-              key={b._id}
-              className="bg-white border border-slate-200 rounded-xl p-4"
-            >
-              <div className="flex flex-wrap items-center gap-2 mb-2">
-                <span className="font-medium text-slate-900">
-                  {b.firstName} {b.lastName}
-                </span>
-                <Badge className={statusClass(b.status)}>
-                  {b.status || "pending"}
-                </Badge>
-                <Badge variant="outline">{b.paymentStatus || "pending"}</Badge>
-                <span className="text-xs text-slate-400">
-                  #{b._id.slice(-8).toUpperCase()}
-                </span>
-              </div>
-              <p className="text-sm text-slate-600">
-                {new Date(b.checkIn).toLocaleDateString()} →{" "}
-                {new Date(b.checkOut).toLocaleDateString()} · £
-                {b.totalCost?.toLocaleString()}
-              </p>
-              <CancelBookingButton booking={b} className="mt-3" />
-            </li>
-          ))}
-        </ul>
+        <DataTable
+          columns={columns}
+          data={(bookings as BookingType[]) || []}
+          searchPlaceholder="Search bookings…"
+        />
       )}
     </div>
   );

@@ -89,7 +89,9 @@ const AdminDashboard = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-medium text-slate-900">Dashboard</h1>
+          <h1 className="text-lg md:text-2xl font-medium text-slate-900">
+            Dashboard
+          </h1>
           <p className="text-sm text-slate-500">
             Live hotel-domain figures and business insights rollups
           </p>
@@ -184,7 +186,7 @@ const AdminDashboard = () => {
               className="bg-white border border-slate-200 rounded-xl p-4"
             >
               <p className="text-xs text-slate-500">{label}</p>
-              <p className="text-2xl font-medium text-slate-900 mt-1">
+              <p className="text-lg md:text-2xl font-medium text-slate-900 mt-1">
                 {value ?? "—"}
               </p>
             </div>

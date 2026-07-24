@@ -7,23 +7,21 @@
 
 ## Roadmap
 - **T1–T5 DONE** · Resume: `c1-t5-ai-auth-seed`
-- Post-T5: profile API links · Inter self-host · SafeImage · Vercel headers
-- UI polish: stable `scrollbar-gutter` · single focus ring · `/api/business-insights/rollups` (not `/analytics`) · insights shell+pulse (no full-page spinner)
+- Post-T5: Inter · SafeImage · Vercel · rollups path · focus/gutter
+- UI shell 2026-07-24: `PageContainer` max-w-9xl · shadcn Select/Checkbox · TanStack `DataTable` · city Badge chips · Prev/Next pagination · no native `<select>`
 
 ## Security (REQ-0034)
-- Public `GET /api/health` minimal · `/detailed` JWT · VulDB CAPA-0001
-- Avoid URL segments: analytics / metrics / tracking / performance / analysis (ad-block)
+- Public `GET /api/health` minimal · `/detailed` JWT
+- Avoid URL: analytics / metrics / tracking / performance / analysis
 
 ## Agile V
-- `.agile-v/STATE.md` first · C1 · Gate 1 PENDING · Last REQ-0052  
-- Skills: `.agile-v/skills/` · Rule: agile-v-infinity-loop
+- `.agile-v/STATE.md` · C1 · Gate 1 PENDING · REQ-0052
 
 ## Invariants
-- JWT `localStorage.session_id` → Bearer · validateToken only if token present  
-- CRUD → `lib/invalidate-queries.ts` (incl. `fetchBusinessInsightsRollups`)  
-- AI: `AI_ASSIST_ENABLED` + Groq/OpenAI/OpenRouter → stub failover (`lib/llm.ts`)  
-- Images: Cloudinary · UI: `components/ui/safe-image.tsx`  
-- FE env: `VITE_API_BASE_URL` + `VITE_STRIPE_PUB_KEY` · BE fail-fast secrets
+- JWT `localStorage.session_id` → Bearer  
+- CRUD → `lib/invalidate-queries.ts`  
+- Layout: `components/PageContainer.tsx` · Lists: `ui/data-table.tsx`  
+- FE: `VITE_API_BASE_URL` + `VITE_STRIPE_PUB_KEY`
 
 ## Verify
 `cd hotel-booking-backend && npm run build` · `cd hotel-booking-frontend && npm run lint && npm run build`

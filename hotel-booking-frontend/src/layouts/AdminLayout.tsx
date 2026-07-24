@@ -58,7 +58,7 @@ const AdminLayout = () => {
           </Link>
         </div>
       </aside>
-      <main className="flex-1 p-6 overflow-auto">
+      <main className="flex-1 overflow-auto px-2 sm:px-4 xl:px-8 py-6">
         <Outlet />
       </main>
     </div>

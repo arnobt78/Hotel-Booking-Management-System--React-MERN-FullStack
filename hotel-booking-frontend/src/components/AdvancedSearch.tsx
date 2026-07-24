@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Search as SearchIcon,
@@ -6,13 +6,44 @@ import {
   MapPin,
   Calendar,
   Users,
+  DollarSign,
+  Star,
+  Building2,
+  Sparkles,
+  ArrowUpDown,
+  CircleDot,
 } from "lucide-react";
 import useSearchContext from "../hooks/useSearchContext";
+import { Input } from "./ui/input";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { Checkbox } from "./ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import FilterSectionLabel from "./FilterSectionLabel";
 
 interface AdvancedSearchProps {
-  onSearch: (searchData: any) => void;
+  onSearch: (searchData: unknown) => void;
   isExpanded?: boolean;
 }
+
+const GUEST_OPTIONS = [
+  { value: "1-0", label: "1 adult", adults: 1, children: 0 },
+  { value: "2-0", label: "2 adults", adults: 2, children: 0 },
+  { value: "1-1", label: "1 adult, 1 child", adults: 1, children: 1 },
+  { value: "2-1", label: "2 adults, 1 child", adults: 2, children: 1 },
+  { value: "2-2", label: "2 adults, 2 children", adults: 2, children: 2 },
+  { value: "3-0", label: "3 adults", adults: 3, children: 0 },
+  { value: "4-0", label: "4 adults", adults: 4, children: 0 },
+] as const;
+
+const inputFocusClass =
+  "pl-10 h-11 text-gray-700 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-0 focus-visible:border-primary-500";
 
 const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   onSearch,
@@ -27,14 +58,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     checkOut: search.checkOut,
     adultCount: search.adultCount,
     childCount: search.childCount,
-    // Advanced filters
     minPrice: "",
     maxPrice: "",
     starRating: "",
     hotelType: "",
     facilities: [] as string[],
     sortBy: "relevance",
-    radius: "50", // km
+    radius: "50",
     instantBooking: false,
     freeCancellation: false,
     breakfast: false,
@@ -45,16 +75,14 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     spa: false,
   });
 
-  // Dropdown functionality for destination
   const [showDropdown, setShowDropdown] = useState(false);
   const [places, setPlaces] = useState<string[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<string[]>([]);
   const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
   const hasFetchedRef = useRef(false);
 
-  // Fetch hotel places on mount
+  // Unique cities from live hotels (also powers Popular Destinations chips)
   useEffect(() => {
-    // Prevent multiple API calls - use a ref to track if we've already fetched
     if (isLoadingPlaces || hasFetchedRef.current) return;
 
     const fetchPlaces = async () => {
@@ -62,15 +90,12 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         setIsLoadingPlaces(true);
         hasFetchedRef.current = true;
 
-        // Check if we have cached places data
         const cachedPlaces = localStorage.getItem("hotelPlaces");
         if (cachedPlaces) {
-          const parsedPlaces = JSON.parse(cachedPlaces);
+          const parsedPlaces = JSON.parse(cachedPlaces) as string[];
           const cacheTime = localStorage.getItem("hotelPlacesTime");
           const now = Date.now();
-
-          // Cache is valid for 5 minutes
-          if (cacheTime && now - parseInt(cacheTime) < 5 * 60 * 1000) {
+          if (cacheTime && now - parseInt(cacheTime, 10) < 5 * 60 * 1000) {
             setPlaces(parsedPlaces);
             setIsLoadingPlaces(false);
             return;
@@ -80,7 +105,6 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         const apiBaseUrl =
           import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
         const response = await fetch(`${apiBaseUrl}/api/hotels`);
-
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -90,7 +114,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         const uniquePlaces: string[] = Array.from(
           new Set(
             data
-              .map((hotel) => hotel.city || hotel.place || hotel.name)
+              .map((hotel) => hotel.city || hotel.place)
               .filter(
                 (place): place is string =>
                   typeof place === "string" && place.length > 0,
@@ -98,10 +122,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           ),
         );
 
-        // Cache the places data
         localStorage.setItem("hotelPlaces", JSON.stringify(uniquePlaces));
         localStorage.setItem("hotelPlacesTime", Date.now().toString());
-
         setPlaces(uniquePlaces);
       } catch (error) {
         console.error("Error fetching hotels:", error);
@@ -112,15 +134,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     };
 
     fetchPlaces();
-  }, []); // Remove all dependencies to run only once on mount
+  }, []);
 
-  // Clear dropdown state when component mounts
   useEffect(() => {
     setShowDropdown(false);
     setFilteredPlaces([]);
   }, []);
 
-  // Filter places as user types
   useEffect(() => {
     if (searchData.destination.length > 0) {
       const filtered = places.filter((place) =>
@@ -155,7 +175,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     { id: "freeCancellation", label: "Free Cancellation", icon: "✅" },
   ];
 
-  const handleInputChange = (field: string, value: any) => {
+  const guestValue = useMemo(() => {
+    const match = GUEST_OPTIONS.find(
+      (o) =>
+        o.adults === searchData.adultCount &&
+        o.children === searchData.childCount,
+    );
+    return match?.value ?? "1-0";
+  }, [searchData.adultCount, searchData.childCount]);
+
+  const handleInputChange = (field: string, value: unknown) => {
     setSearchData((prev) => ({
       ...prev,
       [field]: value,
@@ -171,100 +200,48 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     }));
   };
 
-  const handleSearch = () => {
-    // Only proceed if destination is not empty
-    if (!searchData.destination || searchData.destination.trim() === "") {
-      // Show all hotels when destination is empty
-      search.saveSearchValues(
-        "", // Empty destination to show all hotels
-        searchData.checkIn,
-        searchData.checkOut,
-        searchData.adultCount,
-        searchData.childCount,
-      );
+  const resetLocalForm = () => {
+    setSearchData({
+      destination: "",
+      checkIn: new Date(),
+      checkOut: new Date(),
+      adultCount: 1,
+      childCount: 0,
+      minPrice: "",
+      maxPrice: "",
+      starRating: "",
+      hotelType: "",
+      facilities: [],
+      sortBy: "relevance",
+      radius: "50",
+      instantBooking: false,
+      freeCancellation: false,
+      breakfast: false,
+      wifi: false,
+      parking: false,
+      pool: false,
+      gym: false,
+      spa: false,
+    });
+  };
 
-      // Close dropdown before navigation
-      setShowDropdown(false);
-      setFilteredPlaces([]);
-
-      // Navigate to search page with advanced filters
-      const searchParams = new URLSearchParams();
-      searchParams.append("destination", ""); // Empty destination
-      searchParams.append("checkIn", searchData.checkIn.toISOString());
-      searchParams.append("checkOut", searchData.checkOut.toISOString());
-      searchParams.append("adultCount", searchData.adultCount.toString());
-      searchParams.append("childCount", searchData.childCount.toString());
-
-      // Add advanced filters
-      if (searchData.minPrice)
-        searchParams.append("minPrice", searchData.minPrice);
-      if (searchData.maxPrice)
-        searchParams.append("maxPrice", searchData.maxPrice);
-      if (searchData.starRating)
-        searchParams.append("starRating", searchData.starRating);
-      if (searchData.hotelType)
-        searchParams.append("hotelType", searchData.hotelType);
-      if (searchData.sortBy) searchParams.append("sortBy", searchData.sortBy);
-      if (searchData.radius) searchParams.append("radius", searchData.radius);
-      searchData.facilities.forEach((facility) =>
-        searchParams.append("facilities", facility),
-      );
-
-      navigate(`/search?${searchParams.toString()}`);
-      onSearch(searchData);
-
-      // Don't clear search values immediately - let the search page use them
-      // Only clear the local form state
-      setTimeout(() => {
-        setSearchData({
-          destination: "",
-          checkIn: new Date(),
-          checkOut: new Date(),
-          adultCount: 1,
-          childCount: 0,
-          minPrice: "",
-          maxPrice: "",
-          starRating: "",
-          hotelType: "",
-          facilities: [],
-          sortBy: "relevance",
-          radius: "50",
-          instantBooking: false,
-          freeCancellation: false,
-          breakfast: false,
-          wifi: false,
-          parking: false,
-          pool: false,
-          gym: false,
-          spa: false,
-        });
-        // Remove this line: search.clearSearchValues();
-      }, 100);
-      return;
-    }
-
-    // Update search context
+  const buildAndNavigate = (destination: string) => {
     search.saveSearchValues(
-      searchData.destination.trim(),
+      destination,
       searchData.checkIn,
       searchData.checkOut,
       searchData.adultCount,
       searchData.childCount,
     );
-
-    // Close dropdown before navigation
     setShowDropdown(false);
     setFilteredPlaces([]);
 
-    // Navigate to search page with advanced filters
     const searchParams = new URLSearchParams();
-    searchParams.append("destination", searchData.destination.trim());
+    searchParams.append("destination", destination);
     searchParams.append("checkIn", searchData.checkIn.toISOString());
     searchParams.append("checkOut", searchData.checkOut.toISOString());
     searchParams.append("adultCount", searchData.adultCount.toString());
     searchParams.append("childCount", searchData.childCount.toString());
-
-    // Add advanced filters
     if (searchData.minPrice)
       searchParams.append("minPrice", searchData.minPrice);
     if (searchData.maxPrice)
@@ -281,112 +258,44 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 
     navigate(`/search?${searchParams.toString()}`);
     onSearch(searchData);
+    setTimeout(resetLocalForm, 100);
+  };
 
-    // Don't clear search values immediately - let the search page use them
-    // Only clear the local form state
-    setTimeout(() => {
-      setSearchData({
-        destination: "",
-        checkIn: new Date(),
-        checkOut: new Date(),
-        adultCount: 1,
-        childCount: 0,
-        minPrice: "",
-        maxPrice: "",
-        starRating: "",
-        hotelType: "",
-        facilities: [],
-        sortBy: "relevance",
-        radius: "50",
-        instantBooking: false,
-        freeCancellation: false,
-        breakfast: false,
-        wifi: false,
-        parking: false,
-        pool: false,
-        gym: false,
-        spa: false,
-      });
-      // Remove this line: search.clearSearchValues();
-    }, 100);
+  const handleSearch = () => {
+    const dest = (searchData.destination || "").trim();
+    buildAndNavigate(dest);
   };
 
   const handleQuickSearch = (destination: string) => {
-    if (!destination || destination.trim() === "") {
-      // Show all hotels when destination is empty
-      setSearchData((prev) => ({ ...prev, destination: "" }));
-      setTimeout(() => handleSearch(), 100);
-      return;
-    }
-
     setSearchData((prev) => ({ ...prev, destination: destination.trim() }));
-    setTimeout(() => handleSearch(), 100);
+    setTimeout(() => {
+      buildAndNavigate(destination.trim());
+    }, 50);
   };
 
-  // const handleClear = () => {
-  //   setSearchData({
-  //     destination: "",
-  //     checkIn: new Date(),
-  //     checkOut: new Date(),
-  //     adultCount: 1,
-  //     childCount: 0,
-  //     minPrice: "",
-  //     maxPrice: "",
-  //     starRating: "",
-  //     hotelType: "",
-  //     facilities: [],
-  //     sortBy: "relevance",
-  //     radius: "50",
-  //     instantBooking: false,
-  //     freeCancellation: false,
-  //     breakfast: false,
-  //     wifi: false,
-  //     parking: false,
-  //     pool: false,
-  //     gym: false,
-  //     spa: false,
-  //   });
-  //   search.clearSearchValues();
-  // };
-
-  const popularDestinations = [
-    "New York",
-    "London",
-    "Paris",
-    "Tokyo",
-    "Sydney",
-    "Dubai",
-    "Singapore",
-    "Barcelona",
-  ];
-
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-large p-8 max-w-6xl mx-auto border border-white/20">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-large p-6 sm:p-8 w-full border border-white/20">
       {/* Basic Search */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        {/* Destination */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 flex items-center">
-            <MapPin className="w-4 h-4 mr-2 text-primary-600" />
-            Destination
-          </label>
+          <FilterSectionLabel icon={MapPin} title="Destination" className="mb-0" />
           <div className="relative">
-            <input
+            <Input
               type="text"
               placeholder="Where are you going?"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className={inputFocusClass}
               value={searchData.destination}
               onChange={(e) => handleInputChange("destination", e.target.value)}
               onFocus={() => setShowDropdown(filteredPlaces.length > 0)}
               onBlur={() => setShowDropdown(false)}
             />
-            <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             {showDropdown && (
-              <ul className="absolute top-full left-0 w-full bg-white border border-gray-300 rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto">
+              <ul className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto mt-1">
                 {filteredPlaces.map((place) => (
                   <li
                     key={place}
-                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm border-b border-gray-100 last:border-b-0"
+                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm text-gray-700 border-b border-gray-100 last:border-b-0"
                     onMouseDown={() => {
                       handleInputChange("destination", place);
                       setShowDropdown(false);
@@ -400,116 +309,105 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </div>
         </div>
 
-        {/* Check-in Date */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 flex items-center">
-            <Calendar className="w-4 h-4 mr-2 text-primary-600" />
-            Check-in
-          </label>
+          <FilterSectionLabel icon={Calendar} title="Check-in" className="mb-0" />
           <div className="relative">
-            <input
+            <Input
               type="date"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className={inputFocusClass}
               value={searchData.checkIn.toISOString().split("T")[0]}
               onChange={(e) =>
                 handleInputChange("checkIn", new Date(e.target.value))
               }
             />
-            <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
         </div>
 
-        {/* Check-out Date */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 flex items-center">
-            <Calendar className="w-4 h-4 mr-2 text-primary-600" />
-            Check-out
-          </label>
+          <FilterSectionLabel icon={Calendar} title="Check-out" className="mb-0" />
           <div className="relative">
-            <input
+            <Input
               type="date"
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
+              className={inputFocusClass}
               value={searchData.checkOut.toISOString().split("T")[0]}
               onChange={(e) =>
                 handleInputChange("checkOut", new Date(e.target.value))
               }
             />
-            <Calendar className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
           </div>
         </div>
 
-        {/* Guests */}
         <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700 flex items-center">
-            <Users className="w-4 h-4 mr-2 text-primary-600" />
-            Guests
-          </label>
-          <div className="relative">
-            <select
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200"
-              value={`${searchData.adultCount} adults, ${searchData.childCount} children`}
-              onChange={(e) => {
-                const [adults, children] = e.target.value.split(", ");
-                handleInputChange("adultCount", parseInt(adults));
-                handleInputChange("childCount", parseInt(children));
-              }}
-            >
-              <option value="1 adults, 0 children">1 adult</option>
-              <option value="2 adults, 0 children">2 adults</option>
-              <option value="1 adults, 1 children">1 adult, 1 child</option>
-              <option value="2 adults, 1 children">2 adults, 1 child</option>
-              <option value="2 adults, 2 children">2 adults, 2 children</option>
-              <option value="3 adults, 0 children">3 adults</option>
-              <option value="4 adults, 0 children">4 adults</option>
-            </select>
-            <Users className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-          </div>
+          <FilterSectionLabel icon={Users} title="Guests" className="mb-0" />
+          <Select
+            value={guestValue}
+            onValueChange={(v) => {
+              const opt = GUEST_OPTIONS.find((o) => o.value === v);
+              if (!opt) return;
+              handleInputChange("adultCount", opt.adults);
+              handleInputChange("childCount", opt.children);
+            }}
+          >
+            <SelectTrigger className="h-11">
+              <SelectValue placeholder="Guests" />
+            </SelectTrigger>
+            <SelectContent>
+              {GUEST_OPTIONS.map((o) => (
+                <SelectItem key={o.value} value={o.value}>
+                  {o.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
-      {/* Advanced Search Toggle */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <button
+          type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="flex items-center text-primary-600 hover:text-primary-700 font-medium transition-colors"
+          className="flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium transition-colors"
         >
-          <Filter className="w-4 h-4 mr-2" />
+          <Filter className="w-4 h-4" />
           Advanced Filters
         </button>
 
-        <button
+        <Button
+          type="button"
           onClick={handleSearch}
-          className="flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-8 py-3 rounded-xl font-medium hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 shadow-medium hover:shadow-large"
+          className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800"
         >
           <SearchIcon className="w-4 h-4 mr-2" />
           Search Hotels
-        </button>
+        </Button>
       </div>
 
-      {/* Advanced Filters */}
       {showAdvanced && (
         <div className="border-t border-gray-200 pt-6 space-y-6">
-          {/* Price Range */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Price Range
-              </label>
+              <FilterSectionLabel
+                icon={DollarSign}
+                title="Price Range"
+                subtitle="Min and max per night"
+              />
               <div className="flex space-x-2">
-                <input
+                <Input
                   type="number"
                   placeholder="Min"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="text-gray-700"
                   value={searchData.minPrice}
                   onChange={(e) =>
                     handleInputChange("minPrice", e.target.value)
                   }
                 />
                 <span className="flex items-center text-gray-500">-</span>
-                <input
+                <Input
                   type="number"
                   placeholder="Max"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+                  className="text-gray-700"
                   value={searchData.maxPrice}
                   onChange={(e) =>
                     handleInputChange("maxPrice", e.target.value)
@@ -518,64 +416,67 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               </div>
             </div>
 
-            {/* Star Rating */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Star Rating
-              </label>
-              <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                value={searchData.starRating}
-                onChange={(e) =>
-                  handleInputChange("starRating", e.target.value)
+              <FilterSectionLabel icon={Star} title="Star Rating" />
+              <Select
+                value={searchData.starRating || "any"}
+                onValueChange={(v) =>
+                  handleInputChange("starRating", v === "any" ? "" : v)
                 }
               >
-                <option value="">Any Rating</option>
-                <option value="5">5 Stars</option>
-                <option value="4">4+ Stars</option>
-                <option value="3">3+ Stars</option>
-                <option value="2">2+ Stars</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Any Rating" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Any Rating</SelectItem>
+                  <SelectItem value="5">5 Stars</SelectItem>
+                  <SelectItem value="4">4+ Stars</SelectItem>
+                  <SelectItem value="3">3+ Stars</SelectItem>
+                  <SelectItem value="2">2+ Stars</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Hotel Type */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hotel Type
-              </label>
-              <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
-                value={searchData.hotelType}
-                onChange={(e) => handleInputChange("hotelType", e.target.value)}
+              <FilterSectionLabel icon={Building2} title="Hotel Type" />
+              <Select
+                value={searchData.hotelType || "any"}
+                onValueChange={(v) =>
+                  handleInputChange("hotelType", v === "any" ? "" : v)
+                }
               >
-                <option value="">Any Type</option>
-                {hotelTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Any Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Any Type</SelectItem>
+                  {hotelTypes.map((type) => (
+                    <SelectItem key={type} value={type}>
+                      {type}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          {/* Facilities */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-3">
-              Facilities
-            </label>
+            <FilterSectionLabel
+              icon={Sparkles}
+              title="Facilities"
+              subtitle="Select amenities you need"
+            />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {facilityOptions.map((facility) => (
                 <label
                   key={facility.id}
-                  className="flex items-center space-x-2 cursor-pointer"
+                  className="flex items-center space-x-2 cursor-pointer text-gray-700"
                 >
-                  <input
-                    type="checkbox"
-                    className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  <Checkbox
                     checked={searchData.facilities.includes(facility.id)}
-                    onChange={() => handleFacilityToggle(facility.id)}
+                    onCheckedChange={() => handleFacilityToggle(facility.id)}
                   />
-                  <span className="text-sm text-gray-700">
+                  <span className="text-sm">
                     {facility.icon} {facility.label}
                   </span>
                 </label>
@@ -583,59 +484,79 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
             </div>
           </div>
 
-          {/* Sort Options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Sort / radius — pb-6 before Popular Destinations separator */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Sort By
-              </label>
-              <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+              <FilterSectionLabel icon={ArrowUpDown} title="Sort By" />
+              <Select
                 value={searchData.sortBy}
-                onChange={(e) => handleInputChange("sortBy", e.target.value)}
+                onValueChange={(v) => handleInputChange("sortBy", v)}
               >
-                <option value="relevance">Relevance</option>
-                <option value="priceLow">Price: Low to High</option>
-                <option value="priceHigh">Price: High to Low</option>
-                <option value="rating">Rating</option>
-                <option value="distance">Distance</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="relevance">Relevance</SelectItem>
+                  <SelectItem value="priceLow">Price: Low to High</SelectItem>
+                  <SelectItem value="priceHigh">Price: High to Low</SelectItem>
+                  <SelectItem value="rating">Rating</SelectItem>
+                  <SelectItem value="distance">Distance</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Search Radius (km)
-              </label>
-              <select
-                className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500"
+              <FilterSectionLabel
+                icon={CircleDot}
+                title="Search Radius (km)"
+              />
+              <Select
                 value={searchData.radius}
-                onChange={(e) => handleInputChange("radius", e.target.value)}
+                onValueChange={(v) => handleInputChange("radius", v)}
               >
-                <option value="10">10 km</option>
-                <option value="25">25 km</option>
-                <option value="50">50 km</option>
-                <option value="100">100 km</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10 km</SelectItem>
+                  <SelectItem value="25">25 km</SelectItem>
+                  <SelectItem value="50">50 km</SelectItem>
+                  <SelectItem value="100">100 km</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
         </div>
       )}
 
-      {/* Quick Search Destinations */}
+      {/* Dynamic destinations from hotel cities */}
       <div className="border-t border-gray-200 pt-6">
-        <h3 className="text-sm font-medium text-gray-700 mb-3">
-          Popular Destinations
-        </h3>
+        <FilterSectionLabel
+          icon={MapPin}
+          title="Popular Destinations"
+          subtitle="Based on hotels in our catalog"
+        />
         <div className="flex flex-wrap gap-2">
-          {popularDestinations.map((destination) => (
-            <button
-              key={destination}
-              onClick={() => handleQuickSearch(destination)}
-              className="px-3 py-1 text-sm bg-gray-100 text-gray-700 rounded-full hover:bg-blue-100 hover:text-blue-700 transition-colors"
-            >
-              {destination}
-            </button>
-          ))}
+          {places.length === 0 ? (
+            <p className="text-sm text-gray-500">
+              {isLoadingPlaces ? "Loading destinations…" : "No destinations yet"}
+            </p>
+          ) : (
+            places.map((destination) => (
+              <button
+                key={destination}
+                type="button"
+                onClick={() => handleQuickSearch(destination)}
+              >
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 transition-colors px-3 py-1 text-sm"
+                >
+                  {destination}
+                </Badge>
+              </button>
+            ))
+          )}
         </div>
       </div>
     </div>

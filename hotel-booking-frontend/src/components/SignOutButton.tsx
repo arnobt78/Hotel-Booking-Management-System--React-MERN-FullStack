@@ -122,7 +122,7 @@ const SignOutButton = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleSignOut} className="text-primary-600">
-          <LogOut className="w-4 h-4 mr-2" />
+          <LogOut className="w-4 h-4 " />
           Sign Out
         </DropdownMenuItem>
 
@@ -134,14 +134,14 @@ const SignOutButton = () => {
               onClick={handleClearAuth}
               className="text-red-600"
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="w-4 h-4 " />
               Clear Auth State
             </DropdownMenuItem>
             <DropdownMenuItem
               onClick={clearAllStorage}
               className="text-orange-600"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
+              <RefreshCw className="w-4 h-4 " />
               Clear All Storage
             </DropdownMenuItem>
           </>

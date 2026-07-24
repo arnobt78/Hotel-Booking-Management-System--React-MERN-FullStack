@@ -217,7 +217,7 @@ const SearchBar = () => {
           <div className="flex flex-row items-center flex-1 relative sm:col-span-2 lg:col-span-1">
             <MdTravelExplore
               size={20}
-              className="mr-2 text-gray-500 absolute left-3 z-10"
+              className=" text-gray-500 absolute left-3 z-10"
             />
             <Input
               placeholder="Where are you going?"

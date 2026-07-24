@@ -1,12 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
-import {
-  Building2,
-  Calendar,
-  BarChart3,
-  LogIn,
-  Hotel,
-} from "lucide-react";
+import { Building2, Calendar, BarChart3, LogIn, Hotel } from "lucide-react";
 import UsernameMenu from "./UsernameMenu";
 import useAppContext from "../hooks/useAppContext";
 import { getHotelsSearchUrl } from "../lib/nav-utils";
@@ -45,7 +39,7 @@ const MobileNavLinks = () => {
         ) : (
           <Link to="/sign-in" className="w-full">
             <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700">
-              <LogIn className="h-4 w-4 mr-2" />
+              <LogIn className="h-4 w-4 " />
               Log In
             </Button>
           </Link>

@@ -165,7 +165,7 @@ const GuestInfoForm = ({ hotelId, pricePerNight }: Props) => {
               </span>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-medium text-blue-600">
+              <div className="text-lg md:text-2xl font-medium text-blue-600">
                 £{totalPrice}
               </div>
               <div className="text-xs text-gray-500">Total Price</div>

@@ -75,7 +75,7 @@ const Booking = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <h2 className="text-2xl font-medium text-gray-700 mb-2">
+          <h2 className="text-sm md:text-lg font-medium text-gray-700 mb-2">
             Hotel Not Found
           </h2>
           <p className="text-gray-600">
@@ -87,13 +87,12 @@ const Booking = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 py-8">
-      <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
+    <div className="space-y-8">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <CreditCard className="h-6 w-6 text-blue-600" />
-            <h1 className="text-3xl font-medium text-gray-700">
+            <h1 className="text-sm md:text-lg font-medium text-gray-700">
               Complete Your Booking
             </h1>
           </div>
@@ -208,7 +207,6 @@ const Booking = () => {
             )}
           </div>
         </div>
-      </div>
     </div>
   );
 };

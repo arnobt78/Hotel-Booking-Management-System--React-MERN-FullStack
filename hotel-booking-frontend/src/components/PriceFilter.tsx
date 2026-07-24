@@ -1,3 +1,13 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import FilterSectionLabel from "./FilterSectionLabel";
+import { DollarSign } from "lucide-react";
+
 type Props = {
   selectedPrice?: number;
   onChange: (value?: number) => void;
@@ -6,23 +16,25 @@ type Props = {
 const PriceFilter = ({ selectedPrice, onChange }: Props) => {
   return (
     <div>
-      <h4 className="text-md font-medium mb-2"> Max Price</h4>
-      <select
-        className="p-2 border rounded-xl w-full"
-        value={selectedPrice}
-        onChange={(event) =>
-          onChange(
-            event.target.value ? parseInt(event.target.value) : undefined,
-          )
+      <FilterSectionLabel icon={DollarSign} title="Max Price" />
+      <Select
+        value={selectedPrice != null ? String(selectedPrice) : "any"}
+        onValueChange={(v) =>
+          onChange(v === "any" ? undefined : parseInt(v, 10))
         }
       >
-        <option value="">Select Max Price</option>
-        {[50, 100, 200, 300, 500].map((price) => (
-          <option key={price} value={price}>
-            {price}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger>
+          <SelectValue placeholder="Select max price" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="any">Any</SelectItem>
+          {[50, 100, 200, 300, 500].map((price) => (
+            <SelectItem key={price} value={String(price)}>
+              £{price}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
     </div>
   );
 };

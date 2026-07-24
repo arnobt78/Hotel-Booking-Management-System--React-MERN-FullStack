@@ -1,8 +1,12 @@
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import type { ColumnDef } from "@tanstack/react-table";
 import * as apiClient from "../../api-client";
 import type { HotelType } from "../../../../shared/types";
 import { Badge } from "../../components/ui/badge";
+import { Button } from "../../components/ui/button";
+import { DataTable } from "../../components/ui/data-table";
 import { invalidateAdminQueries } from "../../lib/invalidate-queries";
 import useAppContext from "../../hooks/useAppContext";
 
@@ -31,11 +35,79 @@ const AdminHotels = () => {
     },
   );
 
+  const columns = useMemo<ColumnDef<HotelType, unknown>[]>(
+    () => [
+      {
+        accessorKey: "name",
+        header: "Name",
+        cell: ({ row }) => (
+          <span className="font-medium text-gray-700">{row.original.name}</span>
+        ),
+      },
+      {
+        id: "location",
+        accessorFn: (h) => `${h.city}, ${h.country}`,
+        header: "Location",
+      },
+      {
+        accessorKey: "pricePerNight",
+        header: "Price",
+        cell: ({ row }) => `£${row.original.pricePerNight}/night`,
+      },
+      {
+        accessorKey: "totalBookings",
+        header: "Bookings",
+        cell: ({ row }) => (
+          <Badge variant="outline">{row.original.totalBookings ?? 0}</Badge>
+        ),
+      },
+      {
+        id: "active",
+        accessorFn: (h) => (h.isActive === false ? "inactive" : "active"),
+        header: "Active",
+        cell: ({ row }) => {
+          const h = row.original;
+          return (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={mutation.isLoading}
+              onClick={() =>
+                mutation.mutate({
+                  hotelId: h._id,
+                  isActive: !h.isActive,
+                })
+              }
+            >
+              {h.isActive === false
+                ? "Inactive — activate"
+                : "Active — deactivate"}
+            </Button>
+          );
+        },
+      },
+      {
+        id: "view",
+        header: "",
+        cell: ({ row }) => (
+          <Link
+            to={`/detail/${row.original._id}`}
+            className="text-primary-600 hover:underline text-sm"
+          >
+            View
+          </Link>
+        ),
+      },
+    ],
+    [mutation],
+  );
+
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Hotels</h1>
-        <p className="text-sm text-slate-500">All properties in the catalog</p>
+        <h1 className="text-lg md:text-2xl font-medium text-gray-700">Hotels</h1>
+        <p className="text-sm text-gray-500">All properties in the catalog</p>
       </div>
       {isLoading ? (
         <div className="space-y-2">
@@ -47,59 +119,11 @@ const AdminHotels = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-slate-600">
-              <tr>
-                <th className="p-3 font-medium">Name</th>
-                <th className="p-3 font-medium">Location</th>
-                <th className="p-3 font-medium">Price</th>
-                <th className="p-3 font-medium">Bookings</th>
-                <th className="p-3 font-medium">Active</th>
-                <th className="p-3 font-medium" />
-              </tr>
-            </thead>
-            <tbody>
-              {(hotels || []).map((h: HotelType) => (
-                <tr key={h._id} className="border-t border-slate-100">
-                  <td className="p-3 font-medium text-slate-900">{h.name}</td>
-                  <td className="p-3 text-slate-600">
-                    {h.city}, {h.country}
-                  </td>
-                  <td className="p-3">£{h.pricePerNight}/night</td>
-                  <td className="p-3">
-                    <Badge variant="outline">{h.totalBookings ?? 0}</Badge>
-                  </td>
-                  <td className="p-3">
-                    <button
-                      type="button"
-                      className="text-sm px-2 py-1 rounded-xl border border-slate-200 hover:bg-slate-50 disabled:opacity-50"
-                      disabled={mutation.isLoading}
-                      onClick={() =>
-                        mutation.mutate({
-                          hotelId: h._id,
-                          isActive: !h.isActive,
-                        })
-                      }
-                    >
-                      {h.isActive === false
-                        ? "Inactive — activate"
-                        : "Active — deactivate"}
-                    </button>
-                  </td>
-                  <td className="p-3 text-right">
-                    <Link
-                      to={`/detail/${h._id}`}
-                      className="text-primary-600 hover:underline"
-                    >
-                      View
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={hotels || []}
+          searchPlaceholder="Search hotels…"
+        />
       )}
     </div>
   );

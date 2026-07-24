@@ -5,6 +5,13 @@ import { BookingType } from "../../../shared/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { Badge } from "./ui/badge";
 import { Card, CardContent, CardHeader } from "./ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import CancelBookingButton from "./CancelBookingButton";
 import {
   Calendar,
@@ -145,7 +152,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
             <div className="flex items-center space-x-3">
               <Building2 className="w-6 h-6 text-primary-600" />
               <div>
-                <h2 className="text-2xl font-medium text-gray-700">
+                <h2 className="text-lg md:text-2xl font-medium text-gray-700">
                   Booking Log - {hotelName}
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
@@ -171,29 +178,31 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
             <span className="text-sm font-medium text-gray-700">Filters:</span>
           </div>
 
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          >
-            <option value="all">All Status</option>
-            <option value="pending">Pending</option>
-            <option value="confirmed">Confirmed</option>
-            <option value="cancelled">Cancelled</option>
-            <option value="completed">Completed</option>
-            <option value="refunded">Refunded</option>
-          </select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-9 w-[160px]">
+              <SelectValue placeholder="All Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="confirmed">Confirmed</SelectItem>
+              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="refunded">Refunded</SelectItem>
+            </SelectContent>
+          </Select>
 
-          <select
-            value={dateFilter}
-            onChange={(e) => setDateFilter(e.target.value)}
-            className="px-3 py-1 border border-gray-300 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-          >
-            <option value="all">All Dates</option>
-            <option value="upcoming">Upcoming (Next 7 Days)</option>
-            <option value="future">Future</option>
-            <option value="past">Past</option>
-          </select>
+          <Select value={dateFilter} onValueChange={setDateFilter}>
+            <SelectTrigger className="h-9 w-[200px]">
+              <SelectValue placeholder="All Dates" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Dates</SelectItem>
+              <SelectItem value="upcoming">Upcoming (Next 7 Days)</SelectItem>
+              <SelectItem value="future">Future</SelectItem>
+              <SelectItem value="past">Past</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         {/* Booking Statistics */}
@@ -206,7 +215,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                     <p className="text-sm font-medium text-gray-600">
                       Total Bookings
                     </p>
-                    <p className="text-2xl font-medium text-gray-700">
+                    <p className="text-lg md:text-2xl font-medium text-gray-700">
                       {bookings.length}
                     </p>
                   </div>
@@ -224,7 +233,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                     <p className="text-sm font-medium text-gray-600">
                       Confirmed
                     </p>
-                    <p className="text-2xl font-medium text-green-600">
+                    <p className="text-lg md:text-2xl font-medium text-green-600">
                       {
                         bookings.filter(
                           (b: BookingType) => b.status === "confirmed",
@@ -246,7 +255,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                     <p className="text-sm font-medium text-gray-600">
                       Total Revenue
                     </p>
-                    <p className="text-2xl font-medium text-gray-700">
+                    <p className="text-lg md:text-2xl font-medium text-gray-700">
                       £
                       {bookings
                         .filter((b: BookingType) => b.paymentStatus === "paid")
@@ -270,7 +279,7 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-gray-600">Pending</p>
-                    <p className="text-2xl font-medium text-yellow-600">
+                    <p className="text-lg md:text-2xl font-medium text-yellow-600">
                       {
                         bookings.filter(
                           (b: BookingType) => b.status === "pending",

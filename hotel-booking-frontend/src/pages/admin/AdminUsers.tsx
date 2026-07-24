@@ -1,8 +1,18 @@
+import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
+import type { ColumnDef } from "@tanstack/react-table";
 import * as apiClient from "../../api-client";
 import type { UserType } from "../../../../shared/types";
 import { invalidateAdminQueries } from "../../lib/invalidate-queries";
 import useAppContext from "../../hooks/useAppContext";
+import { DataTable } from "../../components/ui/data-table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 
 const ROLES = ["user", "admin", "hotel_owner"] as const;
 
@@ -31,11 +41,74 @@ const AdminUsers = () => {
     },
   );
 
+  const columns = useMemo<ColumnDef<UserType, unknown>[]>(
+    () => [
+      {
+        accessorKey: "firstName",
+        header: "Name",
+        cell: ({ row }) => (
+          <span className="font-medium">
+            {row.original.firstName} {row.original.lastName}
+          </span>
+        ),
+      },
+      {
+        accessorKey: "email",
+        header: "Email",
+      },
+      {
+        id: "role",
+        accessorKey: "role",
+        header: "Role",
+        cell: ({ row }) => {
+          const u = row.original;
+          return (
+            <Select
+              value={u.role || "user"}
+              disabled={mutation.isLoading}
+              onValueChange={(role) =>
+                mutation.mutate({
+                  userId: u._id,
+                  role: role as (typeof ROLES)[number],
+                })
+              }
+            >
+              <SelectTrigger
+                className="h-8 w-[140px]"
+                aria-label={`Role for ${u.email}`}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {ROLES.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          );
+        },
+      },
+      {
+        accessorKey: "totalBookings",
+        header: "Bookings",
+        cell: ({ row }) => row.original.totalBookings ?? 0,
+      },
+      {
+        id: "active",
+        accessorFn: (u) => (u.isActive === false ? "No" : "Yes"),
+        header: "Active",
+      },
+    ],
+    [mutation],
+  );
+
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900">Users</h1>
-        <p className="text-sm text-slate-500">Registered accounts</p>
+        <h1 className="text-lg md:text-2xl font-medium text-gray-700">Users</h1>
+        <p className="text-sm text-gray-500">Registered accounts</p>
       </div>
       {isLoading ? (
         <div className="space-y-2">
@@ -47,51 +120,11 @@ const AdminUsers = () => {
           ))}
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-slate-50 text-left text-slate-600">
-              <tr>
-                <th className="p-3 font-medium">Name</th>
-                <th className="p-3 font-medium">Email</th>
-                <th className="p-3 font-medium">Role</th>
-                <th className="p-3 font-medium">Bookings</th>
-                <th className="p-3 font-medium">Active</th>
-              </tr>
-            </thead>
-            <tbody>
-              {(users || []).map((u: UserType) => (
-                <tr key={u._id} className="border-t border-slate-100">
-                  <td className="p-3 font-medium">
-                    {u.firstName} {u.lastName}
-                  </td>
-                  <td className="p-3 text-slate-600">{u.email}</td>
-                  <td className="p-3">
-                    <select
-                      className="border border-slate-200 rounded-xl px-2 py-1 text-sm bg-white"
-                      value={u.role || "user"}
-                      disabled={mutation.isLoading}
-                      onChange={(e) =>
-                        mutation.mutate({
-                          userId: u._id,
-                          role: e.target.value as (typeof ROLES)[number],
-                        })
-                      }
-                      aria-label={`Role for ${u.email}`}
-                    >
-                      {ROLES.map((r) => (
-                        <option key={r} value={r}>
-                          {r}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="p-3">{u.totalBookings ?? 0}</td>
-                  <td className="p-3">{u.isActive === false ? "No" : "Yes"}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          columns={columns}
+          data={users || []}
+          searchPlaceholder="Search users…"
+        />
       )}
     </div>
   );

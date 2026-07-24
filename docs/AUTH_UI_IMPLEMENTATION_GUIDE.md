@@ -272,7 +272,7 @@ const Navbar = memo(() => {
       const firstName = user.name?.split(' ')[0] || 'User';
       toast.success(
         <div className="flex items-center gap-2">
-          <span className="text-2xl">👋</span>
+          <span className="text-lg md:text-2xl">👋</span>
           <div>
             <p className="font-medium">Welcome back, {firstName}!</p>
             <p className="text-sm text-gray-500">Let&apos;s cook something amazing together!</p>
@@ -288,7 +288,7 @@ const Navbar = memo(() => {
       const firstName = prevUserNameRef.current?.split(' ')[0] || 'User';
       toast.success(
         <div className="flex items-center gap-2">
-          <span className="text-2xl">👋</span>
+          <span className="text-lg md:text-2xl">👋</span>
           <div>
             <p className="font-medium">Goodbye, {firstName}!</p>
             <p className="text-sm text-gray-500">We&apos;ll cook together again soon!</p>
@@ -364,7 +364,7 @@ const Navbar = memo(() => {
               <DropdownMenuSeparator />
               {/* ... Menu items ... */}
               <DropdownMenuItem onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
+                <LogOut className=" h-4 w-4" />
                 <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>

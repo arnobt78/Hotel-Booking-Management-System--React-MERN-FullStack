@@ -46,7 +46,9 @@ const AdminActivity = () => {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-2xl font-medium text-slate-900">Activity</h1>
+        <h1 className="text-lg md:text-2xl font-medium text-slate-900">
+          Activity
+        </h1>
         <p className="text-sm text-slate-500">
           Recent bookings and reviews (no separate audit log)
         </p>

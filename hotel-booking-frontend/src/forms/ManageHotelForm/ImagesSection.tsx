@@ -134,7 +134,7 @@ const ImagesSection = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-medium mb-3">Images</h2>
+      <h2 className="text-lg md:text-2xl font-medium mb-3">Images</h2>
       <div className="border rounded-xl p-6 flex flex-col gap-6">
         {/* Upload Area */}
         <div className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-gray-400 transition-colors">
@@ -155,7 +155,7 @@ const ImagesSection = () => {
                 variant="outline"
                 className="bg-white hover:bg-gray-50"
               >
-                <ImageIcon className="w-4 h-4 mr-2" />
+                <ImageIcon className="w-4 h-4 " />
                 Choose Images
               </Button>
             </div>

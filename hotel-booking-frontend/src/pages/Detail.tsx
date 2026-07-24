@@ -75,7 +75,7 @@ const Detail = () => {
             <AiFillStar key={i} className="fill-yellow-400" />
           ))}
         </span>
-        <h1 className="text-3xl font-medium">{hotel.name}</h1>
+        <h1 className="text-sm md:text-lg font-medium">{hotel.name}</h1>
 
         {/* Location and Contact Info */}
         <div className="flex items-center gap-4 mt-2 text-gray-600">
@@ -166,7 +166,7 @@ const Detail = () => {
         <div className="flex items-center justify-between mt-4 p-4 bg-gray-50 rounded-xl">
           <div className="flex items-center gap-6">
             <div className="text-center">
-              <p className="text-2xl font-medium text-gray-700">
+              <p className="text-sm md:text-lg font-medium text-gray-700">
                 £{hotel.pricePerNight}
               </p>
               <p className="text-sm text-gray-600">per night</p>

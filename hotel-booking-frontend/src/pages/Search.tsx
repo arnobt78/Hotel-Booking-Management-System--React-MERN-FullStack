@@ -10,6 +10,13 @@ import HotelTypesFilter from "../components/HotelTypesFilter";
 import FacilitiesFilter from "../components/FacilitiesFilter";
 import PriceFilter from "../components/PriceFilter";
 import SearchBar from "../components/SearchBar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
 
 const Search = () => {
   const [urlSearchParams] = useSearchParams();
@@ -136,20 +143,24 @@ const Search = () => {
                 : `${hotelData?.pagination.total ?? 0} Hotels found`}
               {search.destination ? ` in ${search.destination}` : ""}
             </span>
-            <select
-              value={sortOption}
-              onChange={(event) => setSortOption(event.target.value)}
-              className="p-2 border rounded-xl"
+            <Select
+              value={sortOption || "default"}
+              onValueChange={(v) => setSortOption(v === "default" ? "" : v)}
             >
-              <option value="">Sort By</option>
-              <option value="starRating">Star Rating</option>
-              <option value="pricePerNightAsc">
-                Price Per Night (low to high)
-              </option>
-              <option value="pricePerNightDesc">
-                Price Per Night (high to low)
-              </option>
-            </select>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue placeholder="Sort By" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="default">Sort By</SelectItem>
+                <SelectItem value="starRating">Star Rating</SelectItem>
+                <SelectItem value="pricePerNightAsc">
+                  Price Per Night (low to high)
+                </SelectItem>
+                <SelectItem value="pricePerNightDesc">
+                  Price Per Night (high to low)
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           {isSearchLoading || hotelData === undefined ? (
             <div className="flex flex-col gap-5">

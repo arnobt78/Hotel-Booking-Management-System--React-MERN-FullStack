@@ -79,7 +79,7 @@ const MyBookings = () => {
             </div>
             <Link to="/sign-in">
               <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700 mt-4">
-                <LogIn className="h-4 w-4 mr-2 text-white" />
+                <LogIn className="h-4 w-4  text-white" />
                 Sign In to View Bookings
               </Button>
             </Link>
@@ -207,11 +207,11 @@ const MyBookings = () => {
   };
 
   return (
-    <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
-      <div className="space-y-8">
-        {/* Header Section */}
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
-          <h1 className="text-4xl font-medium mb-2">My Bookings History</h1>
+    <div className="space-y-8">
+        {/* Header Section */}        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-8 text-white">
+          <h1 className="text-lg md:text-2xl font-medium mb-2">
+            My Bookings History
+          </h1>
           <p className="text-blue-100 text-lg">
             Track all your hotel reservations and booking details
           </p>
@@ -260,7 +260,7 @@ const MyBookings = () => {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h2 className="text-2xl font-medium text-gray-700 mb-2">
+                    <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-2">
                       {hotel.name}
                     </h2>
                     <div className="flex items-center gap-4 text-gray-600">
@@ -495,7 +495,6 @@ const MyBookings = () => {
             </div>
           ))}
         </div>
-      </div>
     </div>
   );
 };

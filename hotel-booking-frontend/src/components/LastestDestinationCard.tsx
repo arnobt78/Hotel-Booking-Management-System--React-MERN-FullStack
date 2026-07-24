@@ -12,7 +12,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
   return (
     <Link
       to={`/detail/${hotel._id}`}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-soft transition-all duration-300 hover:shadow-large hover:scale-105 bg-white flex flex-col w-full h-[350px] border border-gray-10"
+      className="group relative cursor-pointer overflow-hidden rounded-2xl shadow-soft transition-all duration-300 hover:shadow-large bg-white flex flex-col w-full h-[350px] border border-gray-10"
       style={{ minWidth: 320, maxWidth: 500 }}
     >
       <div className="w-full h-full relative">
@@ -20,7 +20,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
           src={hotel.imageUrls[0]}
           alt={hotel.name}
           fill
-          className="object-cover object-center transition-transform duration-500 group-hover:scale-110"
+          className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
         />
 
         {/* Overlay Gradient */}
@@ -46,7 +46,7 @@ const LatestDestinationCard = ({ hotel }: Props) => {
 
       <div className="absolute bottom-0 p-6 w-full">
         <div className="space-y-2">
-          <h3 className="text-white font-medium text-2xl tracking-tight group-hover:text-primary-200 transition-colors">
+          <h3 className="text-white font-medium text-lg md:text-2xl tracking-tight group-hover:text-primary-200 transition-colors">
             {hotel.name}
           </h3>
 

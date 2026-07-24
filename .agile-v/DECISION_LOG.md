@@ -98,3 +98,9 @@
 - **Decision:** Restore `scrollbar-gutter:stable`; move admin snapshots to `GET/POST /api/business-insights/rollups` (drop `/api/analytics`); Business Insights shell+inline pulse (no full-page spinner); tab Ops status; single focus ring.
 - **Rationale:** Layout squeeze + ad-block on `/analytics` + UX spinner complaint; Vite SPA (no SSR/Redis).
 - **Resume:** `c1-t5-ai-auth-seed`
+
+## [C1] 2026-07-24T13:20:00Z | PRODUCT | UI_SHELL_DATATABLE
+
+- **Decision:** Shared `PageContainer` (max-w-9xl); shadcn Select/Checkbox/Input across search+admin; TanStack `DataTable` for admin lists; Popular Destinations from hotel cities; Prev/Next pagination; remove all native `<select>` (WriteReview + DetailsSection Controller).
+- **Rationale:** Align Header/content/Footer; replace browser selects; scalable list UI. Vite SPA — no Next SSR/Redis.
+- **Resume:** `c1-t5-ai-auth-seed`

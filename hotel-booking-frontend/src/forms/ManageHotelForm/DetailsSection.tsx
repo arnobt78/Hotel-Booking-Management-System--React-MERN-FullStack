@@ -1,14 +1,22 @@
 import { useState } from "react";
-import { useFormContext } from "react-hook-form";
+import { Controller, useFormContext } from "react-hook-form";
 import { useMutation } from "react-query";
 import { HotelFormData } from "./ManageHotelForm";
 import * as apiClient from "../../api-client";
 import { Button } from "../../components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../components/ui/select";
 import useAppContext from "../../hooks/useAppContext";
 
 const DetailsSection = () => {
   const {
     register,
+    control,
     getValues,
     setValue,
     formState: { errors },
@@ -54,7 +62,7 @@ const DetailsSection = () => {
 
   return (
     <div className="flex flex-col gap-4">
-      <h1 className="text-3xl font-medium mb-3">Add Hotel</h1>
+      <h1 className="text-lg md:text-2xl font-medium mb-3">Add Hotel</h1>
       <label className="text-gray-700 text-sm font-medium flex-1">
         Name
         <input
@@ -165,27 +173,46 @@ const DetailsSection = () => {
           <span className="text-red-500">{errors.pricePerNight.message}</span>
         )}
       </label>
-      <label className="text-gray-700 text-sm font-medium max-w-[50%]">
-        Star Rating
-        <select
-          {...register("starRating", {
-            required: "This field is required",
-          })}
-          className="border rounded w-full p-2 text-gray-700 font-normal"
-        >
-          <option value="" className="text-sm font-medium">
-            Select as Rating
-          </option>
-          {[1, 2, 3, 4, 5].map((num) => (
-            <option key={num} value={num}>
-              {num}
-            </option>
-          ))}
-        </select>
+      {/* shadcn Select + RHF Controller — starRating is number on HotelFormData */}
+      <div className="text-gray-700 text-sm font-medium max-w-[50%] space-y-1.5">
+        <label htmlFor="starRating">Star Rating</label>
+        <Controller
+          name="starRating"
+          control={control}
+          rules={{ required: "This field is required" }}
+          render={({ field }) => (
+            <Select
+              value={
+                field.value != null && !Number.isNaN(Number(field.value))
+                  ? String(field.value)
+                  : "_unset"
+              }
+              onValueChange={(v) => {
+                if (v === "_unset") {
+                  field.onChange(undefined as unknown as number);
+                  return;
+                }
+                field.onChange(Number(v));
+              }}
+            >
+              <SelectTrigger id="starRating" className="w-full bg-white">
+                <SelectValue placeholder="Select as Rating" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="_unset">Select as Rating</SelectItem>
+                {[1, 2, 3, 4, 5].map((num) => (
+                  <SelectItem key={num} value={String(num)}>
+                    {num}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        />
         {errors.starRating && (
           <span className="text-red-500">{errors.starRating.message}</span>
         )}
-      </label>
+      </div>
     </div>
   );
 };

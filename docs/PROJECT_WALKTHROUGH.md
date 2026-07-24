@@ -322,10 +322,13 @@ QueryClientProvider
 
 **Layouts**
 
-- `layouts/Layout.tsx` — main chrome (header, nav, footer)
+- `layouts/Layout.tsx` — Header + Footer + `PageContainer` shell (`max-w-9xl mx-auto w-full px-2 sm:px-4 xl:px-8`)
 - `layouts/AuthLayout.tsx` — centered auth pages
+- `components/PageContainer.tsx` — shared width alignment for Header / main / Footer / Hero
+- Admin lists: `components/ui/data-table.tsx` (TanStack Table + search + Prev/Next pagination)
+- Controls: shadcn `Select` / `Checkbox` / `Input` / `Textarea` (no native `<select>` in `src`)
 
-> UI hides some routes when logged out; **backend still enforces JWT** on protected mutations.
+> UI hides some routes when logged out; **backend still enforces JWT** on protected mutations. Vite SPA — no Next SSR/Redis.
 
 ### 6.3 API client layers
 

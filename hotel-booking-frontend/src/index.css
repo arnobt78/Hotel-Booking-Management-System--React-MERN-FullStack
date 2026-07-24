@@ -85,4 +85,10 @@ html::-webkit-scrollbar-track {
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
   }
+
+  /* Default body text; Header/Hero/Footer keep explicit text-white */
+  body {
+    @apply text-gray-700;
+  }
 }
+

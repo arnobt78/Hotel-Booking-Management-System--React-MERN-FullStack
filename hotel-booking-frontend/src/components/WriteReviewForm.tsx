@@ -3,6 +3,14 @@ import { useMutation, useQueryClient } from "react-query";
 import * as apiClient from "../api-client";
 import { invalidateReviewQueries } from "../lib/invalidate-queries";
 import { Button } from "./ui/button";
+import { Textarea } from "./ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 import useAppContext from "../hooks/useAppContext";
 
 type Props = {
@@ -74,32 +82,39 @@ const WriteReviewForm = ({ hotelId, bookingId, onDone }: Props) => {
         });
       }}
     >
-      <label className="block text-sm font-medium text-gray-700">
-        Rating
-        <select
-          className="mt-1 block w-full rounded-xl border border-gray-300 p-2"
-          value={rating}
-          onChange={(e) => setRating(Number(e.target.value))}
+      {/* shadcn Select — matches global control styling (no native <select>) */}
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium text-gray-700">Rating</label>
+        <Select
+          value={String(rating)}
+          onValueChange={(v) => setRating(Number(v))}
         >
-          {[5, 4, 3, 2, 1].map((n) => (
-            <option key={n} value={n}>
-              {n} stars
-            </option>
-          ))}
-        </select>
-      </label>
-      <label className="block text-sm font-medium text-gray-700">
-        Comment
-        <textarea
-          className="mt-1 block w-full rounded-xl border border-gray-300 p-2"
+          <SelectTrigger className="w-full bg-white">
+            <SelectValue placeholder="Select rating" />
+          </SelectTrigger>
+          <SelectContent>
+            {[5, 4, 3, 2, 1].map((n) => (
+              <SelectItem key={n} value={String(n)}>
+                {n} stars
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-1.5">
+        <label className="block text-sm font-medium text-gray-700">
+          Comment
+        </label>
+        <Textarea
           rows={3}
           required
           minLength={3}
           value={comment}
           onChange={(e) => setComment(e.target.value)}
           placeholder="Share your stay experience"
+          className="bg-white"
         />
-      </label>
+      </div>
       <div className="flex gap-2">
         <Button type="submit" disabled={isLoading || comment.trim().length < 3}>
           {isLoading ? "Submitting…" : "Submit review"}

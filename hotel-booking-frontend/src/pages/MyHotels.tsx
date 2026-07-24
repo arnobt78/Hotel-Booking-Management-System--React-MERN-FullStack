@@ -63,7 +63,7 @@ const MyHotels = () => {
       onError: () => {
         showToast({ title: "Failed to update hotel status", type: "ERROR" });
       },
-    }
+    },
   );
 
   if (!isLoggedIn) {
@@ -100,7 +100,7 @@ const MyHotels = () => {
             </div>
             <Link to="/sign-in">
               <Button className="w-full font-medium bg-primary-600 hover:bg-primary-700 mt-4">
-                <LogIn className="h-4 w-4 mr-2 text-white" />
+                <LogIn className="h-4 w-4  text-white" />
                 Sign In to View My Hotels
               </Button>
             </Link>
@@ -160,7 +160,7 @@ const MyHotels = () => {
             to="/add-hotel"
             className="inline-flex items-center bg-primary-600 text-white px-6 py-3 rounded-xl font-medium hover:bg-primary-700 transition-colors"
           >
-            <Plus className="w-5 h-5 mr-2" />
+            <Plus className="w-5 h-5 " />
             Add Your First Hotel
           </Link>
         </div>
@@ -173,7 +173,9 @@ const MyHotels = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-medium text-gray-700">My Hotels</h1>
+          <h1 className="text-sm md:text-lg font-medium text-gray-700">
+            My Hotels
+          </h1>
           <p className="text-gray-600 mt-1">
             Manage your hotel listings and bookings
           </p>
@@ -182,7 +184,7 @@ const MyHotels = () => {
           to="/add-hotel"
           className="inline-flex items-center bg-gradient-to-r from-primary-600 to-primary-700 text-white px-6 py-3 rounded-xl font-medium hover:from-primary-700 hover:to-primary-800 transform hover:scale-105 transition-all duration-200 shadow-medium"
         >
-          <Plus className="w-5 h-5 mr-2" />
+          <Plus className="w-5 h-5 " />
           Add Hotel
         </Link>
       </div>
@@ -193,7 +195,7 @@ const MyHotels = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Hotels</p>
-              <p className="text-2xl font-medium text-gray-700">
+              <p className="text-sm md:text-lg font-medium text-gray-700">
                 {hotelData.length}
               </p>
             </div>
@@ -209,7 +211,7 @@ const MyHotels = () => {
               <p className="text-sm font-medium text-gray-600">
                 Total Bookings
               </p>
-              <p className="text-2xl font-medium text-gray-700">
+              <p className="text-sm md:text-lg font-medium text-gray-700">
                 {hotelData.reduce(
                   (sum, hotel) => sum + (hotel.totalBookings || 0),
                   0,
@@ -226,7 +228,7 @@ const MyHotels = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-              <p className="text-2xl font-medium text-gray-700">
+              <p className="text-sm md:text-lg font-medium text-gray-700">
                 £
                 {hotelData
                   .reduce((sum, hotel) => sum + (hotel.totalRevenue || 0), 0)
@@ -243,7 +245,7 @@ const MyHotels = () => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Avg Rating</p>
-              <p className="text-2xl font-medium text-gray-700">
+              <p className="text-sm md:text-lg font-medium text-gray-700">
                 {hotelData.length > 0
                   ? (
                       hotelData.reduce(
@@ -275,7 +277,7 @@ const MyHotels = () => {
                 src={hotel.imageUrls[0]}
                 alt={hotel.name}
                 fill
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
 
@@ -402,14 +404,14 @@ const MyHotels = () => {
                     to={`/edit-hotel/${hotel._id}`}
                     className="flex-1 bg-primary-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-primary-700 transition-colors text-center flex items-center justify-center"
                   >
-                    <Edit className="w-4 h-4 mr-2" />
+                    <Edit className="w-4 h-4 " />
                     Edit Hotel
                   </Link>
                   <Link
                     to={`/detail/${hotel._id}`}
                     className="flex-1 bg-gray-100 text-gray-700 py-3 px-4 rounded-xl font-medium hover:bg-gray-200 transition-colors text-center flex items-center justify-center"
                   >
-                    <Eye className="w-4 h-4 mr-2" />
+                    <Eye className="w-4 h-4 " />
                     View Details
                   </Link>
                   <button
@@ -417,7 +419,7 @@ const MyHotels = () => {
                     onClick={() => handleOpenBookingLog(hotel._id, hotel.name)}
                     className="flex-1 bg-green-600 text-white py-3 px-4 rounded-xl font-medium hover:bg-green-700 transition-colors text-center flex items-center justify-center"
                   >
-                    <Calendar className="w-4 h-4 mr-2" />
+                    <Calendar className="w-4 h-4 " />
                     Booking Log
                   </button>
                 </div>
@@ -433,7 +435,7 @@ const MyHotels = () => {
                     })
                   }
                 >
-                  <Power className="w-4 h-4 mr-2" />
+                  <Power className="w-4 h-4 " />
                   {hotel.isActive === false
                     ? "Activate listing"
                     : "Deactivate listing"}

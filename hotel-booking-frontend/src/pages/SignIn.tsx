@@ -109,11 +109,8 @@ const SignIn = () => {
           <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
 
           {/* Header */}
-          <CardHeader className="text-center relative z-10 pb-8">
-            <div className="mx-auto w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-              <LogIn className="w-8 h-8 text-white" />
-            </div>
-            <CardTitle className="text-3xl font-medium text-gray-700 mb-2">
+          <CardHeader className="text-center relative z-10 pb-6">
+            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700 mb-2">
               Welcome Back
             </CardTitle>
             <CardDescription className="text-gray-600">
@@ -266,12 +263,12 @@ const SignIn = () => {
               >
                 {isLoading ? (
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white "></div>
                     Signing in...
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <LogIn className="w-5 h-5 mr-2" />
+                    <LogIn className="w-5 h-5 " />
                     Sign In
                   </div>
                 )}

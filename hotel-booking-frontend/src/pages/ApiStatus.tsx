@@ -148,7 +148,7 @@ const ApiStatus = () => {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <XCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-medium text-gray-700 mb-2">
+          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-2">
             API Unavailable
           </h2>
           <p className="text-gray-600 mb-4">
@@ -173,10 +173,9 @@ const ApiStatus = () => {
         detailedError.message === "SIGN_IN_REQUIRED"));
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-9xl mx-auto px-2 sm:px-4 xl:px-8">
+    <div>
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-medium text-gray-700 mb-4">
+          <h1 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
             API Status
           </h1>
           <p className="text-xl text-gray-600">
@@ -188,7 +187,7 @@ const ApiStatus = () => {
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center">
               <Server className="w-8 h-8 text-blue-600 mr-3" />
-              <h2 className="text-2xl font-medium text-gray-700">
+              <h2 className="text-lg md:text-2xl font-medium text-gray-700">
                 Overall Status
               </h2>
             </div>
@@ -274,7 +273,7 @@ const ApiStatus = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <div className="bg-white rounded-xl shadow-sm border p-6">
               <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
-                <Database className="w-5 h-5 text-green-600 mr-2" />
+                <Database className="w-5 h-5 text-green-600 " />
                 Database
               </h3>
               <div className="space-y-3">
@@ -295,7 +294,7 @@ const ApiStatus = () => {
 
             <div className="bg-white rounded-xl shadow-sm border p-6">
               <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
-                <HardDrive className="w-5 h-5 text-blue-600 mr-2" />
+                <HardDrive className="w-5 h-5 text-blue-600 " />
                 Memory (rounded MB)
               </h3>
               <div className="space-y-3">
@@ -325,18 +324,18 @@ const ApiStatus = () => {
         {isDetailed && detailedData && (
           <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
             <h3 className="text-lg font-medium text-gray-700 mb-4 flex items-center">
-              <Activity className="w-5 h-5 text-purple-600 mr-2" />
+              <Activity className="w-5 h-5 text-purple-600 " />
               Performance
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="text-center">
-                <div className="text-2xl font-medium text-blue-600">
+                <div className="text-lg md:text-2xl font-medium text-blue-600">
                   {detailedData.performance.memory.percentage}%
                 </div>
                 <div className="text-sm text-gray-600">Heap usage</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-medium text-orange-600">
+                <div className="text-lg md:text-2xl font-medium text-orange-600">
                   {formatUptime(detailedData.performance.uptime)}
                 </div>
                 <div className="text-sm text-gray-600">Uptime</div>
@@ -351,7 +350,6 @@ const ApiStatus = () => {
             ? new Date(healthData.timestamp).toLocaleString()
             : "N/A"}
         </div>
-      </div>
     </div>
   );
 };
