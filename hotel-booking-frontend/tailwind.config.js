@@ -76,6 +76,8 @@ export default {
         "fade-in": "fadeIn 0.5s ease-in-out",
         "slide-up": "slideUp 0.3s ease-out",
         "bounce-gentle": "bounceGentle 2s infinite",
+        /* Landing/auth stair-step reveal (see StaggerItem) */
+        "stagger-in": "staggerIn 0.45s ease-in-out both",
       },
       keyframes: {
         fadeIn: {
@@ -89,6 +91,10 @@ export default {
         bounceGentle: {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-5px)" },
+        },
+        staggerIn: {
+          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
         },
       },
     },

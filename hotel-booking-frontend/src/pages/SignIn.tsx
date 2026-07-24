@@ -3,7 +3,9 @@ import { useQueryClient } from "react-query";
 import { useMutationWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
 import useAppContext from "../hooks/useAppContext";
+import { welcomeBackToast } from "../lib/toast-messages";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { StaggerItem } from "../components/ui/stagger";
 import { Mail, Lock, Eye, EyeOff, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
@@ -101,12 +103,7 @@ const SignIn = () => {
 
   const mutation = useMutationWithLoading(apiClient.signIn, {
     onSuccess: async () => {
-      showToast({
-        title: "Sign In Successful",
-        description:
-          "Welcome back! You have been successfully signed in to your account.",
-        type: "SUCCESS",
-      });
+      showToast(welcomeBackToast());
       await queryClient.invalidateQueries("validateToken");
       navigate(location.state?.from?.pathname || "/");
     },
@@ -130,42 +127,40 @@ const SignIn = () => {
   return (
     <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl w-full space-y-8">
-        {/* Modern Card Container */}
-        <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
-          {/* Decorative Background Elements */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-600"></div>
-          <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-100 rounded-full opacity-50"></div>
-          <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
+        {/* Card shell eases in; inner rows stagger as a stairway */}
+        <StaggerItem index={0}>
+          <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-600"></div>
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-100 rounded-full opacity-50"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
 
-          {/* Header */}
-          <CardHeader className="space-y-0 text-center relative z-10 pb-6">
-            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
-              Welcome Back
-            </CardTitle>
-            <CardDescription className="mt-0 text-gray-600">
-              Sign in to your account to continue
-            </CardDescription>
+            <StaggerItem index={1}>
+              <CardHeader className="space-y-0 text-center relative z-10 pb-6">
+                <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
+                  Welcome Back
+                </CardTitle>
+                <CardDescription className="mt-0 text-gray-600">
+                  Sign in to your account to continue
+                </CardDescription>
 
-            {/* Development Notice */}
-            {!import.meta.env.PROD && (
-              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
-                <p className="text-sm text-yellow-800">
-                  <span className="font-medium text-gray-700">
-                    Development Note:
-                  </span>{" "}
-                  Authentication state persists between sessions. If you're
-                  seeing a logged-in state unexpectedly, use the "Clear Auth"
-                  button in the header.
-                </p>
-              </div>
-            )}
-          </CardHeader>
+                {!import.meta.env.PROD && (
+                  <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
+                    <p className="text-sm text-yellow-800">
+                      <span className="font-medium text-gray-700">
+                        Development Note:
+                      </span>{" "}
+                      Authentication state persists between sessions. If you're
+                      seeing a logged-in state unexpectedly, use the "Clear Auth"
+                      button in the header.
+                    </p>
+                  </div>
+                )}
+              </CardHeader>
+            </StaggerItem>
 
-          {/* Form */}
-          <CardContent className="space-y-6">
-            <form className="space-y-6" onSubmit={onSubmit}>
-              {/* Test Credentials Dropdown */}
-              <div className="space-y-2">
+            <CardContent className="space-y-6">
+              <form className="space-y-6" onSubmit={onSubmit}>
+              <StaggerItem index={2} className="space-y-2">
                 <Label
                   htmlFor="test-account"
                   className="text-sm font-medium text-gray-700"
@@ -219,10 +214,9 @@ const SignIn = () => {
                     )}
                   </SelectContent>
                 </Select>
-              </div>
+              </StaggerItem>
 
-              {/* Email Field */}
-              <div className="space-y-2">
+              <StaggerItem index={3} className="space-y-2">
                 <Label
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700"
@@ -252,10 +246,9 @@ const SignIn = () => {
                     </Badge>
                   </div>
                 )}
-              </div>
+              </StaggerItem>
 
-              {/* Password Field */}
-              <div className="space-y-2">
+              <StaggerItem index={4} className="space-y-2">
                 <Label
                   htmlFor="password"
                   className="text-sm font-medium text-gray-700"
@@ -304,36 +297,37 @@ const SignIn = () => {
                     </Badge>
                   </div>
                 )}
-              </div>
+              </StaggerItem>
 
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Signing in...
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Sign In
-                  </div>
-                )}
-              </Button>
+              <StaggerItem index={5}>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Signing in...
+                    </div>
+                  ) : (
+                    <div className="flex items-center">
+                      <Sparkles className="w-5 h-5 mr-2" />
+                      Sign In
+                    </div>
+                  )}
+                </Button>
+              </StaggerItem>
 
-              {/* Divider */}
-              <div className="relative my-6">
+              <StaggerItem index={6} className="relative my-6">
                 <Separator className="bg-gray-300" />
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">or</span>
                 </div>
-              </div>
+              </StaggerItem>
 
               {/* Google OAuth starts on backend; redirect_uri port must match PORT / VITE_API_BASE_URL */}
+              <StaggerItem index={7}>
               <Button
                 type="button"
                 variant="outline"
@@ -367,9 +361,9 @@ const SignIn = () => {
                 </svg>
                 Continue with Google
               </Button>
+              </StaggerItem>
 
-              {/* Registration Link */}
-              <div className="text-center">
+              <StaggerItem index={8} className="text-center">
                 <p className="text-sm text-gray-600">
                   Don't have an account?{" "}
                   <Link
@@ -379,13 +373,13 @@ const SignIn = () => {
                     Create one here
                   </Link>
                 </p>
-              </div>
+              </StaggerItem>
             </form>
           </CardContent>
-        </Card>
+          </Card>
+        </StaggerItem>
 
-        {/* Additional Info */}
-        <div className="text-center">
+        <StaggerItem index={9} className="text-center">
           <p className="text-xs text-gray-500">
             By signing in, you agree to our{" "}
             <a href="#" className="text-primary-600 hover:text-primary-700">
@@ -396,7 +390,7 @@ const SignIn = () => {
               Privacy Policy
             </a>
           </p>
-        </div>
+        </StaggerItem>
       </div>
     </div>
   );

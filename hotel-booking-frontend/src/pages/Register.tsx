@@ -3,6 +3,8 @@ import { useQueryClient } from "react-query";
 import { useMutationWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
 import useAppContext from "../hooks/useAppContext";
+import { welcomeNewToast } from "../lib/toast-messages";
+import { StaggerItem } from "../components/ui/stagger";
 import { useNavigate, Link } from "react-router-dom";
 import {
   Mail,
@@ -53,12 +55,7 @@ const Register = () => {
 
   const mutation = useMutationWithLoading(apiClient.register, {
     onSuccess: async () => {
-      showToast({
-        title: "Registration Successful",
-        description:
-          "Your account has been created successfully! Welcome to HolidayHotel.",
-        type: "SUCCESS",
-      });
+      showToast(welcomeNewToast());
       await queryClient.invalidateQueries("validateToken");
       navigate("/");
     },
@@ -84,42 +81,42 @@ const Register = () => {
   return (
     <div className="flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-xl w-full space-y-8">
-        {/* Modern Card Container */}
-        <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
-          {/* Decorative Background Elements */}
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-600"></div>
-          <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-100 rounded-full opacity-50"></div>
-          <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
+        <StaggerItem index={0}>
+          <Card className="relative overflow-hidden border-0 shadow-2xl bg-white/95 backdrop-blur-sm">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary-500 to-primary-600"></div>
+            <div className="absolute -top-4 -right-4 w-24 h-24 bg-primary-100 rounded-full opacity-50"></div>
+            <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
 
-          {/* Header */}
-          <CardHeader className="space-y-0 text-center relative z-10 pb-6">
-            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
-              Join HolidayHotel
-            </CardTitle>
-            <CardDescription className="mt-0 text-gray-600">
-              Create your account to start booking
-            </CardDescription>
+            <StaggerItem index={1}>
+              <CardHeader className="space-y-0 text-center relative z-10 pb-6">
+                <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
+                  Join HolidayHotel
+                </CardTitle>
+                <CardDescription className="mt-0 text-gray-600">
+                  Create your account to start booking
+                </CardDescription>
 
-            {/* Development Notice */}
-            {!import.meta.env.PROD && (
-              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
-                <p className="text-sm text-yellow-800">
-                  <span className="font-medium text-gray-700">
-                    Development Note:
-                  </span>{" "}
-                  Authentication state persists between sessions. If you're
-                  seeing a logged-in state unexpectedly, use the "Clear Auth"
-                  button in the header.
-                </p>
-              </div>
-            )}
-          </CardHeader>
+                {!import.meta.env.PROD && (
+                  <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
+                    <p className="text-sm text-yellow-800">
+                      <span className="font-medium text-gray-700">
+                        Development Note:
+                      </span>{" "}
+                      Authentication state persists between sessions. If you're
+                      seeing a logged-in state unexpectedly, use the "Clear Auth"
+                      button in the header.
+                    </p>
+                  </div>
+                )}
+              </CardHeader>
+            </StaggerItem>
 
-          {/* Form */}
-          <CardContent className="space-y-6">
-            <form className="space-y-6" onSubmit={onSubmit}>
-              {/* Name Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="space-y-6">
+              <form className="space-y-6" onSubmit={onSubmit}>
+              <StaggerItem
+                index={2}
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              >
                 <div className="space-y-2">
                   <Label
                     htmlFor="firstName"
@@ -187,10 +184,9 @@ const Register = () => {
                     </div>
                   )}
                 </div>
-              </div>
+              </StaggerItem>
 
-              {/* Email Field */}
-              <div className="space-y-2">
+              <StaggerItem index={3} className="space-y-2">
                 <Label
                   htmlFor="email"
                   className="text-sm font-medium text-gray-700"
@@ -220,10 +216,9 @@ const Register = () => {
                     </Badge>
                   </div>
                 )}
-              </div>
+              </StaggerItem>
 
-              {/* Password Field */}
-              <div className="space-y-2">
+              <StaggerItem index={4} className="space-y-2">
                 <Label
                   htmlFor="password"
                   className="text-sm font-medium text-gray-700"
@@ -272,10 +267,9 @@ const Register = () => {
                     </Badge>
                   </div>
                 )}
-              </div>
+              </StaggerItem>
 
-              {/* Confirm Password Field */}
-              <div className="space-y-2">
+              <StaggerItem index={5} className="space-y-2">
                 <Label
                   htmlFor="confirmPassword"
                   className="text-sm font-medium text-gray-700"
@@ -339,37 +333,36 @@ const Register = () => {
                       </Badge>
                     </div>
                   )}
-              </div>
+              </StaggerItem>
 
-              {/* Submit Button */}
-              <Button
-                type="submit"
-                disabled={isLoading}
-                className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Creating account...
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <Sparkle className="w-5 h-5 mr-2" />
-                    Create Account
-                  </div>
-                )}
-              </Button>
+              <StaggerItem index={6}>
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="w-full py-3 px-4 rounded-xl text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 transition-all duration-200 transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                >
+                  {isLoading ? (
+                    <div className="flex items-center">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Creating account...
+                    </div>
+                  ) : (
+                    <div className="flex items-center">
+                      <Sparkle className="w-5 h-5 mr-2" />
+                      Create Account
+                    </div>
+                  )}
+                </Button>
+              </StaggerItem>
 
-              {/* Divider */}
-              <div className="relative my-6">
+              <StaggerItem index={7} className="relative my-6">
                 <Separator className="bg-gray-300" />
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">or</span>
                 </div>
-              </div>
+              </StaggerItem>
 
-              {/* Sign In Link */}
-              <div className="text-center">
+              <StaggerItem index={8} className="text-center">
                 <p className="text-sm text-gray-600">
                   Already have an account?{" "}
                   <Link
@@ -379,13 +372,13 @@ const Register = () => {
                     Sign in here
                   </Link>
                 </p>
-              </div>
+              </StaggerItem>
             </form>
           </CardContent>
-        </Card>
+          </Card>
+        </StaggerItem>
 
-        {/* Additional Info */}
-        <div className="text-center">
+        <StaggerItem index={9} className="text-center">
           <p className="text-xs text-gray-500">
             By creating an account, you agree to our{" "}
             <a href="#" className="text-primary-600 hover:text-primary-700">
@@ -396,7 +389,7 @@ const Register = () => {
               Privacy Policy
             </a>
           </p>
-        </div>
+        </StaggerItem>
       </div>
     </div>
   );

@@ -2,8 +2,12 @@ import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import useAppContext from "../hooks/useAppContext";
+import { welcomeBackToast } from "../lib/toast-messages";
 import { Loader2 } from "lucide-react";
 
+/**
+ * Google OAuth return — store JWT, invalidate auth queries, soft-nav home (no reload).
+ */
 const AuthCallback = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -26,8 +30,8 @@ const AuthCallback = () => {
           error === "oauth_config"
             ? "Google sign-in is not configured."
             : error === "token_exchange"
-            ? "Could not complete Google sign-in."
-            : "Something went wrong. Please try again.",
+              ? "Could not complete Google sign-in."
+              : "Something went wrong. Please try again.",
         type: "ERROR",
       });
       navigate("/sign-in");
@@ -43,13 +47,8 @@ const AuthCallback = () => {
       if (image) localStorage.setItem("user_image", image);
 
       queryClient.invalidateQueries("validateToken");
-      showToast({
-        title: "Signed in successfully",
-        description: "Welcome! You have been signed in with Google.",
-        type: "SUCCESS",
-      });
+      showToast(welcomeBackToast(name || undefined));
       navigate("/");
-      window.location.reload();
     } else {
       navigate("/sign-in");
     }
@@ -59,7 +58,7 @@ const AuthCallback = () => {
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="h-12 w-12 animate-spin text-primary-600" />
-        <p className="text-gray-600">Completing sign-in...</p>
+        <p className="text-sm text-gray-600">Completing sign-in…</p>
       </div>
     </div>
   );

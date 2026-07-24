@@ -330,6 +330,9 @@ QueryClientProvider
 - Select/Dropdown rows: `py-2 leading-none`; check/radio indicators `top-1/2 -translate-y-1/2`; option icons via `SelectOptionLabel` + `lib/select-option-maps.ts`
 - Overlay scroll: `lib/scroll-lock-fix.ts` + `html { scrollbar-gutter: stable; overflow-y: scroll }` (Radix RemoveScroll margin fix)
 - Places cache: `lib/hotel-places.ts` + `hooks/useHotelPlaces.ts` (cleared on hotel CRUD via `invalidate-queries`)
+- Toasts: Sonner via `AppContext.showToast` + `lib/toast-messages.ts` (bottom-right; welcome/goodbye auth copy)
+- Home: static Header/hero bg; stagger copy/search/dest cards; 3× `h-[350px]` pulse skeletons while hotels load
+- Auth nav: optimistic `isLoggedIn` when `session_id` present (no Log In flash on refresh)
 
 > UI hides some routes when logged out; **backend still enforces JWT** on protected mutations. Vite SPA — no Next SSR/Redis.
 

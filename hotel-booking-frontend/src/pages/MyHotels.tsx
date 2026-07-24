@@ -58,10 +58,18 @@ const MyHotels = () => {
     {
       onSuccess: async () => {
         await invalidateHotelQueries(queryClient);
-        showToast({ title: "Hotel status updated", type: "SUCCESS" });
+        showToast({
+          title: "Hotel status updated",
+          description: "Visibility updated. Lists will refresh automatically.",
+          type: "SUCCESS",
+        });
       },
       onError: () => {
-        showToast({ title: "Failed to update hotel status", type: "ERROR" });
+        showToast({
+          title: "Failed to update hotel status",
+          description: "Please try again in a moment.",
+          type: "ERROR",
+        });
       },
     },
   );

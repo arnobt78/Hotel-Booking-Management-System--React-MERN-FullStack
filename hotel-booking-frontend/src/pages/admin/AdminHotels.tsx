@@ -24,11 +24,16 @@ const AdminHotels = () => {
     {
       onSuccess: async () => {
         await invalidateAdminQueries(queryClient);
-        showToast({ title: "Hotel status updated", type: "SUCCESS" });
+        showToast({
+          title: "Hotel status updated",
+          description: "Visibility updated. Lists will refresh automatically.",
+          type: "SUCCESS",
+        });
       },
       onError: () => {
         showToast({
           title: "Failed to update hotel",
+          description: "Please try again in a moment.",
           type: "ERROR",
         });
       },

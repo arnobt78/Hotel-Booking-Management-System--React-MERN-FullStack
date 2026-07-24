@@ -2,6 +2,7 @@ import { useQueryClient } from "react-query";
 import { useMutationWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
 import useAppContext from "../hooks/useAppContext";
+import { goodbyeToast, getStoredDisplayName } from "../lib/toast-messages";
 import { useNavigate } from "react-router-dom";
 import { LogOut, Trash2, RefreshCw } from "lucide-react";
 import {
@@ -30,15 +31,13 @@ const SignOutButton = () => {
 
   const mutation = useMutationWithLoading(apiClient.signOut, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries("validateToken");
-      showToast({
-        title: "Successfully Signed Out",
-        description:
-          "You have been logged out of your account. Redirecting to sign-in page...",
-        type: "SUCCESS",
-      });
+      // Soft logout: invalidate auth queries; no hard reload so Sonner can show
+      await Promise.all([
+        queryClient.invalidateQueries("validateToken"),
+        queryClient.invalidateQueries("fetchCurrentUser"),
+      ]);
+      queryClient.removeQueries("fetchCurrentUser");
       navigate("/sign-in");
-      window.location.reload();
     },
     onError: (error: Error) => {
       showToast({
@@ -52,15 +51,18 @@ const SignOutButton = () => {
 
   const clearAuthMutation = useMutationWithLoading(apiClient.signOut, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries("validateToken");
+      await Promise.all([
+        queryClient.invalidateQueries("validateToken"),
+        queryClient.invalidateQueries("fetchCurrentUser"),
+      ]);
+      queryClient.removeQueries("fetchCurrentUser");
       showToast({
         title: "Auth State Cleared",
         description:
-          "Authentication state has been cleared. Redirecting to sign-in page...",
+          "Authentication state has been cleared. You can sign in again.",
         type: "SUCCESS",
       });
       navigate("/sign-in");
-      window.location.reload();
     },
     onError: (error: Error) => {
       showToast({
@@ -72,18 +74,23 @@ const SignOutButton = () => {
     loadingMessage: "Clearing auth state...",
   });
 
+  /** Dev util: wipe browser storage + RQ cache, soft-nav to sign-in (no hard reload) */
   const clearAllStorage = () => {
     apiClient.clearAllStorage();
+    queryClient.clear();
     showToast({
       title: "Storage Cleared",
       description:
-        "All browser storage (localStorage, sessionStorage, cookies) has been cleared. Page will reload...",
+        "All browser storage and cached queries were cleared. Sign in again when ready.",
       type: "SUCCESS",
     });
-    window.location.reload();
+    navigate("/sign-in");
   };
 
   const handleSignOut = () => {
+    // Capture name before signOut clears localStorage
+    const displayName = getStoredDisplayName();
+    showToast(goodbyeToast(displayName));
     mutation.mutate(undefined);
   };
 

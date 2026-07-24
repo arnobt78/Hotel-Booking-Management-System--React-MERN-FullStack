@@ -39,11 +39,16 @@ const AdminUsers = () => {
     {
       onSuccess: async () => {
         await invalidateAdminQueries(queryClient);
-        showToast({ title: "Role updated", type: "SUCCESS" });
+        showToast({
+          title: "Role updated",
+          description: "User role saved. Admin lists stay in sync.",
+          type: "SUCCESS",
+        });
       },
       onError: () => {
         showToast({
           title: "Failed to update role",
+          description: "Please try again in a moment.",
           type: "ERROR",
         });
       },

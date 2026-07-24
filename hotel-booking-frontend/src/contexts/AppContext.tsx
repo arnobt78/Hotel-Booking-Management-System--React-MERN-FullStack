@@ -3,15 +3,12 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useQuery } from "react-query";
 import * as apiClient from "../api-client";
 import { loadStripe, Stripe } from "@stripe/stripe-js";
-import { useToast } from "../hooks/use-toast";
+import { toast as sonnerToast } from "sonner";
+import type { ToastPayload } from "../lib/toast-messages";
 
 const STRIPE_PUB_KEY = import.meta.env.VITE_STRIPE_PUB_KEY || "";
 
-type ToastMessage = {
-  title: string;
-  description?: string;
-  type: "SUCCESS" | "ERROR" | "INFO";
-};
+type ToastMessage = ToastPayload;
 
 export type AppContext = {
   showToast: (toastMessage: ToastMessage) => void;
@@ -47,13 +44,11 @@ export const AppContextProvider = ({
   const [globalLoadingMessage, setGlobalLoadingMessage] = useState(
     "Hotel room is getting ready..."
   );
-  const { toast } = useToast();
-
   const hasStoredToken =
     typeof window !== "undefined" && !!localStorage.getItem("session_id");
 
   // Guests: skip validate-token (avoids expected 401 noise in prod console)
-  const { isError, isLoading, data } = useQuery(
+  const { isError, data } = useQuery(
     "validateToken",
     apiClient.validateToken,
     {
@@ -68,24 +63,22 @@ export const AppContextProvider = ({
     }
   );
 
-  // Logged in only when validate-token succeeds (or brief post-login race with token)
-  const isLoggedIn =
-    (!isLoading && !isError && !!data) ||
-    (hasStoredToken && !isLoading && !isError && !data);
+  // Optimistic nav chrome: JWT in localStorage → show profile until validate fails
+  // (avoids Log In flash on refresh while validateToken is loading)
+  const isLoggedIn = hasStoredToken ? !isError : Boolean(data) && !isError;
 
+  /** Central toast API — Sonner; all CRUD/auth mutations use this */
   const showToast = (toastMessage: ToastMessage) => {
-    const variant =
-      toastMessage.type === "SUCCESS"
-        ? "success"
-        : toastMessage.type === "ERROR"
-          ? "destructive"
-          : "info";
-
-    toast({
-      variant,
-      title: toastMessage.title,
+    const opts = {
       description: toastMessage.description,
-    });
+    };
+    if (toastMessage.type === "SUCCESS") {
+      sonnerToast.success(toastMessage.title, opts);
+    } else if (toastMessage.type === "ERROR") {
+      sonnerToast.error(toastMessage.title, opts);
+    } else {
+      sonnerToast.message(toastMessage.title, opts);
+    }
   };
 
   const showGlobalLoading = (message?: string) => {

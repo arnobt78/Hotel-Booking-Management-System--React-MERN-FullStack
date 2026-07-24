@@ -153,7 +153,7 @@ hotel-booking-frontend/
 │   │       ├── PoliciesSection.tsx # Hotel policies section
 │   │       └── TypeSection.tsx  # Hotel type section
 │   ├── hooks/
-│   │   ├── use-toast.ts         # Toast notification hook
+│   │   ├── (toasts via AppContext + sonner)
 │   │   ├── useAppContext.ts    # App context hook
 │   │   ├── useLoadingHooks.ts  # Loading state hooks
 │   │   └── useSearchContext.ts # Search context hook

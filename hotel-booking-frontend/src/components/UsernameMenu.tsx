@@ -18,6 +18,7 @@ import {
   Activity,
 } from "lucide-react";
 import useAppContext from "../hooks/useAppContext";
+import { goodbyeToast, getStoredDisplayName } from "../lib/toast-messages";
 
 const getAvatarUrl = () => {
   const image = localStorage.getItem("user_image");
@@ -35,7 +36,7 @@ const linkRowClass =
   "flex items-center gap-2 w-full text-sm font-normal leading-none text-gray-700 hover:text-primary-600";
 
 const UsernameMenu = () => {
-  const { isLoggedIn } = useAppContext();
+  const { isLoggedIn, showToast } = useAppContext();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
@@ -56,8 +57,10 @@ const UsernameMenu = () => {
 
   const handleMenuClick = () => setIsOpen(false);
 
-  // Soft logout: clear auth queries then navigate — avoids full page reload
+  // Soft logout: toast goodbye, clear auth queries, navigate — no full reload
   const handleLogout = async () => {
+    const displayName = getStoredDisplayName();
+    showToast(goodbyeToast(displayName));
     await apiClient.signOut();
     setIsOpen(false);
     await Promise.all([

@@ -77,6 +77,7 @@ const AdminDashboard = () => {
         }
         showToast({
           title: "Suggestion failed",
+          description: "Could not generate a draft. Please try again.",
           type: "ERROR",
         });
       },
@@ -134,6 +135,7 @@ const AdminDashboard = () => {
                 setInsightsDraft(null);
                 showToast({
                   title: "Draft applied to notepad",
+                  description: "Paste or edit in the notepad as needed.",
                   type: "SUCCESS",
                 });
               }}

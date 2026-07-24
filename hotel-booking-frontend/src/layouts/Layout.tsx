@@ -7,6 +7,10 @@ interface Props {
   children: React.ReactNode;
 }
 
+/**
+ * App shell. Header/Footer static. Home stagger lives in Hero + Home only
+ * (never wrap the hero blue bg in StaggerItem).
+ */
 const Layout = ({ children }: Props) => {
   const location = useLocation();
   const isHomePage = location.pathname === "/";
