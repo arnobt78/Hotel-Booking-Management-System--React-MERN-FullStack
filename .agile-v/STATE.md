@@ -7,10 +7,10 @@
 | Field | Value |
 |-------|-------|
 | **Cycle** | **C1** |
-| **Phase** | Stage 3–4 — UI polish pending push |
-| **Status** | Select/menu centering · scroll-lock · AdvancedSearch · hotel-places — commit next |
+| **Phase** | Stage 3–4 — UI polish shipped |
+| **Status** | Select/menu · scroll-lock · AdvancedSearch · hotel-places **pushed** `137ce98` — redeploy Vercel FE |
 | **Last REQ** | **REQ-0052** |
-| **HEAD** | (update after push) |
+| **HEAD** | `137ce98` on origin/main |
 | **Resume token** | `c1-t5-ai-auth-seed` |
 | **CHECKPOINTS** | INT-0001 PENDING (Gate 1) |
 
