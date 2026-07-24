@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { SelectOptionLabel } from "./ui/select-option-label";
+import { Star } from "lucide-react";
 import useAppContext from "../hooks/useAppContext";
 
 type Props = {
@@ -95,7 +97,12 @@ const WriteReviewForm = ({ hotelId, bookingId, onDone }: Props) => {
           <SelectContent>
             {[5, 4, 3, 2, 1].map((n) => (
               <SelectItem key={n} value={String(n)}>
-                {n} stars
+                <SelectOptionLabel
+                  icon={Star}
+                  iconClassName="fill-amber-400 text-amber-500"
+                >
+                  {n} stars
+                </SelectOptionLabel>
               </SelectItem>
             ))}
           </SelectContent>

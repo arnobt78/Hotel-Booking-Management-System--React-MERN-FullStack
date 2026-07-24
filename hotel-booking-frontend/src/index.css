@@ -35,10 +35,33 @@
   src: url("/fonts/Inter-Bold.woff2") format("woff2");
 }
 
-/* Stable gutter keeps content width fixed when scrollbar appears (no layout squeeze).
+/* Always reserve vertical scrollbar so Select open/close does not hide the thumb.
    Transparent track so the reserved strip does not look like a second painted bar. */
 html {
+  overflow-y: scroll;
   scrollbar-gutter: stable;
+}
+
+/* RemoveScroll gap + stable gutter double-compensates — zero lock inset.
+   Inline !important from react-remove-scroll still wins; see lib/scroll-lock-fix.ts */
+body[data-scroll-locked] {
+  margin-right: 0 !important;
+  padding-right: 0 !important;
+  --removed-body-scroll-bar-size: 0px;
+}
+
+/* Hide native date icon — Lucide Calendar (right) is the single affordance; keep field clickable */
+input[type="date"] {
+  position: relative;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
 }
 
 html::-webkit-scrollbar {

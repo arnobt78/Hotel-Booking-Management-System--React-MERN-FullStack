@@ -4,7 +4,7 @@ import { useMutationWithLoading } from "../hooks/useLoadingHooks";
 import * as apiClient from "../api-client";
 import useAppContext from "../hooks/useAppContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Mail, Lock, Eye, EyeOff, LogIn, Sparkles } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, Sparkles, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -31,12 +31,41 @@ export type SignInFormData = {
   password: string;
 };
 
+/** Matches seed.ts: test@user.com → Test Admin (role=admin) */
 const testAccounts = {
-  "guest-user": {
+  "test-admin": {
     email: "test@user.com",
     password: "12345678",
+    name: "Test Admin",
   },
 };
+
+/** Same Robohash set1 as UsernameMenu — circle ring + Name · email row */
+const testAccountAvatar = (email: string) =>
+  `https://robohash.org/${encodeURIComponent(email)}.png?set=set1&size=32x32`;
+
+function TestAccountOptionLabel({
+  name,
+  email,
+}: {
+  name: string;
+  email: string;
+}) {
+  return (
+    <span className="inline-flex min-w-0 items-center gap-2">
+      <img
+        src={testAccountAvatar(email)}
+        alt=""
+        className="h-7 w-7 shrink-0 rounded-full border border-gray-300 bg-gray-100 object-cover"
+      />
+      <span className="truncate font-normal">
+        <span className="text-gray-700">{name}</span>
+        <span className="text-gray-400"> · </span>
+        <span className="text-gray-500">{email}</span>
+      </span>
+    </span>
+  );
+}
 
 const SignIn = () => {
   const { showToast } = useAppContext();
@@ -109,17 +138,17 @@ const SignIn = () => {
           <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
 
           {/* Header */}
-          <CardHeader className="text-center relative z-10 pb-6">
-            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700 mb-2">
+          <CardHeader className="space-y-0 text-center relative z-10 pb-6">
+            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
               Welcome Back
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="mt-0 text-gray-600">
               Sign in to your account to continue
             </CardDescription>
 
             {/* Development Notice */}
             {!import.meta.env.PROD && (
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
+              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
                 <p className="text-sm text-yellow-800">
                   <span className="font-medium text-gray-700">
                     Development Note:
@@ -148,22 +177,44 @@ const SignIn = () => {
                   value={selectedRole || undefined}
                   onValueChange={handleRoleSelect}
                 >
-                  <SelectTrigger className="border border-gray-300 bg-white/80 text-gray-700">
-                    <SelectValue placeholder="Select Role Based Test Account" />
+                  <SelectTrigger className="border border-gray-300 bg-white/80 text-gray-700 [&>span]:inline-flex [&>span]:items-center [&>span]:gap-2 [&>span]:truncate">
+                    {selectedRole &&
+                    testAccounts[selectedRole as keyof typeof testAccounts] ? (
+                      <TestAccountOptionLabel
+                        name={
+                          testAccounts[
+                            selectedRole as keyof typeof testAccounts
+                          ].name
+                        }
+                        email={
+                          testAccounts[
+                            selectedRole as keyof typeof testAccounts
+                          ].email
+                        }
+                      />
+                    ) : (
+                      <SelectValue placeholder="Select Role Based Test Account" />
+                    )}
                   </SelectTrigger>
                   <SelectContent className="border-gray-200 bg-white">
                     <SelectItem
-                      value="guest-user"
-                      className="cursor-pointer text-gray-700 focus:bg-primary-50 focus:text-primary-900"
+                      value="test-admin"
+                      className="cursor-pointer font-normal text-gray-700 focus:bg-primary-50 focus:text-primary-900"
                     >
-                      Guest User (test@user.com)
+                      <TestAccountOptionLabel
+                        name={testAccounts["test-admin"].name}
+                        email={testAccounts["test-admin"].email}
+                      />
                     </SelectItem>
                     {selectedRole && (
                       <SelectItem
                         value="clear"
-                        className="cursor-pointer text-gray-400 opacity-60 focus:bg-gray-100 focus:text-gray-500"
+                        className="cursor-pointer font-normal text-gray-600 focus:bg-gray-100 focus:text-gray-700"
                       >
-                        Clear Selection
+                        <span className="inline-flex items-center gap-2 font-normal">
+                          <X className="h-4 w-4" />
+                          Clear Selection
+                        </span>
                       </SelectItem>
                     )}
                   </SelectContent>
@@ -263,12 +314,12 @@ const SignIn = () => {
               >
                 {isLoading ? (
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white "></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     Signing in...
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <LogIn className="w-5 h-5 " />
+                    <Sparkles className="w-5 h-5 mr-2" />
                     Sign In
                   </div>
                 )}
@@ -323,7 +374,7 @@ const SignIn = () => {
                   Don't have an account?{" "}
                   <Link
                     to="/register"
-                    className="font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200 underline decoration-2 underline-offset-2"
+                    className="font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200"
                   >
                     Create one here
                   </Link>
@@ -337,11 +388,11 @@ const SignIn = () => {
         <div className="text-center">
           <p className="text-xs text-gray-500">
             By signing in, you agree to our{" "}
-            <a href="#" className="text-primary-600 hover:underline">
+            <a href="#" className="text-primary-600 hover:text-primary-700">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="text-primary-600 hover:underline">
+            <a href="#" className="text-primary-600 hover:text-primary-700">
               Privacy Policy
             </a>
           </p>

@@ -1,19 +1,40 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
 import {
   Search as SearchIcon,
   Filter,
   MapPin,
+  MapPinHouse,
+  MapPinned,
   Calendar,
   Users,
+  User,
   DollarSign,
   Star,
   Building2,
+  Building,
+  Bed,
+  BedDouble,
+  Home,
+  House,
+  Coffee,
+  Palmtree,
+  Layers,
   Sparkles,
   ArrowUpDown,
   CircleDot,
+  Eraser,
 } from "lucide-react";
 import useSearchContext from "../hooks/useSearchContext";
+import { useHotelPlaces } from "../hooks/useHotelPlaces";
+import {
+  addLocalDays,
+  formatDateInputValue,
+  parseDateInputValue,
+  startOfLocalDay,
+} from "../lib/date-input";
+import { SEARCH_SORT_OPTIONS } from "../lib/select-option-maps";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
@@ -25,6 +46,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { SelectOptionLabel } from "./ui/select-option-label";
 import FilterSectionLabel from "./FilterSectionLabel";
 
 interface AdvancedSearchProps {
@@ -33,17 +55,86 @@ interface AdvancedSearchProps {
 }
 
 const GUEST_OPTIONS = [
-  { value: "1-0", label: "1 adult", adults: 1, children: 0 },
-  { value: "2-0", label: "2 adults", adults: 2, children: 0 },
-  { value: "1-1", label: "1 adult, 1 child", adults: 1, children: 1 },
-  { value: "2-1", label: "2 adults, 1 child", adults: 2, children: 1 },
-  { value: "2-2", label: "2 adults, 2 children", adults: 2, children: 2 },
-  { value: "3-0", label: "3 adults", adults: 3, children: 0 },
-  { value: "4-0", label: "4 adults", adults: 4, children: 0 },
+  { value: "1-0", label: "1 adult", adults: 1, children: 0, icon: User },
+  { value: "2-0", label: "2 adults", adults: 2, children: 0, icon: Users },
+  {
+    value: "1-1",
+    label: "1 adult, 1 child",
+    adults: 1,
+    children: 1,
+    icon: Users,
+  },
+  {
+    value: "2-1",
+    label: "2 adults, 1 child",
+    adults: 2,
+    children: 1,
+    icon: Users,
+  },
+  {
+    value: "2-2",
+    label: "2 adults, 2 children",
+    adults: 2,
+    children: 2,
+    icon: Users,
+  },
+  { value: "3-0", label: "3 adults", adults: 3, children: 0, icon: Users },
+  { value: "4-0", label: "4 adults", adults: 4, children: 0, icon: Users },
 ] as const;
+
+const STAR_RATING_OPTIONS: {
+  value: string;
+  label: string;
+  iconClassName?: string;
+}[] = [
+  { value: "any", label: "Any Rating", iconClassName: "text-gray-400" },
+  {
+    value: "5",
+    label: "5 Stars",
+    iconClassName: "fill-amber-400 text-amber-500",
+  },
+  {
+    value: "4",
+    label: "4+ Stars",
+    iconClassName: "fill-amber-400 text-amber-500",
+  },
+  {
+    value: "3",
+    label: "3+ Stars",
+    iconClassName: "fill-amber-400 text-amber-500",
+  },
+  {
+    value: "2",
+    label: "2+ Stars",
+    iconClassName: "fill-amber-400 text-amber-500",
+  },
+];
+
+const HOTEL_TYPE_OPTIONS: { value: string; label: string; icon: LucideIcon }[] =
+  [
+    { value: "any", label: "Any Type", icon: Layers },
+    { value: "Hotel", label: "Hotel", icon: Building2 },
+    { value: "Resort", label: "Resort", icon: Palmtree },
+    { value: "Motel", label: "Motel", icon: BedDouble },
+    { value: "Hostel", label: "Hostel", icon: Bed },
+    { value: "Apartment", label: "Apartment", icon: Building },
+    { value: "Villa", label: "Villa", icon: Home },
+    { value: "Cottage", label: "Cottage", icon: House },
+    { value: "B&B", label: "B&B", icon: Coffee },
+  ];
+
+const RADIUS_OPTIONS: { value: string; label: string; icon: LucideIcon }[] = [
+  { value: "10", label: "10 km", icon: CircleDot },
+  { value: "25", label: "25 km", icon: CircleDot },
+  { value: "50", label: "50 km", icon: MapPinned },
+  { value: "100", label: "100 km", icon: MapPinned },
+];
 
 const inputFocusClass =
   "pl-10 h-11 text-gray-700 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-0 focus-visible:border-primary-500";
+
+const dateInputFocusClass =
+  "pr-10 h-11 text-gray-700 focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-0 focus-visible:border-primary-500";
 
 const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   onSearch,
@@ -51,13 +142,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
 }) => {
   const navigate = useNavigate();
   const search = useSearchContext();
+  // Shared RQ + soft LS cache — invalidates on hotel CRUD via invalidateHotelQueries
+  const { places, isLoadingPlaces } = useHotelPlaces();
   const [showAdvanced, setShowAdvanced] = useState(isExpanded);
   const [searchData, setSearchData] = useState({
     destination: search.destination,
-    checkIn: search.checkIn,
-    checkOut: search.checkOut,
-    adultCount: search.adultCount,
-    childCount: search.childCount,
+    checkIn: null as Date | null,
+    checkOut: null as Date | null,
+    // null until user picks — trigger shows placeholder (defaults on Search)
+    adultCount: null as number | null,
+    childCount: null as number | null,
     minPrice: "",
     maxPrice: "",
     starRating: "",
@@ -76,65 +170,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   });
 
   const [showDropdown, setShowDropdown] = useState(false);
-  const [places, setPlaces] = useState<string[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<string[]>([]);
-  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
-  const hasFetchedRef = useRef(false);
-
-  // Unique cities from live hotels (also powers Popular Destinations chips)
-  useEffect(() => {
-    if (isLoadingPlaces || hasFetchedRef.current) return;
-
-    const fetchPlaces = async () => {
-      try {
-        setIsLoadingPlaces(true);
-        hasFetchedRef.current = true;
-
-        const cachedPlaces = localStorage.getItem("hotelPlaces");
-        if (cachedPlaces) {
-          const parsedPlaces = JSON.parse(cachedPlaces) as string[];
-          const cacheTime = localStorage.getItem("hotelPlacesTime");
-          const now = Date.now();
-          if (cacheTime && now - parseInt(cacheTime, 10) < 5 * 60 * 1000) {
-            setPlaces(parsedPlaces);
-            setIsLoadingPlaces(false);
-            return;
-          }
-        }
-
-        const apiBaseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
-        const response = await fetch(`${apiBaseUrl}/api/hotels`);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data: { city?: string; place?: string; name?: string }[] =
-          await response.json();
-        const uniquePlaces: string[] = Array.from(
-          new Set(
-            data
-              .map((hotel) => hotel.city || hotel.place)
-              .filter(
-                (place): place is string =>
-                  typeof place === "string" && place.length > 0,
-              ),
-          ),
-        );
-
-        localStorage.setItem("hotelPlaces", JSON.stringify(uniquePlaces));
-        localStorage.setItem("hotelPlacesTime", Date.now().toString());
-        setPlaces(uniquePlaces);
-      } catch (error) {
-        console.error("Error fetching hotels:", error);
-        setPlaces([]);
-      } finally {
-        setIsLoadingPlaces(false);
-      }
-    };
-
-    fetchPlaces();
-  }, []);
 
   useEffect(() => {
     setShowDropdown(false);
@@ -147,22 +183,12 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
         place.toLowerCase().includes(searchData.destination.toLowerCase()),
       );
       setFilteredPlaces(filtered);
-      setShowDropdown(filtered.length > 0);
+      setShowDropdown(true);
     } else {
+      setFilteredPlaces([]);
       setShowDropdown(false);
     }
   }, [searchData.destination, places]);
-
-  const hotelTypes = [
-    "Hotel",
-    "Resort",
-    "Motel",
-    "Hostel",
-    "Apartment",
-    "Villa",
-    "Cottage",
-    "B&B",
-  ];
 
   const facilityOptions = [
     { id: "wifi", label: "Free WiFi", icon: "📶" },
@@ -176,12 +202,15 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   ];
 
   const guestValue = useMemo(() => {
+    if (searchData.adultCount == null || searchData.childCount == null) {
+      return undefined;
+    }
     const match = GUEST_OPTIONS.find(
       (o) =>
         o.adults === searchData.adultCount &&
         o.children === searchData.childCount,
     );
-    return match?.value ?? "1-0";
+    return match?.value;
   }, [searchData.adultCount, searchData.childCount]);
 
   const handleInputChange = (field: string, value: unknown) => {
@@ -203,10 +232,10 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   const resetLocalForm = () => {
     setSearchData({
       destination: "",
-      checkIn: new Date(),
-      checkOut: new Date(),
-      adultCount: 1,
-      childCount: 0,
+      checkIn: null,
+      checkOut: null,
+      adultCount: null,
+      childCount: null,
       minPrice: "",
       maxPrice: "",
       starRating: "",
@@ -223,25 +252,61 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       gym: false,
       spa: false,
     });
+    setShowDropdown(false);
+    setFilteredPlaces([]);
   };
 
+  // Show Clear Search when any field differs from empty defaults
+  const isSearchDirty = useMemo(() => {
+    return (
+      searchData.destination.trim().length > 0 ||
+      searchData.checkIn != null ||
+      searchData.checkOut != null ||
+      searchData.adultCount != null ||
+      searchData.childCount != null ||
+      searchData.minPrice !== "" ||
+      searchData.maxPrice !== "" ||
+      searchData.starRating !== "" ||
+      searchData.hotelType !== "" ||
+      searchData.facilities.length > 0 ||
+      searchData.sortBy !== "relevance" ||
+      searchData.radius !== "50"
+    );
+  }, [searchData]);
+
   const buildAndNavigate = (destination: string) => {
+    // Local calendar defaults — never leave null ISO; checkout at least check-in + 1 day
+    const today = startOfLocalDay(new Date());
+    const checkIn = searchData.checkIn
+      ? startOfLocalDay(searchData.checkIn)
+      : today;
+    const checkOutCandidate = searchData.checkOut
+      ? startOfLocalDay(searchData.checkOut)
+      : addLocalDays(checkIn, 1);
+    const resolvedCheckOut =
+      checkOutCandidate.getTime() <= checkIn.getTime()
+        ? addLocalDays(checkIn, 1)
+        : checkOutCandidate;
+    // Guests placeholder → default 1 adult / 0 children on Search
+    const adultCount = searchData.adultCount ?? 1;
+    const childCount = searchData.childCount ?? 0;
+
     search.saveSearchValues(
       destination,
-      searchData.checkIn,
-      searchData.checkOut,
-      searchData.adultCount,
-      searchData.childCount,
+      checkIn,
+      resolvedCheckOut,
+      adultCount,
+      childCount,
     );
     setShowDropdown(false);
     setFilteredPlaces([]);
 
     const searchParams = new URLSearchParams();
     searchParams.append("destination", destination);
-    searchParams.append("checkIn", searchData.checkIn.toISOString());
-    searchParams.append("checkOut", searchData.checkOut.toISOString());
-    searchParams.append("adultCount", searchData.adultCount.toString());
-    searchParams.append("childCount", searchData.childCount.toString());
+    searchParams.append("checkIn", checkIn.toISOString());
+    searchParams.append("checkOut", resolvedCheckOut.toISOString());
+    searchParams.append("adultCount", adultCount.toString());
+    searchParams.append("childCount", childCount.toString());
     if (searchData.minPrice)
       searchParams.append("minPrice", searchData.minPrice);
     if (searchData.maxPrice)
@@ -257,7 +322,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
     );
 
     navigate(`/search?${searchParams.toString()}`);
-    onSearch(searchData);
+    onSearch({
+      ...searchData,
+      checkIn,
+      checkOut: resolvedCheckOut,
+      adultCount,
+      childCount,
+    });
     setTimeout(resetLocalForm, 100);
   };
 
@@ -274,11 +345,15 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-large p-6 sm:p-8 w-full border border-white/20">
+    <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-large p-4 sm:p-6 w-full border border-white/20 max-w-7xl mx-auto">
       {/* Basic Search */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pb-6">
         <div className="space-y-2">
-          <FilterSectionLabel icon={MapPin} title="Destination" className="mb-0" />
+          <FilterSectionLabel
+            icon={MapPin}
+            title="Destination"
+            className="mb-0"
+          />
           <div className="relative">
             <Input
               type="text"
@@ -286,77 +361,102 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
               className={inputFocusClass}
               value={searchData.destination}
               onChange={(e) => handleInputChange("destination", e.target.value)}
-              onFocus={() => setShowDropdown(filteredPlaces.length > 0)}
+              onFocus={() => setShowDropdown(searchData.destination.length > 0)}
               onBlur={() => setShowDropdown(false)}
             />
             <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
             {showDropdown && (
               <ul className="absolute top-full left-0 w-full bg-white border border-gray-200 rounded-xl shadow-lg z-10 max-h-40 overflow-y-auto mt-1">
-                {filteredPlaces.map((place) => (
-                  <li
-                    key={place}
-                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm text-gray-700 border-b border-gray-100 last:border-b-0"
-                    onMouseDown={() => {
-                      handleInputChange("destination", place);
-                      setShowDropdown(false);
-                    }}
-                  >
-                    {place}
+                {filteredPlaces.length === 0 ? (
+                  <li className="px-4 py-2 text-sm text-gray-500">
+                    No destination found in our hotel locations
                   </li>
-                ))}
+                ) : (
+                  filteredPlaces.map((place) => (
+                    <li
+                      key={place}
+                      className="px-4 py-2 cursor-pointer hover:bg-gray-100 text-sm text-gray-700 border-b border-gray-100 last:border-b-0"
+                      onMouseDown={() => {
+                        handleInputChange("destination", place);
+                        setShowDropdown(false);
+                      }}
+                    >
+                      {place}
+                    </li>
+                  ))
+                )}
               </ul>
             )}
           </div>
         </div>
 
         <div className="space-y-2">
-          <FilterSectionLabel icon={Calendar} title="Check-in" className="mb-0" />
+          <FilterSectionLabel
+            icon={Calendar}
+            title="Check-in"
+            className="mb-0"
+          />
           <div className="relative">
             <Input
               type="date"
-              className={inputFocusClass}
-              value={searchData.checkIn.toISOString().split("T")[0]}
+              className={dateInputFocusClass}
+              value={formatDateInputValue(searchData.checkIn)}
               onChange={(e) =>
-                handleInputChange("checkIn", new Date(e.target.value))
+                handleInputChange(
+                  "checkIn",
+                  parseDateInputValue(e.target.value),
+                )
               }
             />
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 opacity-70 pointer-events-none" />
           </div>
         </div>
 
         <div className="space-y-2">
-          <FilterSectionLabel icon={Calendar} title="Check-out" className="mb-0" />
+          <FilterSectionLabel
+            icon={Calendar}
+            title="Check-out"
+            className="mb-0"
+          />
           <div className="relative">
             <Input
               type="date"
-              className={inputFocusClass}
-              value={searchData.checkOut.toISOString().split("T")[0]}
+              className={dateInputFocusClass}
+              value={formatDateInputValue(searchData.checkOut)}
               onChange={(e) =>
-                handleInputChange("checkOut", new Date(e.target.value))
+                handleInputChange(
+                  "checkOut",
+                  parseDateInputValue(e.target.value),
+                )
               }
             />
-            <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+            <Calendar className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500 opacity-70 pointer-events-none" />
           </div>
         </div>
 
         <div className="space-y-2">
           <FilterSectionLabel icon={Users} title="Guests" className="mb-0" />
+          {/* key remounts when cleared — Radix Select does not reset UI if value → undefined */}
           <Select
+            key={`guests-${guestValue ?? "empty"}`}
             value={guestValue}
             onValueChange={(v) => {
               const opt = GUEST_OPTIONS.find((o) => o.value === v);
               if (!opt) return;
-              handleInputChange("adultCount", opt.adults);
-              handleInputChange("childCount", opt.children);
+              setSearchData((prev) => ({
+                ...prev,
+                adultCount: opt.adults,
+                childCount: opt.children,
+              }));
             }}
           >
             <SelectTrigger className="h-11">
-              <SelectValue placeholder="Guests" />
+              <SelectValue placeholder="Select number of guests" />
             </SelectTrigger>
             <SelectContent>
               {GUEST_OPTIONS.map((o) => (
                 <SelectItem key={o.value} value={o.value}>
-                  {o.label}
+                  <SelectOptionLabel icon={o.icon}>{o.label}</SelectOptionLabel>
                 </SelectItem>
               ))}
             </SelectContent>
@@ -374,25 +474,33 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           Advanced Filters
         </button>
 
-        <Button
-          type="button"
-          onClick={handleSearch}
-          className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800"
-        >
-          <SearchIcon className="w-4 h-4 mr-2" />
-          Search Hotels
-        </Button>
+        <div className="flex items-center gap-4">
+          {isSearchDirty && (
+            <button
+              type="button"
+              onClick={resetLocalForm}
+              className="inline-flex items-center gap-1.5 text-sm font-normal text-gray-600 hover:text-primary-600 transition-colors"
+            >
+              <Eraser className="h-4 w-4" />
+              Clear Search
+            </button>
+          )}
+          <Button
+            type="button"
+            onClick={handleSearch}
+            className="bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800"
+          >
+            <SearchIcon className="w-4 h-4 mr-2" />
+            Search Hotels
+          </Button>
+        </div>
       </div>
 
       {showAdvanced && (
         <div className="border-t border-gray-200 pt-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <FilterSectionLabel
-                icon={DollarSign}
-                title="Price Range"
-                subtitle="Min and max per night"
-              />
+              <FilterSectionLabel icon={DollarSign} title="Price Range" />
               <div className="flex space-x-2">
                 <Input
                   type="number"
@@ -428,11 +536,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   <SelectValue placeholder="Any Rating" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="any">Any Rating</SelectItem>
-                  <SelectItem value="5">5 Stars</SelectItem>
-                  <SelectItem value="4">4+ Stars</SelectItem>
-                  <SelectItem value="3">3+ Stars</SelectItem>
-                  <SelectItem value="2">2+ Stars</SelectItem>
+                  {STAR_RATING_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      <SelectOptionLabel
+                        icon={Star}
+                        iconClassName={o.iconClassName}
+                      >
+                        {o.label}
+                      </SelectOptionLabel>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -449,10 +562,11 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   <SelectValue placeholder="Any Type" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="any">Any Type</SelectItem>
-                  {hotelTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
+                  {HOTEL_TYPE_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      <SelectOptionLabel icon={o.icon}>
+                        {o.label}
+                      </SelectOptionLabel>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -461,11 +575,7 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
           </div>
 
           <div>
-            <FilterSectionLabel
-              icon={Sparkles}
-              title="Facilities"
-              subtitle="Select amenities you need"
-            />
+            <FilterSectionLabel icon={Sparkles} title="Facilities" />
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {facilityOptions.map((facility) => (
                 <label
@@ -496,20 +606,19 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="relevance">Relevance</SelectItem>
-                  <SelectItem value="priceLow">Price: Low to High</SelectItem>
-                  <SelectItem value="priceHigh">Price: High to Low</SelectItem>
-                  <SelectItem value="rating">Rating</SelectItem>
-                  <SelectItem value="distance">Distance</SelectItem>
+                  {SEARCH_SORT_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      <SelectOptionLabel icon={o.icon}>
+                        {o.label}
+                      </SelectOptionLabel>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
 
             <div>
-              <FilterSectionLabel
-                icon={CircleDot}
-                title="Search Radius (km)"
-              />
+              <FilterSectionLabel icon={CircleDot} title="Search Radius (km)" />
               <Select
                 value={searchData.radius}
                 onValueChange={(v) => handleInputChange("radius", v)}
@@ -518,10 +627,13 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="10">10 km</SelectItem>
-                  <SelectItem value="25">25 km</SelectItem>
-                  <SelectItem value="50">50 km</SelectItem>
-                  <SelectItem value="100">100 km</SelectItem>
+                  {RADIUS_OPTIONS.map((o) => (
+                    <SelectItem key={o.value} value={o.value}>
+                      <SelectOptionLabel icon={o.icon}>
+                        {o.label}
+                      </SelectOptionLabel>
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -532,14 +644,16 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({
       {/* Dynamic destinations from hotel cities */}
       <div className="border-t border-gray-200 pt-6">
         <FilterSectionLabel
-          icon={MapPin}
+          icon={MapPinHouse}
           title="Popular Destinations"
           subtitle="Based on hotels in our catalog"
         />
         <div className="flex flex-wrap gap-2">
           {places.length === 0 ? (
             <p className="text-sm text-gray-500">
-              {isLoadingPlaces ? "Loading destinations…" : "No destinations yet"}
+              {isLoadingPlaces
+                ? "Loading destinations…"
+                : "No destinations yet"}
             </p>
           ) : (
             places.map((destination) => (

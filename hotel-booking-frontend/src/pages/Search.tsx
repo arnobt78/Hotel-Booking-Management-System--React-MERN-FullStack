@@ -17,6 +17,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/ui/select";
+import { SelectOptionLabel } from "../components/ui/select-option-label";
+import { SEARCH_PAGE_SORT_OPTIONS } from "../lib/select-option-maps";
 
 const Search = () => {
   const [urlSearchParams] = useSearchParams();
@@ -151,14 +153,11 @@ const Search = () => {
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="default">Sort By</SelectItem>
-                <SelectItem value="starRating">Star Rating</SelectItem>
-                <SelectItem value="pricePerNightAsc">
-                  Price Per Night (low to high)
-                </SelectItem>
-                <SelectItem value="pricePerNightDesc">
-                  Price Per Night (high to low)
-                </SelectItem>
+                {SEARCH_PAGE_SORT_OPTIONS.map((o) => (
+                  <SelectItem key={o.value} value={o.value}>
+                    <SelectOptionLabel icon={o.icon}>{o.label}</SelectOptionLabel>
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

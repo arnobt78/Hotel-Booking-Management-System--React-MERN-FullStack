@@ -12,9 +12,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { SelectOptionLabel } from "./ui/select-option-label";
 import CancelBookingButton from "./CancelBookingButton";
 import {
   Calendar,
+  CalendarClock,
+  CalendarPlus,
+  History,
   Clock,
   Users,
   Phone,
@@ -24,6 +28,11 @@ import {
   CreditCard,
   FileText,
   Filter,
+  List,
+  CheckCircle2,
+  XCircle,
+  BadgeCheck,
+  RotateCcw,
 } from "lucide-react";
 
 interface BookingLogModalProps {
@@ -183,12 +192,28 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
               <SelectValue placeholder="All Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="confirmed">Confirmed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="refunded">Refunded</SelectItem>
+              <SelectItem value="all">
+                <SelectOptionLabel icon={List}>All Status</SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="pending">
+                <SelectOptionLabel icon={Clock}>Pending</SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="confirmed">
+                <SelectOptionLabel icon={CheckCircle2}>
+                  Confirmed
+                </SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="cancelled">
+                <SelectOptionLabel icon={XCircle}>Cancelled</SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="completed">
+                <SelectOptionLabel icon={BadgeCheck}>
+                  Completed
+                </SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="refunded">
+                <SelectOptionLabel icon={RotateCcw}>Refunded</SelectOptionLabel>
+              </SelectItem>
             </SelectContent>
           </Select>
 
@@ -197,10 +222,20 @@ const BookingLogModal: React.FC<BookingLogModalProps> = ({
               <SelectValue placeholder="All Dates" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Dates</SelectItem>
-              <SelectItem value="upcoming">Upcoming (Next 7 Days)</SelectItem>
-              <SelectItem value="future">Future</SelectItem>
-              <SelectItem value="past">Past</SelectItem>
+              <SelectItem value="all">
+                <SelectOptionLabel icon={Calendar}>All Dates</SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="upcoming">
+                <SelectOptionLabel icon={CalendarClock}>
+                  Upcoming (Next 7 Days)
+                </SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="future">
+                <SelectOptionLabel icon={CalendarPlus}>Future</SelectOptionLabel>
+              </SelectItem>
+              <SelectItem value="past">
+                <SelectOptionLabel icon={History}>Past</SelectOptionLabel>
+              </SelectItem>
             </SelectContent>
           </Select>
         </div>

@@ -1,5 +1,6 @@
-import { FormEvent, useState, useEffect, useRef } from "react";
+import { FormEvent, useState, useEffect } from "react";
 import useSearchContext from "../hooks/useSearchContext";
+import { useHotelPlaces } from "../hooks/useHotelPlaces";
 import { MdTravelExplore } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -11,83 +12,18 @@ import { Card, CardContent } from "./ui/card";
 const SearchBar = () => {
   const navigate = useNavigate();
   const search = useSearchContext();
+  // Shared with AdvancedSearch — clears + refetches on hotel CRUD
+  const { places } = useHotelPlaces();
 
   const [destination, setDestination] = useState<string>(search.destination);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [places, setPlaces] = useState<string[]>([]);
   const [filteredPlaces, setFilteredPlaces] = useState<string[]>([]);
-  const [isLoadingPlaces, setIsLoadingPlaces] = useState(false);
   const [checkIn, setCheckIn] = useState<Date>(search.checkIn);
   const [checkOut, setCheckOut] = useState<Date>(search.checkOut);
   const [adultCount, setAdultCount] = useState<number>(search.adultCount);
   const [childCount, setChildCount] = useState<number>(search.childCount);
-  const hasFetchedRef = useRef(false);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [isInitialMount, setIsInitialMount] = useState(true);
-
-  // Fetch hotel places on mount
-  // You can replace this fetch with context if you already have hotel data
-
-  useEffect(() => {
-    // Prevent multiple API calls - use a ref to track if we've already fetched
-    if (isLoadingPlaces || hasFetchedRef.current) return;
-
-    const fetchPlaces = async () => {
-      try {
-        setIsLoadingPlaces(true);
-        hasFetchedRef.current = true;
-
-        // Check if we have cached places data
-        const cachedPlaces = localStorage.getItem("hotelPlaces");
-        if (cachedPlaces) {
-          const parsedPlaces = JSON.parse(cachedPlaces);
-          const cacheTime = localStorage.getItem("hotelPlacesTime");
-          const now = Date.now();
-
-          // Cache is valid for 5 minutes
-          if (cacheTime && now - parseInt(cacheTime) < 5 * 60 * 1000) {
-            setPlaces(parsedPlaces);
-            setIsLoadingPlaces(false);
-            return;
-          }
-        }
-
-        const apiBaseUrl =
-          import.meta.env.VITE_API_BASE_URL || "http://localhost:5001";
-        const response = await fetch(`${apiBaseUrl}/api/hotels`);
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data: { city?: string; place?: string; name?: string }[] =
-          await response.json();
-        const uniquePlaces: string[] = Array.from(
-          new Set(
-            data
-              .map((hotel) => hotel.city || hotel.place || hotel.name)
-              .filter(
-                (place): place is string =>
-                  typeof place === "string" && place.length > 0,
-              ),
-          ),
-        );
-
-        // Cache the places data
-        localStorage.setItem("hotelPlaces", JSON.stringify(uniquePlaces));
-        localStorage.setItem("hotelPlacesTime", Date.now().toString());
-
-        setPlaces(uniquePlaces);
-      } catch (error) {
-        console.error("Error fetching hotels:", error);
-        setPlaces([]);
-      } finally {
-        setIsLoadingPlaces(false);
-      }
-    };
-
-    fetchPlaces();
-  }, []); // Remove all dependencies to run only once on mount
 
   // Clear dropdown state when component mounts (for search page)
   useEffect(() => {

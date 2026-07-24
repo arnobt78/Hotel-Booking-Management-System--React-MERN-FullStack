@@ -173,7 +173,7 @@ const AnalyticsDashboard = () => {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="w-full mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header — always visible */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between pb-6">
           <div>
             <h1 className="text-sm md:text-lg font-medium text-gray-700 mb-2">
               Business Insights Dashboard
@@ -192,7 +192,7 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Tab Navigation */}
-        <div className="bg-white rounded-xl shadow-sm border mb-8">
+        <div className="bg-white rounded-xl shadow-sm border pb-6">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               {[
@@ -226,7 +226,7 @@ const AnalyticsDashboard = () => {
 
         {/* Inline error for dashboard load (content area only) */}
         {error && activeTab === "overview" && !isLoading && (
-          <div className="bg-white rounded-xl shadow-sm border p-6 mb-8 text-center">
+          <div className="bg-white rounded-xl shadow-sm border p-6 pb-6 text-center">
             <p className="text-red-500 mb-4">
               Failed to load business insights data
             </p>

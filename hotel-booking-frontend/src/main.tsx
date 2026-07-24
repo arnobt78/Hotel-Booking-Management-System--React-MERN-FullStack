@@ -5,6 +5,10 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { AppContextProvider } from "./contexts/AppContext.tsx";
 import { SearchContextProvider } from "./contexts/SearchContext.tsx";
+import { installScrollLockGapFix } from "./lib/scroll-lock-fix";
+
+// Neutralize RemoveScroll + scrollbar-gutter double gap (Select/Dialog)
+installScrollLockGapFix();
 
 /**
  * SPA data cache: modest staleTime cuts duplicate GETs on rapid nav;

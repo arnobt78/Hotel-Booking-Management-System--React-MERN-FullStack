@@ -176,7 +176,7 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-primary-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-300 text-sm">
-            © 2025 HolidayHotel. All rights reserved.
+            &copy; {new Date().getFullYear()}. All rights reserved.
           </p>
           <div className="flex space-x-6 mt-4 md:mt-0">
             <a

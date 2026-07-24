@@ -23,3 +23,4 @@
 | 2026-07-23T16:50:00Z | BUILD | Post-T5 polish (fonts/SafeImage/Vercel/API domain) | OK | resume `c1-t5-ai-auth-seed` |
 | 2026-07-23T19:40:00Z | BUILD | Gutter + rollups path + insights shell pulse | OK | `/api/business-insights/rollups` |
 | 2026-07-24T13:20:00Z | BUILD | PageContainer + shadcn + DataTable + zero native select | OK | resume `c1-t5-ai-auth-seed` |
+| 2026-07-24T12:57:00Z | BUILD | UI polish: Select/menu center · scroll-lock · hotel-places · AdvancedSearch | OK | resume `c1-t5-ai-auth-seed` |

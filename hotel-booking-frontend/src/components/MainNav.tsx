@@ -9,7 +9,7 @@ import * as apiClient from "../api-client";
 const NAV_AUTH_WIDTH = "min-w-[120px]";
 
 const navLinkClass =
-  "flex items-center text-white/90 hover:text-white px-4 py-2 rounded-xl font-medium hover:bg-white/10 transition-all duration-200";
+  "flex items-center text-sm font-normal text-white/90 hover:text-white px-4 py-2 rounded-xl hover:bg-white/10 transition-all duration-200";
 
 const MainNav = () => {
   const { isLoggedIn } = useAppContext();
@@ -57,7 +57,7 @@ const MainNav = () => {
           <Link to="/sign-in">
             <Button
               variant="ghost"
-              className="font-medium bg-white text-primary-600 hover:bg-primary-50 hover:text-primary-700 border-2 border-white/80"
+              className="text-sm font-normal bg-white text-primary-600 hover:bg-primary-50 hover:text-primary-700 border-2 border-white/80"
             >
               Log In
             </Button>

@@ -1,4 +1,8 @@
 import { QueryClient } from "react-query";
+import {
+  HOTEL_PLACES_QUERY_KEY,
+  clearHotelPlacesCache,
+} from "./hotel-places";
 
 /**
  * Central React Query invalidation for hotel / booking / review / admin CRUD.
@@ -8,12 +12,15 @@ import { QueryClient } from "react-query";
  * - fetchMyHotels, fetchMyHotelById — owner dashboard
  * - fetchQuery, searchHotels, fetchHotels — home + search + admin hotels
  * - fetchHotelById / fetchHotelByID — hotel detail
+ * - hotelPlaces — destination typeahead / Popular Destinations (also clears localStorage)
  * - fetchMyBookings, fetchHotelBookings, fetchAdminBookings — booking lists
  * - fetchHotelReviews, fetchAdminReviews — reviews
  * - fetchAdminUsers, fetchBusinessInsightsRollups, fetchBusinessInsightsDashboard
  * - fetchCurrentUser — profile role / AdminRoute (invalidate on role PATCH)
  */
 export const invalidateHotelQueries = async (queryClient: QueryClient) => {
+  // Soft LS cache must drop before RQ refetch or AdvancedSearch/SearchBar stay stale
+  clearHotelPlacesCache();
   await Promise.all([
     queryClient.invalidateQueries("fetchMyHotels"),
     queryClient.invalidateQueries("fetchMyHotelById"),
@@ -22,6 +29,7 @@ export const invalidateHotelQueries = async (queryClient: QueryClient) => {
     queryClient.invalidateQueries("fetchHotels"),
     queryClient.invalidateQueries("fetchHotelById"),
     queryClient.invalidateQueries("fetchHotelByID"),
+    queryClient.invalidateQueries(HOTEL_PLACES_QUERY_KEY),
   ]);
 };
 

@@ -13,8 +13,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import { SelectOptionLabel } from "../../components/ui/select-option-label";
+import type { LucideIcon } from "lucide-react";
+import { Crown, Shield, User } from "lucide-react";
 
 const ROLES = ["user", "admin", "hotel_owner"] as const;
+
+const ROLE_ICONS: Record<(typeof ROLES)[number], LucideIcon> = {
+  user: User,
+  admin: Shield,
+  hotel_owner: Crown,
+};
 
 const AdminUsers = () => {
   const queryClient = useQueryClient();
@@ -82,7 +91,7 @@ const AdminUsers = () => {
               <SelectContent>
                 {ROLES.map((r) => (
                   <SelectItem key={r} value={r}>
-                    {r}
+                    <SelectOptionLabel icon={ROLE_ICONS[r]}>{r}</SelectOptionLabel>
                   </SelectItem>
                 ))}
               </SelectContent>

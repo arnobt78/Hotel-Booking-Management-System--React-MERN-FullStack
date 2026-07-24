@@ -16,12 +16,12 @@ const Home = () => {
   return (
     <>
       <Hero onSearch={handleSearch} />
-      <PageContainer className="py-4 space-y-8">
-        <div className="text-center mb-8">
-          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-2">
+      <PageContainer className="py-6">
+        <div className="text-center mb-6">
+          <h2 className="text-lg md:text-2xl font-medium text-gray-700">
             Latest Destinations
           </h2>
-          <p className="text-gray-600">
+          <p className="text-sm md:text-lg text-gray-600 font-normal">
             Most recent destinations added by our hosts
           </p>
         </div>

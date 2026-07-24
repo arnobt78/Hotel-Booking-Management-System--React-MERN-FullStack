@@ -93,7 +93,7 @@ const AdminHotels = () => {
         cell: ({ row }) => (
           <Link
             to={`/detail/${row.original._id}`}
-            className="text-primary-600 hover:underline text-sm"
+            className="text-primary-600 hover:text-primary-700 text-sm"
           >
             View
           </Link>
@@ -106,7 +106,9 @@ const AdminHotels = () => {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-lg md:text-2xl font-medium text-gray-700">Hotels</h1>
+        <h1 className="text-lg md:text-2xl font-medium text-gray-700">
+          Hotels
+        </h1>
         <p className="text-sm text-gray-500">All properties in the catalog</p>
       </div>
       {isLoading ? (

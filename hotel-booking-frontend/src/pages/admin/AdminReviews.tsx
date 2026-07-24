@@ -49,7 +49,7 @@ const AdminReviews = () => {
         cell: ({ row }) => (
           <Link
             to={`/detail/${row.original.hotelId}`}
-            className="text-xs text-primary-600 hover:underline"
+            className="text-xs text-primary-600 hover:text-primary-700"
           >
             Hotel {row.original.hotelId.slice(-6)}
           </Link>

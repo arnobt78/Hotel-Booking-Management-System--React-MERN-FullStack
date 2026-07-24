@@ -11,6 +11,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../components/ui/select";
+import { SelectOptionLabel } from "../../components/ui/select-option-label";
+import { Star } from "lucide-react";
 import useAppContext from "../../hooks/useAppContext";
 
 const DetailsSection = () => {
@@ -199,10 +201,22 @@ const DetailsSection = () => {
                 <SelectValue placeholder="Select as Rating" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="_unset">Select as Rating</SelectItem>
+                <SelectItem value="_unset">
+                  <SelectOptionLabel
+                    icon={Star}
+                    iconClassName="text-gray-400"
+                  >
+                    Select as Rating
+                  </SelectOptionLabel>
+                </SelectItem>
                 {[1, 2, 3, 4, 5].map((num) => (
                   <SelectItem key={num} value={String(num)}>
-                    {num}
+                    <SelectOptionLabel
+                      icon={Star}
+                      iconClassName="fill-amber-400 text-amber-500"
+                    >
+                      {num}
+                    </SelectOptionLabel>
                   </SelectItem>
                 ))}
               </SelectContent>

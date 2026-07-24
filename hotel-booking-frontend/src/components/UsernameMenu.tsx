@@ -29,10 +29,10 @@ const getAvatarUrl = () => {
 };
 
 const menuItemClass =
-  "py-1.5 rounded-xl cursor-pointer hover:bg-gray-100 focus:bg-gray-100";
+  "flex items-center py-2 rounded-xl cursor-pointer hover:bg-gray-100 focus:bg-gray-100";
 
 const linkRowClass =
-  "flex items-center gap-2 w-full font-medium text-gray-700 hover:text-primary-600";
+  "flex items-center gap-2 w-full text-sm font-normal leading-none text-gray-700 hover:text-primary-600";
 
 const UsernameMenu = () => {
   const { isLoggedIn } = useAppContext();
@@ -83,7 +83,7 @@ const UsernameMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56 bg-white p-2 shadow-lg">
         <div className="px-2 py-1">
-          <p className="font-medium text-gray-900">{name || "User"}</p>
+          <p className="text-sm font-normal text-gray-700">{name || "User"}</p>
           <p className="text-xs text-muted-foreground truncate">{email}</p>
         </div>
         <Separator className="my-2 bg-gray-200" />
@@ -95,7 +95,7 @@ const UsernameMenu = () => {
           >
             <Link to="/admin" className={linkRowClass}>
               <Shield className="h-4 w-4" />
-              Admin
+              Admin Panel
             </Link>
           </DropdownMenuItem>
         )}
@@ -148,7 +148,7 @@ const UsernameMenu = () => {
           }}
           className={`${menuItemClass} text-red-600 focus:text-red-700 focus:bg-red-50`}
         >
-          <span className="flex items-center gap-2 w-full font-medium">
+          <span className="flex items-center gap-2 w-full text-sm font-normal leading-none">
             <LogOut className="h-4 w-4" />
             Logout
           </span>

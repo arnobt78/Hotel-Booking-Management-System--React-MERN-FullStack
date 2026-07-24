@@ -5,8 +5,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { SelectOptionLabel } from "./ui/select-option-label";
 import FilterSectionLabel from "./FilterSectionLabel";
-import { DollarSign } from "lucide-react";
+import { CircleDashed, DollarSign, PoundSterling } from "lucide-react";
 
 type Props = {
   selectedPrice?: number;
@@ -27,10 +28,19 @@ const PriceFilter = ({ selectedPrice, onChange }: Props) => {
           <SelectValue placeholder="Select max price" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="any">Any</SelectItem>
+          <SelectItem value="any">
+            <SelectOptionLabel
+              icon={CircleDashed}
+              iconClassName="text-gray-400"
+            >
+              Any
+            </SelectOptionLabel>
+          </SelectItem>
           {[50, 100, 200, 300, 500].map((price) => (
             <SelectItem key={price} value={String(price)}>
-              £{price}
+              <SelectOptionLabel icon={PoundSterling}>
+                £{price}
+              </SelectOptionLabel>
             </SelectItem>
           ))}
         </SelectContent>

@@ -18,8 +18,8 @@ const Hero = ({ onSearch }: { onSearch: (searchData: unknown) => void }) => {
 
       <PageContainer className="pt-8 pb-6 relative">
         <div className="text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center bg-white/10 backdrop-blur-sm rounded-full px-6 py-2 mb-8">
-            <Star className="w-5 h-5 text-yellow-400" />
+          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-6 py-2 mb-6">
+            <Star className="w-5 h-5 shrink-0 text-yellow-400" />
             <span className="text-white/90 font-medium">
               Trusted by 10,000+ travelers
             </span>
@@ -40,21 +40,29 @@ const Hero = ({ onSearch }: { onSearch: (searchData: unknown) => void }) => {
 
           {/* Feature icons — 2×2 on phone, 4-col on sm+ */}
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6 mb-12 max-w-2xl mx-auto">
-            <div className="flex items-center justify-center gap-2 text-white/80">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-white/80">
               <Search className="w-5 h-5 shrink-0" />
-              <span className="text-sm font-medium">Smart Search</span>
+              <span className="whitespace-nowrap text-xs sm:text-sm font-medium">
+                Smart Search
+              </span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-white/80">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-white/80">
               <MapPin className="w-5 h-5 shrink-0" />
-              <span className="text-sm font-medium">Global Destinations</span>
+              <span className="whitespace-nowrap text-xs sm:text-sm font-medium">
+                Global Destinations
+              </span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-white/80">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-white/80">
               <Calendar className="w-5 h-5 shrink-0" />
-              <span className="text-sm font-medium">Flexible Booking</span>
+              <span className="whitespace-nowrap text-xs sm:text-sm font-medium">
+                Flexible Booking
+              </span>
             </div>
-            <div className="flex items-center justify-center gap-2 text-white/80">
+            <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-white/80">
               <Users className="w-5 h-5 shrink-0" />
-              <span className="text-sm font-medium">24/7 Support</span>
+              <span className="whitespace-nowrap text-xs sm:text-sm font-medium">
+                24/7 Support
+              </span>
             </div>
           </div>
         </div>

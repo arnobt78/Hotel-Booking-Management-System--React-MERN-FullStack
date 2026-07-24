@@ -149,197 +149,194 @@ const ApiDocs = () => {
 
   return (
     <div>
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
-            API Documentation
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Comprehensive documentation for the Hotel Booking API. Explore
-            endpoints, understand authentication, and integrate with our
-            services.
-          </p>
-        </div>
+      {/* Header */}
+      <div className="text-center mb-12">
+        <h1 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
+          API Documentation
+        </h1>
+        <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          Comprehensive documentation for the Hotel Booking API. Explore
+          endpoints, understand authentication, and integrate with our services.
+        </p>
+      </div>
 
-        {/* API Base URL */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mb-8">
-          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
-            Base URL
-          </h2>
-          <div className="bg-gray-100 rounded-xl p-4">
-            <code className="text-lg font-mono text-gray-700">
-              {apiBaseUrl}
-            </code>
+      {/* API Base URL */}
+      <div className="bg-white rounded-xl shadow-sm border p-6 pb-6">
+        <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
+          Base URL
+        </h2>
+        <div className="bg-gray-100 rounded-xl p-4">
+          <code className="text-lg font-mono text-gray-700">{apiBaseUrl}</code>
+        </div>
+        <p className="text-gray-600 mt-2">
+          All API endpoints are relative to this base URL.
+        </p>
+      </div>
+
+      {/* Swagger UI Link */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 pb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h3 className="text-lg font-medium text-blue-900 mb-2">
+              Interactive API Documentation
+            </h3>
+            <p className="text-blue-700">
+              Explore our interactive Swagger UI documentation for detailed
+              endpoint specifications, request/response schemas, and testing
+              capabilities.
+            </p>
           </div>
-          <p className="text-gray-600 mt-2">
-            All API endpoints are relative to this base URL.
-          </p>
+          <a
+            href={`${apiBaseUrl}/api-docs`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+          >
+            <ExternalLink className="w-4 h-4 " />
+            Open Swagger UI
+          </a>
         </div>
+      </div>
 
-        {/* Swagger UI Link */}
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-medium text-blue-900 mb-2">
-                Interactive API Documentation
-              </h3>
-              <p className="text-blue-700">
-                Explore our interactive Swagger UI documentation for detailed
-                endpoint specifications, request/response schemas, and testing
-                capabilities.
-              </p>
-            </div>
-            <a
-              href={`${apiBaseUrl}/api-docs`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4 " />
-              Open Swagger UI
-            </a>
-          </div>
-        </div>
-
-        {/* Endpoints by Category */}
-        <div className="space-y-8">
-          {apiEndpoints.map((category) => (
-            <div
-              key={category.category}
-              className="bg-white rounded-xl shadow-sm border"
-            >
-              <div className="border-b border-gray-200 px-6 py-4">
-                <div className="flex items-center">
-                  <div className="text-blue-600 mr-3">{category.icon}</div>
-                  <h3 className="text-xl font-medium text-gray-700">
-                    {category.category}
-                  </h3>
-                </div>
+      {/* Endpoints by Category */}
+      <div className="space-y-8">
+        {apiEndpoints.map((category) => (
+          <div
+            key={category.category}
+            className="bg-white rounded-xl shadow-sm border"
+          >
+            <div className="border-b border-gray-200 px-6 py-4">
+              <div className="flex items-center">
+                <div className="text-blue-600 mr-3">{category.icon}</div>
+                <h3 className="text-xl font-medium text-gray-700">
+                  {category.category}
+                </h3>
               </div>
-              <div className="divide-y divide-gray-200">
-                {category.endpoints.map((endpoint, index) => (
-                  <div key={index} className="px-6 py-4 hover:bg-gray-50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-sm font-medium ${getMethodColor(
-                            endpoint.method,
-                          )}`}
-                        >
-                          {endpoint.method}
-                        </span>
-                        <code className="text-sm font-mono text-gray-700 bg-gray-100 px-2 py-1 rounded">
-                          {endpoint.path}
-                        </code>
-                      </div>
-                      <span className="text-gray-600 text-sm">
-                        {endpoint.description}
+            </div>
+            <div className="divide-y divide-gray-200">
+              {category.endpoints.map((endpoint, index) => (
+                <div key={index} className="px-6 py-4 hover:bg-gray-50">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <span
+                        className={`px-3 py-1 rounded-full text-sm font-medium ${getMethodColor(
+                          endpoint.method,
+                        )}`}
+                      >
+                        {endpoint.method}
                       </span>
+                      <code className="text-sm font-mono text-gray-700 bg-gray-100 px-2 py-1 rounded">
+                        {endpoint.path}
+                      </code>
                     </div>
+                    <span className="text-gray-600 text-sm">
+                      {endpoint.description}
+                    </span>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Authentication Section */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
-          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
-            Authentication
-          </h2>
-          <div className="prose max-w-none">
-            <p className="text-gray-600 mb-4">
-              The API uses JWT (JSON Web Tokens) for authentication. Most
-              endpoints require authentication via HTTP-only cookies.
-            </p>
-            <div className="bg-gray-100 rounded-xl p-4">
-              <h4 className="font-medium text-gray-700 mb-2">
-                Authentication Flow:
-              </h4>
-              <ol className="list-decimal list-inside text-gray-700 space-y-1">
-                <li>Register or login to receive a JWT token</li>
-                <li>Token is automatically stored in HTTP-only cookies</li>
-                <li>Include credentials in subsequent requests</li>
-                <li>Token is validated on protected endpoints</li>
-              </ol>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        ))}
+      </div>
 
-        {/* Rate Limiting */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
-          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
-            Rate Limiting
-          </h2>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
-            <p className="text-yellow-800">
-              <span className="font-medium text-gray-700">Rate Limit:</span> 100
-              requests per 15 minutes per IP address
-            </p>
-            <p className="text-yellow-700 text-sm mt-1">
-              Exceeding this limit will result in a 429 Too Many Requests
-              response.
-            </p>
+      {/* Authentication Section */}
+      <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+        <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
+          Authentication
+        </h2>
+        <div className="prose max-w-none">
+          <p className="text-gray-600 mb-4">
+            The API uses JWT (JSON Web Tokens) for authentication. Most
+            endpoints require authentication via HTTP-only cookies.
+          </p>
+          <div className="bg-gray-100 rounded-xl p-4">
+            <h4 className="font-medium text-gray-700 mb-2">
+              Authentication Flow:
+            </h4>
+            <ol className="list-decimal list-inside text-gray-700 space-y-1">
+              <li>Register or login to receive a JWT token</li>
+              <li>Token is automatically stored in HTTP-only cookies</li>
+              <li>Include credentials in subsequent requests</li>
+              <li>Token is validated on protected endpoints</li>
+            </ol>
           </div>
         </div>
+      </div>
 
-        {/* Error Handling */}
-        <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
-          <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
-            Error Handling
-          </h2>
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-medium text-gray-700">
-                Standard Error Response:
-              </h4>
-              <pre className="bg-gray-100 rounded-xl p-4 text-sm overflow-x-auto">
-                {`{
+      {/* Rate Limiting */}
+      <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+        <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
+          Rate Limiting
+        </h2>
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <p className="text-yellow-800">
+            <span className="font-medium text-gray-700">Rate Limit:</span> 100
+            requests per 15 minutes per IP address
+          </p>
+          <p className="text-yellow-700 text-sm mt-1">
+            Exceeding this limit will result in a 429 Too Many Requests
+            response.
+          </p>
+        </div>
+      </div>
+
+      {/* Error Handling */}
+      <div className="bg-white rounded-xl shadow-sm border p-6 mt-8">
+        <h2 className="text-lg md:text-2xl font-medium text-gray-700 mb-4">
+          Error Handling
+        </h2>
+        <div className="space-y-4">
+          <div>
+            <h4 className="font-medium text-gray-700">
+              Standard Error Response:
+            </h4>
+            <pre className="bg-gray-100 rounded-xl p-4 text-sm overflow-x-auto">
+              {`{
   "error": "Error message",
   "message": "Detailed error description"
 }`}
-              </pre>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-medium text-gray-700">
-                  Common Status Codes:
-                </h4>
-                <ul className="text-gray-600 space-y-1">
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">200</code> -
-                    Success
-                  </li>
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">400</code> - Bad
-                    Request
-                  </li>
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">401</code> -
-                    Unauthorized
-                  </li>
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">403</code> -
-                    Forbidden
-                  </li>
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">404</code> - Not
-                    Found
-                  </li>
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">429</code> - Too
-                    Many Requests
-                  </li>
-                  <li>
-                    <code className="bg-gray-100 px-1 rounded">500</code> -
-                    Server Error
-                  </li>
-                </ul>
-              </div>
+            </pre>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h4 className="font-medium text-gray-700">
+                Common Status Codes:
+              </h4>
+              <ul className="text-gray-600 space-y-1">
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">200</code> -
+                  Success
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">400</code> - Bad
+                  Request
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">401</code> -
+                  Unauthorized
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">403</code> -
+                  Forbidden
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">404</code> - Not
+                  Found
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">429</code> - Too
+                  Many Requests
+                </li>
+                <li>
+                  <code className="bg-gray-100 px-1 rounded">500</code> - Server
+                  Error
+                </li>
+              </ul>
             </div>
           </div>
         </div>
+      </div>
     </div>
   );
 };

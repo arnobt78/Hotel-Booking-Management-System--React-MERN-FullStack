@@ -6,7 +6,7 @@ import useAppContext from "../hooks/useAppContext";
 import { getHotelsSearchUrl } from "../lib/nav-utils";
 
 const linkClass =
-  "flex items-center gap-2 w-full py-3 font-medium text-gray-700 hover:text-primary-600 transition-colors";
+  "flex items-center gap-2 w-full py-3 text-sm font-normal text-gray-700 hover:text-primary-600 transition-colors";
 
 /** Mobile nav — API Docs/Status live in UsernameMenu when logged in (not here). */
 const MobileNavLinks = () => {

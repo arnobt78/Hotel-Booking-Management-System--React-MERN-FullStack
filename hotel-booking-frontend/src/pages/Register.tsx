@@ -10,9 +10,9 @@ import {
   Eye,
   EyeOff,
   User,
-  UserPlus,
   Sparkles,
   CheckCircle,
+  Sparkle,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "../components/ui/button";
@@ -92,17 +92,17 @@ const Register = () => {
           <div className="absolute -bottom-4 -left-4 w-16 h-16 bg-primary-200 rounded-full opacity-30"></div>
 
           {/* Header */}
-          <CardHeader className="text-center relative z-10 pb-6">
-            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700 mb-2">
+          <CardHeader className="space-y-0 text-center relative z-10 pb-6">
+            <CardTitle className="text-lg md:text-2xl font-medium text-gray-700">
               Join HolidayHotel
             </CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardDescription className="mt-0 text-gray-600">
               Create your account to start booking
             </CardDescription>
 
             {/* Development Notice */}
             {!import.meta.env.PROD && (
-              <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
+              <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-xl">
                 <p className="text-sm text-yellow-800">
                   <span className="font-medium text-gray-700">
                     Development Note:
@@ -349,12 +349,12 @@ const Register = () => {
               >
                 {isLoading ? (
                   <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white "></div>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                     Creating account...
                   </div>
                 ) : (
                   <div className="flex items-center">
-                    <UserPlus className="w-5 h-5 " />
+                    <Sparkle className="w-5 h-5 mr-2" />
                     Create Account
                   </div>
                 )}
@@ -374,7 +374,7 @@ const Register = () => {
                   Already have an account?{" "}
                   <Link
                     to="/sign-in"
-                    className="font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200 underline decoration-2 underline-offset-2"
+                    className="font-medium text-primary-600 hover:text-primary-700 transition-colors duration-200"
                   >
                     Sign in here
                   </Link>
@@ -388,11 +388,11 @@ const Register = () => {
         <div className="text-center">
           <p className="text-xs text-gray-500">
             By creating an account, you agree to our{" "}
-            <a href="#" className="text-primary-600 hover:underline">
+            <a href="#" className="text-primary-600 hover:text-primary-700">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="#" className="text-primary-600 hover:underline">
+            <a href="#" className="text-primary-600 hover:text-primary-700">
               Privacy Policy
             </a>
           </p>

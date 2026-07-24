@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { clearHotelPlacesCache } from "../lib/hotel-places";
 
 export type SearchContext = {
   destination: string;
@@ -45,8 +46,9 @@ export const SearchContextProvider = ({
   const [childCount, setChildCount] = useState<number>(() =>
     parseInt(sessionStorage.getItem("childCount") || "1")
   );
+  // Session key is hotelId (legacy hotelID reads would never restore)
   const [hotelId, setHotelId] = useState<string>(
-    () => sessionStorage.getItem("hotelID") || ""
+    () => sessionStorage.getItem("hotelId") || ""
   );
 
   const saveSearchValues = (
@@ -91,16 +93,8 @@ export const SearchContextProvider = ({
     sessionStorage.removeItem("adultCount");
     sessionStorage.removeItem("childCount");
     sessionStorage.removeItem("hotelId");
-
-    // Clear cached places data if it's older than 5 minutes
-    const cacheTime = localStorage.getItem("hotelPlacesTime");
-    if (cacheTime) {
-      const now = Date.now();
-      if (now - parseInt(cacheTime) > 5 * 60 * 1000) {
-        localStorage.removeItem("hotelPlaces");
-        localStorage.removeItem("hotelPlacesTime");
-      }
-    }
+    // Always drop soft destination cache on clear so next search sees fresh cities
+    clearHotelPlacesCache();
   };
 
   return (
